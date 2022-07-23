@@ -8,13 +8,13 @@
     <name>IFinSnowHelper</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="shiwei@rmitec.cn" url="http://www.rmitec.cn/">上海睿民互联网科技有限公司</vendor>
+    <vendor email="shiwei@rmitec.cn" url="http://www.rmitec.cn/">Ashai</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-          IFinSnowHelper-睿雪助手
+          IFinSnowHelper - 睿雪助手<br/>
             功能特点:
        <ul>
           <li>dtst文件跳转java，jsp</li>
@@ -24,7 +24,7 @@
       </ul>
            使用教程:
       <ul>
-          <li>idea设置 Editor-File Types菜单中为xml类型文件，添加 *.dtst,*.dtmd,*.rqlx 三个文件后缀。即可使用</li>
+          <li>idea设置 Editor - File Types 菜单中为xml类型文件，添加 *.dtst,*.dtmd,*.rqlx 三个文件后缀后即可使用</li>
       </ul>
       ]]>
     </description>
