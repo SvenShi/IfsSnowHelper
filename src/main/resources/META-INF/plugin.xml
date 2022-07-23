@@ -19,7 +19,9 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <idea-version since-build="202.0"/>
     <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.java</depends>
+    <depends>com.intellij.java</depends>
+    <depends>com.intellij.jsp</depends>
+    <depends>com.intellij.modules.xml</depends>
     <depends optional="true" config-file="snow-injections.xml">org.intellij.intelliLang</depends>
 
     <!-- Extension points defined by the plugin.
@@ -37,5 +39,8 @@
         <!-- java 跳转到 dtst -->
         <codeInsight.lineMarkerProvider id="snow.SnowJavaLineMarkerProvider" language="JAVA"
                                         implementationClass="com.ruimin.ifinsnowhelper.provider.SnowJavaLineMarkerProvider"/>
+        <!-- jsp 跳转到 dtst -->
+        <codeInsight.lineMarkerProvider id="snow.SnowJspLineMarkerProvider" language="JSP"
+                                        implementationClass="com.ruimin.ifinsnowhelper.provider.SnowJspLineMarkerProvider"/>
     </extensions>
 </idea-plugin>

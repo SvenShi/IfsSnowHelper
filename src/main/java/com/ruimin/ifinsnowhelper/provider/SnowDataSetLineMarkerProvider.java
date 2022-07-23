@@ -5,16 +5,20 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
-import com.ruimin.ifinsnowhelper.constants.SnowConstants;
+import com.ruimin.ifinsnowhelper.constants.DtstConstants;
+import com.ruimin.ifinsnowhelper.constants.SnowPageConstants;
 import com.ruimin.ifinsnowhelper.dom.model.Command;
 import com.ruimin.ifinsnowhelper.dom.model.Data;
 import com.ruimin.ifinsnowhelper.dom.model.Define;
 import com.ruimin.ifinsnowhelper.language.SnowIcons;
 import com.ruimin.ifinsnowhelper.util.JavaUtils;
+import com.ruimin.ifinsnowhelper.util.SnowPageUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,6 +35,9 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
     private static final ImmutableSet<String> TARGET_TYPES = ImmutableSet.of(Define.class.getSimpleName(),
                                                                              Command.class.getSimpleName());
 
+    // 是否导航到java 反之导航到jsp
+    private boolean toJava = true;
+
     @Override
     public boolean isTheElement(@NotNull PsiElement element) {
         return element instanceof XmlToken && isTargetType((XmlToken) element);
@@ -39,40 +46,28 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
 
     @Override
     public Optional<? extends PsiElement[]> apply(@NotNull XmlToken from) {
-        PsiElement parent = from.getParent();
-        if (parent instanceof XmlTag) {
-            XmlTag tag = (XmlTag) parent;
-            String flowId = tag.getAttributeValue(SnowConstants.XML_TAG_FLOWID_ATTRIBUTE_NAME);
-            if (StringUtils.isNotBlank(flowId)){
-                String[] split = flowId.split(SnowConstants.FLOWID_SEPARATE);
-                if (split.length >= 2){
-                    return JavaUtils.findMethods(from.getProject(), split[0],split[1]);
-                }else {
-                    return Optional.empty();
-                }
-            }else {
-                return Optional.empty();
-            }
+        if (toJava) {
+            return goToJava(from);
         } else {
-            return Optional.empty();
+            return goToJsp(from);
         }
     }
 
     @Override
     public String getName() {
-        return "调用方法标记";
+        return toJava ? "调用方法标记" : "被引用的dtst";
     }
 
     @NotNull
     @Override
     public Icon getIcon() {
-        return SnowIcons.LOGO;
+        return toJava ? SnowIcons.GO_BLUE : SnowIcons.GO_YELLOW;
     }
 
     @NotNull
     @Override
     public String getTooltip(PsiElement array, @NotNull PsiElement target) {
-        return "导航到方法";
+        return toJava ? "前往java方法" : "前往jsp";
     }
 
     /**
@@ -84,10 +79,11 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
             // 判断当前元素是开始节点
             PsiElement nextSibling = token.getNextSibling();
             if (nextSibling instanceof PsiWhiteSpace) {
+                toJava = false;
                 isTargetType = true;
             }
         }
-        if (isTargetType == null){
+        if (isTargetType == null) {
             if (TARGET_TYPES.contains(token.getText())) {
                 PsiElement parent = token.getParent();
                 // 判断当前节点时标签
@@ -95,13 +91,55 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
                     PsiElement nextSibling = token.getNextSibling();
                     if (nextSibling instanceof PsiWhiteSpace) {
                         isTargetType = true;
+                        toJava = true;
                     }
                 }
             }
         }
-        if (isTargetType == null){
+        if (isTargetType == null) {
             isTargetType = false;
         }
         return isTargetType;
+    }
+
+    private Optional<? extends PsiElement[]> goToJsp(XmlToken xmlToken) {
+        String path = SnowPageUtils.getDtstPath(xmlToken.getContainingFile());
+        if (path == null) {
+            return Optional.empty();
+        }
+        List<XmlTag> allDtstTag = SnowPageUtils.findAllDtstTag(xmlToken.getProject());
+        ArrayList<PsiElement> psiElements = new ArrayList<>();
+
+        for (XmlTag dtstTag : allDtstTag) {
+            String attributeValue = dtstTag.getAttributeValue(SnowPageConstants.DTST_ATTR_NAME_PATH);
+            if (path.equals(attributeValue)) {
+                psiElements.add(dtstTag);
+            }
+        }
+        if (psiElements.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(psiElements.toArray(new PsiElement[0]));
+    }
+
+    private Optional<? extends PsiElement[]> goToJava(XmlToken from) {
+        PsiElement parent = from.getParent();
+        if (parent instanceof XmlTag) {
+            XmlTag tag = (XmlTag) parent;
+            String flowId = tag.getAttributeValue(DtstConstants.XML_TAG_FLOWID_ATTRIBUTE_NAME);
+            if (StringUtils.isNotBlank(flowId)) {
+                String[] split = flowId.split(DtstConstants.FLOWID_SEPARATE);
+                if (split.length >= 2) {
+                    return JavaUtils.findMethods(from.getProject(), split[0], split[1]);
+                } else {
+                    return Optional.empty();
+                }
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
     }
 }

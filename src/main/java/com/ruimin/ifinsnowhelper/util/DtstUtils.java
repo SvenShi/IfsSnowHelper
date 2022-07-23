@@ -31,8 +31,7 @@ public final class DtstUtils {
     /**
      * 查询项目中的所有dtst的data标签
      */
-    public static List<Data> findDtsts(@NotNull Project project) {
-        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+    public static List<Data> findDtsts(@NotNull Project project,GlobalSearchScope scope) {
         List<DomFileElement<Data>> elements = DomService.getInstance().getFileElements(Data.class, project, scope);
         return elements.stream().map(DomFileElement::getRootElement).collect(Collectors.toList());
     }

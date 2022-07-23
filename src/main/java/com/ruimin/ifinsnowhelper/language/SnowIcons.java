@@ -12,4 +12,7 @@ import javax.swing.*;
  */
 public class SnowIcons {
     public static final Icon LOGO = IconLoader.getIcon("icons/ruimin.png", SnowIcons.class);
+    public static final Icon GO_GREEN = IconLoader.getIcon("icons/go-green.svg", SnowIcons.class);
+    public static final Icon GO_YELLOW = IconLoader.getIcon("icons/go-yellow.svg", SnowIcons.class);
+    public static final Icon GO_BLUE = IconLoader.getIcon("icons/go-blue.svg", SnowIcons.class);
 }

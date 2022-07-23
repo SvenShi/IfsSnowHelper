@@ -4,6 +4,8 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -11,7 +13,7 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Query;
-import com.ruimin.ifinsnowhelper.constants.SnowConstants;
+import com.ruimin.ifinsnowhelper.constants.DtstConstants;
 import com.ruimin.ifinsnowhelper.dom.model.Command;
 import com.ruimin.ifinsnowhelper.dom.model.Commands;
 import com.ruimin.ifinsnowhelper.dom.model.Data;
@@ -42,7 +44,7 @@ public class SnowJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
         final List<XmlTag> results = getResults((PsiMethod) element);
         if (CollectionUtils.isNotEmpty(results)) {
-            NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(SnowIcons.LOGO)
+            NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(SnowIcons.GO_GREEN)
                                                                                          .setAlignment(
                                                                                                  GutterIconRenderer.Alignment.CENTER)
                                                                                          .setTargets(results)
@@ -54,32 +56,39 @@ public class SnowJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
     }
 
     private List<XmlTag> getResults(PsiMethod psiMethod) {
+        //获取方法所在类
         PsiClass psiClass = psiMethod.getContainingClass();
         if (psiClass == null) {
             return new ArrayList<>();
         }
-        List<Data> dtsts = DtstUtils.findDtsts(psiMethod.getProject());
+        //获取所属模块
+        Module module = ModuleUtil.findModuleForPsiElement(psiClass);
+        if (module == null) {
+            return new ArrayList<>();
+        }
+        //获取所有的dtst文件
+        List<Data> dtsts = DtstUtils.findDtsts(psiMethod.getProject(), module.getModuleScope(false));
         HashSet<String> flowIds = new HashSet<>();
-        String flowId = psiClass.getQualifiedName() + SnowConstants.FLOWID_SEPARATE + psiMethod.getName();
+        String flowId = psiClass.getQualifiedName() + DtstConstants.FLOWID_SEPARATE + psiMethod.getName();
         flowIds.add(flowId);
         Query<PsiClass> search = ClassInheritorsSearch.search(psiClass);
         // 所有子类
         Collection<PsiClass> allChildren = search.findAll();
         for (PsiClass child : allChildren) {
-            String childFlowId = child.getQualifiedName() + SnowConstants.FLOWID_SEPARATE + psiMethod.getName();
+            String childFlowId = child.getQualifiedName() + DtstConstants.FLOWID_SEPARATE + psiMethod.getName();
             flowIds.add(childFlowId);
         }
         ArrayList<XmlTag> xmlTags = new ArrayList<>();
-        //获取所有引用了方法的xmlTag
+        // 获取所有引用了方法的xmlTag
         for (Data dtst : dtsts) {
             for (Define define : dtst.getDefines()) {
-                if (flowIds.contains(define.getFlowid().getRawText())){
+                if (flowIds.contains(define.getFlowid().getRawText())) {
                     xmlTags.add(define.getXmlTag());
                 }
             }
             for (Commands commands : dtst.getCommandses()) {
                 for (Command command : commands.getCommands()) {
-                    if (flowIds.contains(command.getFlowid().getRawText())){
+                    if (flowIds.contains(command.getFlowid().getRawText())) {
                         xmlTags.add(command.getXmlTag());
                     }
                 }
