@@ -25,25 +25,12 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <fileType
-                name="dataset file"
-                implementationClass="com.ruimin.ifinsnowhelper.language.SnowDtstFileType"
-                fieldName="INSTANCE"
-                language="XML"
-                extensions="dtst" />
-        <fileType
-                name="dataset mapper file"
-                implementationClass="com.ruimin.ifinsnowhelper.language.SnowDtmdFileType"
-                fieldName="INSTANCE"
-                language="XML"
-                extensions="dtmd" />
-        <fileType
-                name="sql file"
-                implementationClass="com.ruimin.ifinsnowhelper.language.SnowRqlxFileType"
-                fieldName="INSTANCE"
-                language="XML"
-                extensions="rqlx" />
 
+        <!--文件描述-->
+        <!-- dtst文件属性提示 -->
+        <dom.fileMetaData id="snow.DtstDescription"
+                          rootTagName="Data"
+                          implementation="com.ruimin.ifinsnowhelper.dom.description.DtstDescription"/>
         <!-- dtst 跳转到 java -->
         <codeInsight.lineMarkerProvider id="snow.SnowDataSetLineMarkerProvider" language="XML"
                                         implementationClass="com.ruimin.ifinsnowhelper.provider.SnowDataSetLineMarkerProvider"/>

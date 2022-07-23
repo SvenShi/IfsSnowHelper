@@ -3,7 +3,9 @@
 
 package com.ruimin.ifinsnowhelper.dom.model;
 
+import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.NameValue;
 import com.intellij.util.xml.Required;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +25,8 @@ public interface Command extends FlowIdDomElement {
 	 */
 	@NotNull
 	@Required
+	@Attribute("id")
+	@NameValue
 	GenericAttributeValue<String> getId();
 
 
@@ -49,6 +53,7 @@ public interface Command extends FlowIdDomElement {
 	 */
 	@NotNull
 	@Required
+	@Attribute("type")
 	GenericAttributeValue<Type> getType();
 
 
@@ -62,6 +67,7 @@ public interface Command extends FlowIdDomElement {
 	 * @return the value of the icon child.
 	 */
 	@NotNull
+	@Attribute("type")
 	GenericAttributeValue<String> getIcon();
 
 
@@ -70,6 +76,7 @@ public interface Command extends FlowIdDomElement {
 	 * @return the value of the txn child.
 	 */
 	@NotNull
+	@Attribute("txn")
 	GenericAttributeValue<String> getTxn();
 
 
@@ -78,6 +85,7 @@ public interface Command extends FlowIdDomElement {
 	 * @return the value of the url child.
 	 */
 	@NotNull
+	@Attribute("url")
 	GenericAttributeValue<String> getUrl();
 
 
@@ -86,6 +94,7 @@ public interface Command extends FlowIdDomElement {
 	 * @return the value of the tip child.
 	 */
 	@NotNull
+	@Attribute("tip")
 	GenericAttributeValue<String> getTip();
 
 
@@ -94,6 +103,7 @@ public interface Command extends FlowIdDomElement {
 	 * @return the value of the submitdataset child.
 	 */
 	@NotNull
+	@Attribute("submitdataset")
 	GenericAttributeValue<String> getSubmitdataset();
 
 
@@ -102,6 +112,7 @@ public interface Command extends FlowIdDomElement {
 	 * @return the value of the targetFrame child.
 	 */
 	@NotNull
+	@Attribute("targetFrame")
 	GenericAttributeValue<String> getTargetFrame();
 
 

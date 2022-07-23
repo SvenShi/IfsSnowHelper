@@ -3,6 +3,7 @@
 
 package com.ruimin.ifinsnowhelper.dom.model;
 
+import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.Required;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,7 @@ public interface Define extends FlowIdDomElement {
 	 */
 	@NotNull
 	@Required
+	@Attribute("type")
 	GenericAttributeValue<Type> getType();
 
 
@@ -35,6 +37,7 @@ public interface Define extends FlowIdDomElement {
 	 * @return the value of the pagesize child.
 	 */
 	@NotNull
+	@Attribute("pagesize")
 	GenericAttributeValue<Integer> getPagesize();
 
 
@@ -48,6 +51,7 @@ public interface Define extends FlowIdDomElement {
 	 */
 	@NotNull
 	@Required
+	@Attribute("log")
 	GenericAttributeValue<Boolean> getLog();
 
 
@@ -61,6 +65,7 @@ public interface Define extends FlowIdDomElement {
 	 */
 	@NotNull
 	@Required
+	@Attribute("desc")
 	GenericAttributeValue<String> getDesc();
 
 
@@ -74,6 +79,7 @@ public interface Define extends FlowIdDomElement {
 	 */
 	@NotNull
 	@Required
+	@Attribute("expmaxrcd")
 	GenericAttributeValue<Integer> getExpmaxrcd();
 
 
@@ -86,6 +92,7 @@ public interface Define extends FlowIdDomElement {
 	 * @return the value of the flowctxid child.
 	 */
 	@NotNull
+	@Attribute("flowctxid")
 	GenericAttributeValue<String> getFlowctxid();
 
 
@@ -98,6 +105,7 @@ public interface Define extends FlowIdDomElement {
 	 * @return the value of the flowretid child.
 	 */
 	@NotNull
+	@Attribute("flowretid")
 	GenericAttributeValue<String> getFlowretid();
 
 

@@ -4,6 +4,7 @@
 package com.ruimin.ifinsnowhelper.dom.model;
 
 import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.SubTagList;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,11 +22,13 @@ public interface FieldModel extends DomElement {
 	 * @return the list of Field children.
 	 */
 	@NotNull
+	@SubTagList("Field")
 	java.util.List<Field> getFields();
 	/**
 	 * Adds new child to the list of Field children.
 	 * @return created child
 	 */
+	@SubTagList("Field")
 	Field addField();
 
 

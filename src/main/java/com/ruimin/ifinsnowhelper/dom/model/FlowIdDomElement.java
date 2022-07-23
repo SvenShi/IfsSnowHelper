@@ -1,7 +1,6 @@
 package com.ruimin.ifinsnowhelper.dom.model;
 
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,7 +17,12 @@ public interface FlowIdDomElement extends DomElement {
      * <h3>Attribute null:flowid documentation</h3>
      * 流程或组件路径
      * </pre>
+     *
      * @return the value of the flowid child.
      */
+    @Required
+    @NameValue
+    @Attribute("flowid")
     @NotNull GenericAttributeValue<String> getFlowid();
+
 }

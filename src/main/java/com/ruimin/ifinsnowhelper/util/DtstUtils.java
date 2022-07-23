@@ -1,23 +1,15 @@
 package com.ruimin.ifinsnowhelper.util;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomFileElement;
-import com.intellij.util.xml.DomManager;
-import com.ruimin.ifinsnowhelper.dom.model.Commands;
+import com.intellij.util.xml.DomService;
 import com.ruimin.ifinsnowhelper.dom.model.Data;
-import com.ruimin.ifinsnowhelper.dom.model.Define;
-import com.ruimin.ifinsnowhelper.language.SnowDtstFileType;
-import org.apache.commons.collections.CollectionUtils;
+import com.ruimin.ifinsnowhelper.dom.model.FlowIdDomElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,33 +31,16 @@ public final class DtstUtils {
     /**
      * 查询项目中的所有dtst的data标签
      */
-    public static Collection<XmlTag> findDtsts(@NotNull Project project) {
-        // if (ALL_COMMAND_AND_DEFINE_LIST.size()>0){
-        //     return ALL_COMMAND_AND_DEFINE_LIST;
-        // }
+    public static List<Data> findDtsts(@NotNull Project project) {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-        Collection<VirtualFile> files = FileTypeIndex.getFiles(SnowDtstFileType.INSTANCE, scope);
-        DomManager domManager = DomManager.getDomManager(project);
-        List<DomFileElement<Data>> allDomElement = files.stream()
-                                                        .map(item -> PsiManager.getInstance(project).findFile(item))
-                                                        .filter(item -> item instanceof XmlFile)
-                                                        .map(file -> domManager.getFileElement(
-                                                                (XmlFile) file, Data.class,"Data"))
-                                                        .collect(Collectors.toList());
-
-        ArrayList<XmlTag> xmlTags = new ArrayList<>();
-        for (DomFileElement<Data> dataDomFileElement : allDomElement) {
-            XmlTag rootTag = dataDomFileElement.getRootTag();
-            if (rootTag != null) {
-                XmlTag define = rootTag.findFirstSubTag(Define.class.getSimpleName());
-                XmlTag commands = rootTag.findFirstSubTag(Commands.class.getSimpleName());
-                xmlTags.add(define);
-                if (commands != null) {
-                    CollectionUtils.addAll(xmlTags,commands.getSubTags());
-                }
-            }
-        }
-        return xmlTags;
+        List<DomFileElement<Data>> elements = DomService.getInstance().getFileElements(Data.class, project, scope);
+        return elements.stream().map(DomFileElement::getRootElement).collect(Collectors.toList());
     }
 
+    /**
+     * 获取标签的flowId
+     */
+    public static String getFlowIdSignature(@NotNull FlowIdDomElement domElement) {
+        return domElement.getFlowid().getRawText();
+    }
 }

@@ -4,6 +4,7 @@
 package com.ruimin.ifinsnowhelper.dom.model;
 
 import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.SubTagList;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,11 +22,13 @@ public interface Commands extends DomElement {
 	 * @return the list of Command children.
 	 */
 	@NotNull
+	@SubTagList("Command")
 	java.util.List<Command> getCommands();
 	/**
 	 * Adds new child to the list of Command children.
 	 * @return created child
 	 */
+	@SubTagList("Command")
 	Command addCommand();
 
 

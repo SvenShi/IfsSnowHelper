@@ -23,6 +23,7 @@ public interface DataRef extends DomElement {
 	 */
 	@NotNull
 	@Required
+	@Attribute("id")
 	GenericAttributeValue<String> getId();
 
 
@@ -36,6 +37,7 @@ public interface DataRef extends DomElement {
 	 */
 	@NotNull
 	@Required
+	@Attribute("dspath")
 	GenericAttributeValue<String> getDspath();
 
 
