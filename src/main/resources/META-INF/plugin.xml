@@ -1,0 +1,54 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.ruimin.iFinSnowHelper</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>IFinSnowHelper</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="shiwei@rmitec.cn" url="http://www.rmitec.cn/">上海睿民互联网科技有限公司</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description>ifs框架文件导航-上海睿民互联网科技有限公司是属于新成立的一家民生电商旗下，致立于专业从事金融行业应用软件系统开发和集成的高新技术企业。成立于2015年，总部设在上海，在北京、深圳均设立分支机构。</description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <idea-version since-build="202.0"/>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends optional="true" config-file="snow-injections.xml">org.intellij.intelliLang</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType
+                name="dataset file"
+                implementationClass="com.ruimin.ifinsnowhelper.language.SnowDtstFileType"
+                fieldName="INSTANCE"
+                language="XML"
+                extensions="dtst" />
+        <fileType
+                name="dataset mapper file"
+                implementationClass="com.ruimin.ifinsnowhelper.language.SnowDtmdFileType"
+                fieldName="INSTANCE"
+                language="XML"
+                extensions="dtmd" />
+        <fileType
+                name="sql file"
+                implementationClass="com.ruimin.ifinsnowhelper.language.SnowRqlxFileType"
+                fieldName="INSTANCE"
+                language="XML"
+                extensions="rqlx" />
+
+        <!-- dtst 跳转到 java -->
+        <codeInsight.lineMarkerProvider id="snow.SnowDataSetLineMarkerProvider" language="XML"
+                                        implementationClass="com.ruimin.ifinsnowhelper.provider.SnowDataSetLineMarkerProvider"/>
+        <!-- java 跳转到 dtst -->
+        <codeInsight.lineMarkerProvider id="snow.SnowJavaLineMarkerProvider" language="JAVA"
+                                        implementationClass="com.ruimin.ifinsnowhelper.provider.SnowJavaLineMarkerProvider"/>
+    </extensions>
+</idea-plugin>

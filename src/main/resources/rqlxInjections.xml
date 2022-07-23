@@ -1,0 +1,8 @@
+<LanguageInjectionConfiguration>
+  <injection language="SQL" injector-id="xml">
+    <display-name>rqlx</display-name>
+    <single-file value="true" />
+    <place><![CDATA[xmlTag().withLocalName(string().oneOf("sql", "select", "insert", "update", "delete", "statement")).withNamespace(string().equalTo("http://sqlmap.rql.org/rql-mapper"))]]></place>
+    <apply-to-subtags />
+  </injection>
+</LanguageInjectionConfiguration>
