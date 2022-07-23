@@ -1,14 +1,14 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
-    <id>com.ruimin.iFinSnowHelper</id>
+    <id>com.ruimin.helper</id>
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
     <name>IFinSnowHelper</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="shiwei@rmitec.cn" url="http://www.rmitec.cn/">Ashai</vendor>
+    <vendor email="shiwei@rmitec.cn" url="http://www.rmitec.cn/">shiwei</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
@@ -46,15 +46,15 @@
         <!-- dtst文件属性提示 -->
         <dom.fileMetaData id="snow.DtstDescription"
                           rootTagName="Data"
-                          implementation="com.ruimin.ifinsnowhelper.dom.description.DtstDescription"/>
-        <!-- dtst 跳转到 java -->
+                          implementation="com.ruimin.helper.dom.description.DtstDescription"/>
+        <!-- dtst 跳转到 java、jsp -->
         <codeInsight.lineMarkerProvider id="snow.SnowDataSetLineMarkerProvider" language="XML"
-                                        implementationClass="com.ruimin.ifinsnowhelper.provider.SnowDataSetLineMarkerProvider"/>
+                                        implementationClass="com.ruimin.helper.provider.SnowDataSetLineMarkerProvider"/>
         <!-- java 跳转到 dtst -->
         <codeInsight.lineMarkerProvider id="snow.SnowJavaLineMarkerProvider" language="JAVA"
-                                        implementationClass="com.ruimin.ifinsnowhelper.provider.SnowJavaLineMarkerProvider"/>
+                                        implementationClass="com.ruimin.helper.provider.SnowJavaLineMarkerProvider"/>
         <!-- jsp 跳转到 dtst -->
         <codeInsight.lineMarkerProvider id="snow.SnowJspLineMarkerProvider" language="JSP"
-                                        implementationClass="com.ruimin.ifinsnowhelper.provider.SnowJspLineMarkerProvider"/>
+                                        implementationClass="com.ruimin.helper.provider.SnowJspLineMarkerProvider"/>
     </extensions>
 </idea-plugin>
