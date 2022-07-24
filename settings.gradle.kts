@@ -1,1 +1,1 @@
-rootProject.name = "iFinSnowHelper"
+rootProject.name = "IfsSnowHelper"
