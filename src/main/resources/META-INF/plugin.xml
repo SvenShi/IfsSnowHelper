@@ -14,7 +14,6 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-
 <h1 id="ifssnowhelper">IfsSnowHelper</h1>
 <h2>简介</h2>
 <p>本插件为个人兴趣使然在业余时间开发，对idea插件开发的一次简单尝试与学习。</p>
@@ -49,7 +48,7 @@
 <h3>更新频率</h3>
 <p>随缘更新，业余时间有空就写写</p>
 <hr>
-
+<p>知识库链接：<a href="https://kg.rmitec.cn/knowledge/open.knowledge/view/271">https://kg.rmitec.cn/knowledge/open.knowledge/view/271</a></p>
       ]]>
     </description>
 
