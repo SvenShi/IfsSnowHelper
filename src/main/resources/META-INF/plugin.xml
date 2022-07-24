@@ -14,18 +14,42 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-          IfsSnowHelper - 睿雪助手<br/>
-            功能特点:
-       <ul>
-          <li>dtst文件跳转java，jsp</li>
-          <li>java方法跳转dtst</li>
-          <li>jsp dtst标签跳转到dtst文件</li>
-          <li>rqlx文件注入sql语言提示</li>
-      </ul>
-           使用教程:
-      <ul>
-          <li>idea设置 Editor - File Types 菜单中为xml类型文件，添加 *.dtst,*.dtmd,*.rqlx 三个文件后缀后即可使用</li>
-      </ul>
+
+<h1 id="ifssnowhelper">IfsSnowHelper</h1>
+<h2>简介</h2>
+<p>本插件为个人兴趣使然在业余时间开发，对idea插件开发的一次简单尝试与学习。</p>
+<p>公司自研框架在开发过程中，搜索dtst、jsp以及对应的java方法时比较麻烦，所以就写了这个插件，用来简化开发。</p>
+<h3>功能特点</h3>
+<ul>
+    <li>[x] Java方法跳转到DTST中引用处</li>
+    <li>[x] dtst跳转到引用的方法处</li>
+    <li>[x] dtst跳转到Jsp <code>&lt;snow:dataset&gt;</code> 标签引用出</li>
+    <li>[x] Jsp<code>&lt;snow:dataset&gt;</code>标签跳转到对应dtst中</li>
+    <li>[x] rqlx文件注入sql语法提示，需要在idea设置中配置方言，如果需要数据库表名、字段提示需要在idea中连接数据库，并且配置SQL Resolution Scopes中设置对应的映射</li>
+</ul>
+<h3>待开发功能</h3>
+<ul>
+    <li>[ ] 支持Ctrl + 左键点击dtst连接、java方法等跳转转到对应文件</li>
+    <li>[ ] 支持idea重构功能</li>
+    <li>[ ] 引用文件不存在报红功能</li>
+    <li>[ ]
+        <del>代码提示功能、包括JavaScript中的代码提示</del>
+    </li>
+    <li>[ ]
+        <del>rqlx与Java代码中相互跳转</del>
+    </li>
+    <li>[ ]
+        <del>集成公司自研代码生成工具</del>
+    </li>
+    <li>[ ]
+        <del>alt+enter 生成不存在的java方法、dtst和rqlx</del>
+    </li>
+</ul>
+<p>划线为随缘功能，因个人实力原因有可能写不出来</p>
+<h3>更新频率</h3>
+<p>随缘更新，业余时间有空就写写</p>
+<hr>
+
       ]]>
     </description>
 

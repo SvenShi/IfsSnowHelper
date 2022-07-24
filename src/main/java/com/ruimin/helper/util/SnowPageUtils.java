@@ -101,9 +101,6 @@ public class SnowPageUtils {
                 }
             }
         }
-        System.out.println(
-                "------------------------找完了 用时：" + (System.currentTimeMillis() - l) + "----数量： " + xmlTags.size() +
-                        "---------------------------");
         return xmlTags;
     }
 
