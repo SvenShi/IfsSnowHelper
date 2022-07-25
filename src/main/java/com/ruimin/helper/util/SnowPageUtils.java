@@ -1,5 +1,6 @@
 package com.ruimin.helper.util;
 
+
 import com.intellij.jsp.highlighter.NewJspFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -61,8 +62,7 @@ public class SnowPageUtils {
             String packageName = StringUtils.substring(path, 0, index);
             // 找到所在的包
             Collection<VirtualFile> matchPackages = PackageIndex.getInstance(project)
-                                                                .getDirsByPackageName(packageName,
-                                                                                      module.getModuleScope(false))
+                                                                .getDirsByPackageName(packageName,false)
                                                                 .findAll();
             for (VirtualFile matchPackage : matchPackages) {
                 // 匹配包下面的文件

@@ -1,16 +1,29 @@
 package com.ruimin.helper.util;
 
+import com.google.common.collect.Sets;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.searches.ClassInheritorsSearch;
+import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.Query;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomService;
-import com.ruimin.helper.dom.model.Data;
-import com.ruimin.helper.dom.model.FlowIdDomElement;
+import com.ruimin.helper.constants.DtstConstants;
+import com.ruimin.helper.dom.model.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -26,12 +39,11 @@ public final class DtstUtils {
         throw new UnsupportedOperationException();
     }
 
-    public static final ArrayList<XmlTag> ALL_COMMAND_AND_DEFINE_LIST = new ArrayList<>();
 
     /**
      * 查询项目中的所有dtst的data标签
      */
-    public static List<Data> findDtsts(@NotNull Project project,GlobalSearchScope scope) {
+    public static List<Data> findAllDtst(@NotNull Project project, GlobalSearchScope scope) {
         List<DomFileElement<Data>> elements = DomService.getInstance().getFileElements(Data.class, project, scope);
         return elements.stream().map(DomFileElement::getRootElement).collect(Collectors.toList());
     }
@@ -41,5 +53,122 @@ public final class DtstUtils {
      */
     public static String getFlowIdSignature(@NotNull FlowIdDomElement domElement) {
         return domElement.getFlowid().getRawText();
+    }
+
+    /**
+     * 根据方法名获取dataset中的flowid
+     *
+     * @param psiMethod 方法
+     * @return flowId
+     */
+    public static Collection<String> findFlowIdsByMethod(PsiMethod psiMethod) {
+        HashSet<String> flowIds = new HashSet<>();
+
+        // 方法所属的类
+        PsiClass psiClass = psiMethod.getContainingClass();
+        if (psiClass == null) {
+            return null;
+        }
+
+        String flowId = psiClass.getQualifiedName() + DtstConstants.FLOWID_SEPARATE + psiMethod.getName();
+
+        flowIds.add(flowId);
+        Query<PsiClass> search = ClassInheritorsSearch.search(psiClass);
+        // 所有子类
+        Collection<PsiClass> allChildren = search.findAll();
+        for (PsiClass child : allChildren) {
+            String childFlowId = child.getQualifiedName() + DtstConstants.FLOWID_SEPARATE + psiMethod.getName();
+            flowIds.add(childFlowId);
+        }
+        return flowIds;
+    }
+
+    /**
+     * 根据flow获取所有相应的标签
+     *
+     * @param scope   范围
+     * @param flowIds 需要对应的flowid
+     * @return 查找到的xmltag
+     */
+    public static Collection<XmlTag> findXmlTagByFlowId(@NotNull GlobalSearchScope scope, String... flowIds) {
+        HashSet<String> flowIdSet = Sets.newHashSet(flowIds);
+        List<Data> dtsts = DtstUtils.findAllDtst(Objects.requireNonNull(scope.getProject()), scope);
+        ArrayList<XmlTag> xmlTags = new ArrayList<>();
+        // 获取所有引用了方法的xmlTag
+        for (Data dtst : dtsts) {
+            for (Define define : dtst.getDefines()) {
+                if (flowIdSet.contains(define.getFlowid().getRawText())) {
+                    xmlTags.add(define.getXmlTag());
+                }
+            }
+            for (Commands commands : dtst.getCommandses()) {
+                for (Command command : commands.getCommands()) {
+                    if (flowIdSet.contains(command.getFlowid().getRawText())) {
+                        xmlTags.add(command.getXmlTag());
+                    }
+                }
+            }
+        }
+        return xmlTags;
+    }
+
+    /**
+     * 根据方法获取所有对应的xmltags
+     */
+    public static Collection<XmlTag> findTagsByMethod(PsiMethod psiMethod) {
+        HashSet<XmlTag> XmlTags = Sets.newHashSet();
+        Module module = ModuleUtil.findModuleForPsiElement(psiMethod);
+
+
+        if (module != null) {
+            Collection<String> flowIds = findFlowIdsByMethod(psiMethod);
+            if (CollectionUtils.isNotEmpty(flowIds)){
+                return findXmlTagByFlowId(module.getModuleScope(false), flowIds.toArray(new String[0]));
+            }
+        }
+
+        return XmlTags;
+    }
+
+    /**
+     * 是否包含在dtst文件中
+     * @param element 元素
+     * @return 是否
+     */
+    public static boolean isElementWithinDtstFile(@NotNull PsiElement element) {
+        PsiFile psiFile = element.getContainingFile();
+        return element instanceof XmlElement && DtstUtils.isDtstFile(psiFile);
+    }
+
+    /**
+     * 是否是dtst文件
+     * @param file
+     * @return
+     */
+    private static boolean isDtstFile(@Nullable PsiFile file) {
+        Boolean isDtst = null;
+        if (file == null) {
+            isDtst = false;
+        }
+        if (isDtst == null) {
+            if (!(file instanceof XmlFile)) {
+                isDtst = false;
+            }
+        }
+        if (isDtst == null) {
+            XmlTag rootTag = ((XmlFile) file).getRootTag();
+            if (rootTag == null) {
+                isDtst = false;
+            }
+            if (isDtst == null) {
+                if (!Data.class.getSimpleName().equals(rootTag.getName())) {
+                    isDtst = false;
+                }
+            }
+        }
+        if (isDtst == null) {
+            isDtst = true;
+        }
+        return isDtst;
     }
 }

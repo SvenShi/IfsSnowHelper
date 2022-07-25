@@ -6,7 +6,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
 import com.ruimin.helper.constants.SnowPageConstants;
-import com.ruimin.helper.language.SnowIcons;
+import com.ruimin.helper.constants.SnowIcons;
 import com.ruimin.helper.util.SnowPageUtils;
 import org.jetbrains.annotations.NotNull;
 

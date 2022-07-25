@@ -10,7 +10,7 @@ import com.ruimin.helper.constants.SnowPageConstants;
 import com.ruimin.helper.dom.model.Command;
 import com.ruimin.helper.dom.model.Data;
 import com.ruimin.helper.dom.model.Define;
-import com.ruimin.helper.language.SnowIcons;
+import com.ruimin.helper.constants.SnowIcons;
 import com.ruimin.helper.util.JavaUtils;
 import com.ruimin.helper.util.SnowPageUtils;
 import org.apache.commons.lang.StringUtils;

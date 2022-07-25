@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.7.0"
+    id("org.jetbrains.intellij") version "1.5.2"
 }
 
 group = "com.ruimin"
@@ -34,7 +34,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("211")
+        sinceBuild.set("212")
         untilBuild.set("222.*")
     }
 
