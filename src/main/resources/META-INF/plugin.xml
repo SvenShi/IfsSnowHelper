@@ -26,27 +26,6 @@
     <li>[x] Jsp<code>&lt;snow:dataset&gt;</code>标签跳转到对应dtst中</li>
     <li>[x] rqlx文件注入sql语法提示，需要在idea设置中配置方言，如果需要数据库表名、字段提示需要在idea中连接数据库，并且配置SQL Resolution Scopes中设置对应的映射</li>
 </ul>
-<h3>待开发功能</h3>
-<ul>
-    <li>[ ] 支持Ctrl + 左键点击dtst连接、java方法等跳转转到对应文件</li>
-    <li>[ ] 支持idea重构功能</li>
-    <li>[ ] 引用文件不存在报红功能</li>
-    <li>[ ]
-        <del>代码提示功能、包括JavaScript中的代码提示</del>
-    </li>
-    <li>[ ]
-        <del>rqlx与Java代码中相互跳转</del>
-    </li>
-    <li>[ ]
-        <del>集成公司自研代码生成工具</del>
-    </li>
-    <li>[ ]
-        <del>alt+enter 生成不存在的java方法、dtst和rqlx</del>
-    </li>
-</ul>
-<p>划线为随缘功能，因个人实力原因有可能写不出来</p>
-<h3>更新频率</h3>
-<p>随缘更新，业余时间有空就写写</p>
 <hr>
 <p>知识库链接：<a href="https://kg.rmitec.cn/knowledge/open.knowledge/view/271">https://kg.rmitec.cn/knowledge/open.knowledge/view/271</a></p>
       ]]>
