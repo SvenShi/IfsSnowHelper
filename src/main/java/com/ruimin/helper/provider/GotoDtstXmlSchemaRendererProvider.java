@@ -1,46 +1,35 @@
 package com.ruimin.helper.provider;
 
 
-import com.intellij.codeInsight.navigation.GotoTargetHandler;
-import com.intellij.codeInsight.navigation.GotoTargetRendererProvider;
-import com.intellij.ide.util.PsiElementListCellRenderer;
+import com.intellij.codeInsight.navigation.GotoTargetPresentationProvider;
+import com.intellij.navigation.TargetPresentation;
+import com.intellij.navigation.TargetPresentationBuilder;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.xml.XmlTagImpl;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.xml.util.XmlUtil;
-import com.ruimin.helper.util.DtstUtils;
+import com.intellij.psi.xml.XmlTag;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class GotoDtstXmlSchemaRendererProvider implements GotoTargetRendererProvider {
+public class GotoDtstXmlSchemaRendererProvider implements GotoTargetPresentationProvider {
 
     @Override
-    public PsiElementListCellRenderer getRenderer(@NotNull PsiElement element, @NotNull GotoTargetHandler.GotoData gotoData) {
-        if (element instanceof XmlTagImpl) {
-            if (DtstUtils.isElementWithinDtstFile(element)) {
-                return new MyRenderer();
+    @Nullable
+    public TargetPresentation getTargetPresentation(@NotNull PsiElement element, boolean differentNames) {
+        if (element instanceof XmlTag) {
+            XmlTag xmlTag = (XmlTag) element;
+            String text = element.getText();
+
+            String id = xmlTag.getAttributeValue("id");
+            if (StringUtils.isNotBlank(id)) {
+                text += "  " + id;
+            } else {
+                String desc = xmlTag.getAttributeValue("desc");
+                text += "  " + desc;
             }
+            TargetPresentationBuilder builder = TargetPresentation.builder(text);
+            builder.containerText(element.getContainingFile().getName());
+            return builder.presentation();
         }
         return null;
-    }
-
-    public static class MyRenderer extends PsiElementListCellRenderer<XmlTagImpl> {
-
-        @Override
-        public String getElementText(XmlTagImpl element) {
-            XmlAttribute attr = element.getAttribute("flowid", XmlUtil.XML_SCHEMA_INSTANCE_URI);
-            attr = attr == null ? element.getAttribute("flowid") : attr;
-            return (attr == null || attr.getValue() == null ? element.getName() : attr.getValue());
-        }
-
-        @Override
-        protected String getContainerText(XmlTagImpl element, String name) {
-            return element.getContainingFile().getName();
-        }
-
-
-        @Override
-        protected int getIconFlags() {
-            return 0;
-        }
     }
 }

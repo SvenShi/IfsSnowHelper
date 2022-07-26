@@ -7,14 +7,16 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.constants.SnowIcons;
 import com.ruimin.helper.util.DtstUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author shiwei
@@ -38,7 +40,6 @@ public class SnowJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
             NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(SnowIcons.GO_GREEN)
                                                                                          .setAlignment(
                                                                                                  GutterIconRenderer.Alignment.CENTER)
-                                                                                         .setCellRenderer(new GotoDtstXmlSchemaRendererProvider.MyRenderer())
                                                                                          .setTargets(results)
                                                                                          .setTooltipTitle("导航到dtst文件");
             final PsiElement targetMarkerInfo = Objects.requireNonNull(

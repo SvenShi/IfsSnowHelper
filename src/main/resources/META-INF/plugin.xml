@@ -67,7 +67,8 @@
 
 
         <!-- Ctrl+B, 定位类的跳转, 定位方法的跳转 -->
-        <gotoTargetRendererProvider order="first" implementation="com.ruimin.helper.provider.GotoDtstXmlSchemaRendererProvider"/>
+        <gotoTargetPresentationProvider order="first"
+                                        implementation="com.ruimin.helper.provider.GotoDtstXmlSchemaRendererProvider"/>
         <!--文件描述-->
         <!-- dtst文件属性提示 -->
         <dom.fileMetaData id="snow.DtstDescription"
