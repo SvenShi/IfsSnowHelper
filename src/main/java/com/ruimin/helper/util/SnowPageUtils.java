@@ -2,6 +2,7 @@ package com.ruimin.helper.util;
 
 
 import com.intellij.jsp.highlighter.NewJspFileType;
+import com.intellij.jsp.util.JspUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
@@ -11,7 +12,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.jsp.BaseJspFile;
-import com.intellij.psi.jsp.JspUtil;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlTag;
