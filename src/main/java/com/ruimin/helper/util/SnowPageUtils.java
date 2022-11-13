@@ -2,12 +2,14 @@ package com.ruimin.helper.util;
 
 
 import com.intellij.jsp.highlighter.NewJspFileType;
-import com.intellij.jsp.util.JspUtil;
+
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.jsp.BaseJspFile;
@@ -22,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author shiwei
@@ -49,7 +52,7 @@ public class SnowPageUtils {
         for (VirtualFile item : files) {
             PsiFile file = psiManager.findFile(item);
             if (file != null) {
-                BaseJspFile jspFile = JspUtil.getJspFile(file);
+                BaseJspFile jspFile = getJspFile(file);
                 if (jspFile != null) {
                     for (XmlTag subTag : jspFile.getRootTag().findSubTags(SnowPageConstants.SNOW_PAGE_ROOT_TAG_NAME)) {
                         CollectionUtils.addAll(xmlTags,
@@ -95,4 +98,23 @@ public class SnowPageUtils {
 
         return fileAbsolutePath.replace("/", CommonConstants.DOT_SEPARATE);
     }
+
+    /**
+     * 得到jsp文件
+     *
+     * @param element 元素
+     * @return {@link BaseJspFile}
+     */
+    public static @Nullable BaseJspFile getJspFile(@NotNull PsiElement element) {
+
+        PsiFile containingFile = element.getContainingFile();
+        if (containingFile == null) {
+            return null;
+        } else {
+            FileViewProvider fileViewProvider = containingFile.getViewProvider();
+            PsiFile psi = fileViewProvider.getPsi(fileViewProvider.getBaseLanguage());
+            return psi instanceof BaseJspFile ? (BaseJspFile)psi : null;
+        }
+    }
+
 }
