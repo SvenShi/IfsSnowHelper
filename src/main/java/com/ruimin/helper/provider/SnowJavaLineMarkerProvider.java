@@ -37,7 +37,7 @@ public class SnowJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
         final List<XmlTag> results = getResults((PsiMethod) element);
         if (CollectionUtils.isNotEmpty(results)) {
-            NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(SnowIcons.GO_GREEN)
+            NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(SnowIcons.GO_DTST)
                                                                                          .setAlignment(
                                                                                                  GutterIconRenderer.Alignment.CENTER)
                                                                                          .setTargets(results)

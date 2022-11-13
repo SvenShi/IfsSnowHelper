@@ -26,7 +26,6 @@
     <li>[x] Jsp<code>&lt;snow:dataset&gt;</code>标签跳转到对应dtst中</li>
     <li>[x] rqlx文件注入sql语法提示，需要在idea设置中配置方言，如果需要数据库表名、字段提示需要在idea中连接数据库，并且配置SQL Resolution Scopes中设置对应的映射</li>
 </ul>
-<hr>
 <p>知识库链接：<a href="https://kg.rmitec.cn/knowledge/open.knowledge/view/271">https://kg.rmitec.cn/knowledge/open.knowledge/view/271</a></p>
       ]]>
     </description>

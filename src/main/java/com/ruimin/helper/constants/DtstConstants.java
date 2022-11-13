@@ -7,13 +7,14 @@ package com.ruimin.helper.constants;
  * @description 常量类
  */
 public interface DtstConstants {
-    //dtst文件后缀
-    String DTST_FILE_EXTENSION = "dtst";
-    String DTST_FILE_EXTENSION_DOT = "."+DTST_FILE_EXTENSION;
 
-    // flowid 分隔符
-    String FLOWID_SEPARATE = ":";
+    // dtst文件后缀
+    String DTST_FILE_EXTENSION = "dtst";
+    String DTST_FILE_EXTENSION_DOT = CommonConstants.DOT_SEPARATE + DTST_FILE_EXTENSION;
+
 
     String XML_TAG_FLOWID_ATTRIBUTE_NAME = "flowid";
+
+    String XML_TAG_DATASOURCE_ATTRIBUTE_NAME = "datasource";
 
 }

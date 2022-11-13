@@ -4,9 +4,12 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.PackageIndex;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
@@ -16,15 +19,23 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Query;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomService;
+import com.ruimin.helper.constants.CommonConstants;
 import com.ruimin.helper.constants.DtstConstants;
-import com.ruimin.helper.dom.model.*;
+import com.ruimin.helper.dom.model.Command;
+import com.ruimin.helper.dom.model.Commands;
+import com.ruimin.helper.dom.model.Data;
+import com.ruimin.helper.dom.model.Define;
+import com.ruimin.helper.dom.model.FlowIdDomElement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author shiwei
@@ -70,14 +81,14 @@ public final class DtstUtils {
             return null;
         }
 
-        String flowId = psiClass.getQualifiedName() + DtstConstants.FLOWID_SEPARATE + psiMethod.getName();
+        String flowId = psiClass.getQualifiedName() + CommonConstants.COLON_SEPARATE + psiMethod.getName();
 
         flowIds.add(flowId);
         Query<PsiClass> search = ClassInheritorsSearch.search(psiClass);
         // 所有子类
         Collection<PsiClass> allChildren = search.findAll();
         for (PsiClass child : allChildren) {
-            String childFlowId = child.getQualifiedName() + DtstConstants.FLOWID_SEPARATE + psiMethod.getName();
+            String childFlowId = child.getQualifiedName() + CommonConstants.COLON_SEPARATE + psiMethod.getName();
             flowIds.add(childFlowId);
         }
         return flowIds;
@@ -86,7 +97,7 @@ public final class DtstUtils {
     /**
      * 根据flow获取所有相应的标签
      *
-     * @param scope   范围
+     * @param scope 范围
      * @param flowIds 需要对应的flowid
      * @return 查找到的xmltag
      */
@@ -119,10 +130,9 @@ public final class DtstUtils {
         HashSet<XmlTag> XmlTags = Sets.newHashSet();
         Module module = ModuleUtil.findModuleForPsiElement(psiMethod);
 
-
         if (module != null) {
             Collection<String> flowIds = findFlowIdsByMethod(psiMethod);
-            if (CollectionUtils.isNotEmpty(flowIds)){
+            if (CollectionUtils.isNotEmpty(flowIds)) {
                 return findXmlTagByFlowId(module.getModuleScope(false), flowIds.toArray(new String[0]));
             }
         }
@@ -132,6 +142,7 @@ public final class DtstUtils {
 
     /**
      * 是否包含在dtst文件中
+     *
      * @param element 元素
      * @return 是否
      */
@@ -142,6 +153,7 @@ public final class DtstUtils {
 
     /**
      * 是否是dtst文件
+     *
      * @param file
      * @return
      */
@@ -170,5 +182,40 @@ public final class DtstUtils {
             isDtst = true;
         }
         return isDtst;
+    }
+
+    /**
+     * 找到dtst根据文件路径
+     *
+     * @param dtstPath dtst路径
+     * @param project 项目
+     * @return {@link PsiFile}
+     */
+    public static ArrayList<PsiFile> findDtstFileByPath(String dtstPath, Project project) {
+        ArrayList<PsiFile> psiFiles = new ArrayList<>();
+        // 所属项目
+        PsiManager psiManager = PsiManager.getInstance(project);
+        // dataset标签的path属性
+        if (StringUtils.isNotBlank(dtstPath)) {
+            int index = StringUtils.lastIndexOf(dtstPath, CommonConstants.DOT_SEPARATE);
+            // 字符串处理为包名和datset名
+            String dtstName = StringUtils.substring(dtstPath, index + 1);
+            String packageName = StringUtils.substring(dtstPath, 0, index);
+            // 找到所在的包
+            Collection<VirtualFile> matchPackages = PackageIndex.getInstance(project)
+                .getDirsByPackageName(packageName, false)
+                .findAll();
+            for (VirtualFile matchPackage : matchPackages) {
+                // 匹配包下面的文件
+                VirtualFile child = matchPackage.findChild(dtstName + DtstConstants.DTST_FILE_EXTENSION_DOT);
+                if (child != null) {
+                    PsiFile file = psiManager.findFile(child);
+                    if (file != null) {
+                        psiFiles.add(file);
+                    }
+                }
+            }
+        }
+        return psiFiles;
     }
 }
