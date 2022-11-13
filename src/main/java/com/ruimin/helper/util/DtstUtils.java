@@ -157,7 +157,7 @@ public final class DtstUtils {
      * @param file
      * @return
      */
-    private static boolean isDtstFile(@Nullable PsiFile file) {
+    public static boolean isDtstFile(@Nullable PsiFile file) {
         Boolean isDtst = null;
         if (file == null) {
             isDtst = false;
@@ -189,10 +189,10 @@ public final class DtstUtils {
      *
      * @param dtstPath dtst路径
      * @param project 项目
-     * @return {@link PsiFile}
+     * @return {@link XmlFile}
      */
-    public static ArrayList<PsiFile> findDtstFileByPath(String dtstPath, Project project) {
-        ArrayList<PsiFile> psiFiles = new ArrayList<>();
+    public static ArrayList<XmlFile> findDtstFileByPath(String dtstPath, Project project) {
+        ArrayList<XmlFile> psiFiles = new ArrayList<>();
         // 所属项目
         PsiManager psiManager = PsiManager.getInstance(project);
         // dataset标签的path属性
@@ -210,8 +210,8 @@ public final class DtstUtils {
                 VirtualFile child = matchPackage.findChild(dtstName + DtstConstants.DTST_FILE_EXTENSION_DOT);
                 if (child != null) {
                     PsiFile file = psiManager.findFile(child);
-                    if (file != null) {
-                        psiFiles.add(file);
+                    if (file != null && isDtstFile(file)) {
+                        psiFiles.add((XmlFile) file);
                     }
                 }
             }

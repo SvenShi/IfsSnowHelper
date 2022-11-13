@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
 import com.ruimin.helper.common.enums.DtstToWhere;
@@ -161,7 +162,7 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
                 if (split.length >= 2) {
                     if (!NOT_IN_DATASOURCE_TAG.contains(split[0])) {
                         String dtstPath = split[1];
-                        ArrayList<PsiFile> dtst = DtstUtils.findDtstFileByPath(dtstPath, tag.getProject());
+                        ArrayList<XmlFile> dtst = DtstUtils.findDtstFileByPath(dtstPath, tag.getProject());
                         if (CollectionUtils.isNotEmpty(dtst)) {
                             return Optional.of(dtst.toArray(new PsiElement[0]));
                         } else {

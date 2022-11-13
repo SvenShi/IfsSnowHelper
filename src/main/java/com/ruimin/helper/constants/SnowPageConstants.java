@@ -8,14 +8,19 @@ package com.ruimin.helper.constants;
  */
 public interface SnowPageConstants {
 
-    //标签名
+    // 标签名
     String SNOW_PAGE_ROOT_TAG_NAME = "snow:page";
     String SNOW_PAGE_DATASET_TAG_NAME = "snow:dataset";
+    String SNOW_PAGE_BUTTON_TAG_NAME = "snow:button";
 
 
-
-    //dataset标签 属性
+    // dataset标签 属性
     String DTST_ATTR_NAME_PATH = "path";
+    String DTST_ATTR_NAME_ID = "id";
+
+    // 按钮标签属性
+    String BUTTON_ATTR_NAME_DATASET = "dataset";
+    String BUTTON_ATTR_NAME_ID = "id";
 
 }
 
