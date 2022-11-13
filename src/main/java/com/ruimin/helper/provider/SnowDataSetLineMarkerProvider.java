@@ -34,7 +34,7 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
     /**
      * 导航到哪里
      */
-    private DtstToWhere toWhere = null;
+    private DtstToWhere toWhere = DtstToWhere.DTST;
 
     private static final Set<String> NOT_IN_DATASOURCE_TAG = Sets.newHashSet("LIST", "DDIC");
 
