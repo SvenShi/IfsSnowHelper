@@ -1,7 +1,7 @@
 // Generated on Sat Jul 23 02:59:34 CST 2022
 // DTD/Schema  :    http://www.rmitec.cn/dtst-mapper
 
-package com.ruimin.helper.dom.model;
+package com.ruimin.helper.dom.dtst.model;
 
 import com.intellij.util.xml.*;
 import com.intellij.util.xml.DomElement;

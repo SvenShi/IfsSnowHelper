@@ -1,16 +1,26 @@
 package com.ruimin.helper.provider;
 
+import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiExpressionList;
+import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.constants.SnowIcons;
 import com.ruimin.helper.util.DtstUtils;
+import com.ruimin.helper.util.RqlxUtils;
+import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -26,34 +36,106 @@ import java.util.Objects;
  */
 public class SnowJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
+    private static final Set<String> SQL_METHOD_NAME = Sets.newHashSet("selectOne", "selectList", "selectListWithLock",
+        "selectCount", "selectListIn", "selectCountIn");
+
 
     @Override
-    protected void collectNavigationMarkers(@NotNull PsiElement element, @NotNull Collection<?
-            super RelatedItemLineMarkerInfo<?>> result) {
-        // 判断是不是java方法 不是java方法直接结束方法
-        if (!(element instanceof PsiMethod)) {
-            return;
+    protected void collectNavigationMarkers(@NotNull PsiElement element,
+        @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
+        PsiMethodCallExpression rqlTarget = isRqlTarget(element);
+        if (rqlTarget != null) {
+            List<XmlTag> results = getRqlResults(rqlTarget);
+            if (CollectionUtils.isNotEmpty(results)) {
+                NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(SnowIcons.GO_RQLX)
+                    .setTargets(results)
+                    .setAlignment(GutterIconRenderer.Alignment.CENTER)
+                    .setTooltipTitle("导航到rqlx文件");
+                result.add(builder.createLineMarkerInfo(element));
+            }
         }
 
-        final List<XmlTag> results = getResults((PsiMethod) element);
-        if (CollectionUtils.isNotEmpty(results)) {
-            NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(SnowIcons.GO_DTST)
-                                                                                         .setAlignment(
-                                                                                                 GutterIconRenderer.Alignment.CENTER)
-                                                                                         .setTargets(results)
-                                                                                         .setTooltipTitle("导航到dtst文件");
-            final PsiElement targetMarkerInfo = Objects.requireNonNull(
+        boolean dtstTarget = isDtstTarget(element);
+
+        if (dtstTarget) {
+            List<XmlTag> results = getDtstResults((PsiMethod) element);
+            if (CollectionUtils.isNotEmpty(results)) {
+                NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(SnowIcons.GO_DTST)
+                    .setAlignment(GutterIconRenderer.Alignment.CENTER)
+                    .setTargets(results)
+                    .setTooltipTitle("导航到dtst文件");
+                final PsiElement targetMarkerInfo = Objects.requireNonNull(
                     ((PsiNameIdentifierOwner) element).getNameIdentifier());
-            result.add(builder.createLineMarkerInfo(targetMarkerInfo));
+                result.add(builder.createLineMarkerInfo(targetMarkerInfo));
+            }
         }
+
     }
 
-    private List<XmlTag> getResults(PsiMethod psiMethod) {
+    /**
+     * 得到rql结果
+     *
+     * @param expression 表达式
+     * @return {@link List}<{@link XmlTag}>
+     */
+    private List<XmlTag> getRqlResults(PsiMethodCallExpression expression) {
+        ArrayList<XmlTag> xmlTags = new ArrayList<>();
+        PsiExpressionList argumentList = expression.getArgumentList();
+        PsiExpression[] expressions = argumentList.getExpressions();
+        if (!ArrayUtils.isEmpty(expressions)) {
+            if (expressions.length > 0) {
+                String rqlxKey = expressions[0].getText();
+                if (StringUtils.isNotBlank(rqlxKey)) {
+                    rqlxKey = rqlxKey.replaceAll("\"", "");
+                    xmlTags = new ArrayList<>(RqlxUtils.findXmlTagByRqlKey(expression.getResolveScope(), rqlxKey));
+                }
+            }
+        }
+        return xmlTags;
+    }
 
+
+    /**
+     * 得到dtst结果
+     *
+     * @param psiMethod psi方法
+     * @return {@link List}<{@link XmlTag}>
+     */
+    private List<XmlTag> getDtstResults(PsiMethod psiMethod) {
         Collection<XmlTag> tag = DtstUtils.findTagsByMethod(psiMethod);
-
         return new ArrayList<>(tag);
     }
 
+    /**
+     * 是否rql目标
+     *
+     * @param element 元素
+     * @return boolean
+     */
+    private PsiMethodCallExpression isRqlTarget(PsiElement element) {
+        if (element instanceof PsiIdentifier) {
+            if (SQL_METHOD_NAME.contains(element.getText())) {
+                PsiElement reference = element.getContext();
+                if (reference instanceof PsiReferenceExpression) {
+                    PsiElement callMethod = reference.getContext();
+                    if (callMethod instanceof PsiMethodCallExpression){
+                        return ((PsiMethodCallExpression) callMethod);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 是否dtst目标
+     *
+     * @param element 元素
+     * @return boolean
+     */
+    private boolean isDtstTarget(PsiElement element) {
+        // 判断是不是java方法 不是java方法直接结束方法
+        return element instanceof PsiMethod;
+    }
 
 }

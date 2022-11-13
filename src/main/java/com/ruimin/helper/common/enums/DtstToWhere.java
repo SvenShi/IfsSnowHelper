@@ -1,10 +1,10 @@
 package com.ruimin.helper.common.enums;
 
 import com.google.common.collect.Sets;
-import com.ruimin.helper.dom.model.Command;
-import com.ruimin.helper.dom.model.Data;
-import com.ruimin.helper.dom.model.Define;
-import com.ruimin.helper.dom.model.Field;
+import com.ruimin.helper.dom.dtst.model.Command;
+import com.ruimin.helper.dom.dtst.model.Data;
+import com.ruimin.helper.dom.dtst.model.Define;
+import com.ruimin.helper.dom.dtst.model.Field;
 import java.util.Set;
 
 /**

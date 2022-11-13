@@ -15,4 +15,5 @@ public interface SnowIcons {
     Icon GO_DTST = IconLoader.getIcon("icons/go-green.svg", SnowIcons.class);
     Icon GO_JSP = IconLoader.getIcon("icons/go-yellow.svg", SnowIcons.class);
     Icon GO_JAVA = IconLoader.getIcon("icons/go-blue.svg", SnowIcons.class);
+    Icon GO_RQLX = IconLoader.getIcon("icons/go-red.svg", SnowIcons.class);
 }

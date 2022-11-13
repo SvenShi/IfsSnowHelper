@@ -1,7 +1,7 @@
-package com.ruimin.helper.dom.description;
+package com.ruimin.helper.dom.dtst.description;
 
 import com.intellij.util.xml.DomFileDescription;
-import com.ruimin.helper.dom.model.Data;
+import com.ruimin.helper.dom.dtst.model.Data;
 
 /**
  * @author shiwei

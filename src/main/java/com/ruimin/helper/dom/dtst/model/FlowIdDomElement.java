@@ -1,4 +1,4 @@
-package com.ruimin.helper.dom.model;
+package com.ruimin.helper.dom.dtst.model;
 
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NotNull;

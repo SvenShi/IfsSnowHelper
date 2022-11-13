@@ -1,17 +1,17 @@
 // Generated on Sat Jul 23 02:59:34 CST 2022
 // DTD/Schema  :    http://www.rmitec.cn/dtst-mapper
 
-package com.ruimin.helper.dom.model;
+package com.ruimin.helper.dom.dtst.model;
 
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.SubTagList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * http://www.rmitec.cn/dtst-mapper:FieldModelElemType interface.
+ * http://www.rmitec.cn/dtst-mapper:FieldsElemType interface.
  * @author shiwei
  */
-public interface FieldModel extends DomElement {
+public interface Fields extends DomElement {
 
 	/**
 	 * Returns the list of Field children.

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://sqlmap.rql.org/rql-mapper"
+	xmlns:tns="http://sqlmap.rql.org/rql-mapper" elementFormDefault="qualified">
+	<annotation>
+		<documentation>This is the schema for dynamic sql.</documentation>
+	</annotation>
+	<element name="mapper">
+		<complexType>
+			<sequence maxOccurs="unbounded" minOccurs="0">
+				<element ref="tns:insert" maxOccurs="unbounded"
+					minOccurs="0">
+				</element>
+				<element ref="tns:delete" maxOccurs="unbounded"
+					minOccurs="0">
+				</element>
+				<element ref="tns:update" maxOccurs="unbounded"
+					minOccurs="0">
+				</element>
+				<element ref="tns:select" maxOccurs="unbounded"
+					minOccurs="0">
+				</element>
+				<element ref="tns:ddl" maxOccurs="unbounded" minOccurs="0"></element>
+			</sequence>
+		</complexType>
+	</element>
+	<element name="insert" type="tns:rqlType"></element>
+	<element name="update" type="tns:rqlType"></element>
+	<element name="delete" type="tns:rqlType"></element>
+	<element name="select">
+		<complexType mixed="true">
+			<sequence maxOccurs="unbounded" minOccurs="0">
+				<element ref="tns:ifs" maxOccurs="unbounded"
+					minOccurs="0">
+				</element>
+				<element ref="tns:if" maxOccurs="unbounded"
+					minOccurs="0">
+				</element>
+			</sequence>
+			<attribute name="id" type="string"></attribute>
+            <attribute name="paramType" type="string" use="required"></attribute>
+            <attribute name="resultType" type="string"></attribute>
+		</complexType>
+	</element>
+	<element name="if">
+		<complexType mixed="true">
+			<attribute name="test" type="string" use="required"></attribute>
+		</complexType>
+	</element>
+	<element name="elseif" type="tns:ifType"></element>
+	<element name="else" type="string"></element>
+	<element name="ifs">
+		<complexType>
+			<sequence>
+				<element ref="tns:if" maxOccurs="1" minOccurs="1"></element>
+				<element ref="tns:elseif" maxOccurs="unbounded" minOccurs="0"></element>
+				<element ref="tns:else" maxOccurs="1" minOccurs="0"></element>
+			</sequence>
+		</complexType>
+	</element>
+	
+	<complexType name="rqlType" mixed="true">
+		<sequence maxOccurs="unbounded" minOccurs="0">
+			<element ref="tns:ifs" maxOccurs="unbounded"
+				minOccurs="0">
+			</element>
+			<element ref="tns:if" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+		<attribute name="id" type="string" use="required"></attribute>
+		<attribute name="paramType" type="string" use="required"></attribute>
+	</complexType>
+	<complexType name="ifType" mixed="true">
+		<attribute name="test" type="string" use="required"></attribute>
+	</complexType>
+
+	<element name="ddl" type="tns:rqlType"></element>
+</schema>
