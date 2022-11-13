@@ -38,7 +38,7 @@ public class SnowJspLineMarkerProvider extends SimpleLineMarkerProvider<XmlToken
 
     private boolean isButton = false;
 
-    private Map<String, List<XmlFile>> dtstMap = new HashMap<>();
+    private final Map<String, List<XmlFile>> dtstMap = new HashMap<>();
 
     @Override
     public boolean isTheElement(@NotNull PsiElement element) {
@@ -62,10 +62,8 @@ public class SnowJspLineMarkerProvider extends SimpleLineMarkerProvider<XmlToken
         if (StringUtils.isNotBlank(dataset) && StringUtils.isNotBlank(buttonId)) {
             List<XmlFile> xmlFiles = dtstMap.get(dataset);
             for (XmlFile xmlFile : xmlFiles) {
-                DomFileElement<Data> fileElement = DomManager.getDomManager(parent.getProject())
-                    .getFileElement(xmlFile, Data.class);
-                if (fileElement != null) {
-                    Data data = fileElement.getRootElement();
+                Data data = DtstUtils.getDataTagByDtstFile(xmlFile);
+                if (data != null) {
                     List<Commands> commandses = data.getCommandses();
                     for (Commands commands : commandses) {
                         List<Command> commandList = commands.getCommands();

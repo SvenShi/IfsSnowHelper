@@ -18,6 +18,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Query;
 import com.intellij.util.xml.DomFileElement;
+import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.DomService;
 import com.ruimin.helper.constants.CommonConstants;
 import com.ruimin.helper.constants.DtstConstants;
@@ -217,5 +218,21 @@ public final class DtstUtils {
             }
         }
         return psiFiles;
+    }
+
+    /**
+     * 得到dtst文件的Data标签
+     *
+     * @param file dtst文件
+     * @return {@link Data}
+     */
+    public static Data getDataTagByDtstFile(PsiFile file){
+        if (isDtstFile(file)){
+            DomFileElement<Data> fileElement = DomManager.getDomManager(file.getProject()).getFileElement((XmlFile) file, Data.class);
+            if (fileElement != null){
+                return fileElement.getRootElement();
+            }
+        }
+        return null;
     }
 }
