@@ -46,7 +46,6 @@ public interface Select extends DomElement {
      * @return the value of the paramType child.
      */
     @NotNull
-    @Required
     GenericAttributeValue<String> getParamType();
 
 

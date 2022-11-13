@@ -20,7 +20,6 @@ public interface FlowIdDomElement extends DomElement {
      *
      * @return the value of the flowid child.
      */
-    @Required
     @NameValue
     @Attribute("flowid")
     @NotNull GenericAttributeValue<String> getFlowid();
