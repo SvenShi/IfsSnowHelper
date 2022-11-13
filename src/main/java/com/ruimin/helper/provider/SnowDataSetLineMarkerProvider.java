@@ -1,25 +1,27 @@
 package com.ruimin.helper.provider;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
+import com.ruimin.helper.common.enums.DtstToWhere;
+import com.ruimin.helper.constants.CommonConstants;
 import com.ruimin.helper.constants.DtstConstants;
-import com.ruimin.helper.constants.SnowPageConstants;
-import com.ruimin.helper.dom.model.Command;
-import com.ruimin.helper.dom.model.Data;
-import com.ruimin.helper.dom.model.Define;
 import com.ruimin.helper.constants.SnowIcons;
+import com.ruimin.helper.constants.SnowPageConstants;
+import com.ruimin.helper.util.DtstUtils;
 import com.ruimin.helper.util.JavaUtils;
 import com.ruimin.helper.util.SnowPageUtils;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import javax.swing.Icon;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author shiwei
@@ -29,14 +31,13 @@ import java.util.Optional;
  */
 public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlToken, PsiElement> {
 
-    private static final String DATA_CLASS = Data.class.getSimpleName();
+    /**
+     * 导航到哪里
+     */
+    private DtstToWhere toWhere = null;
 
-    // 目标标签
-    private static final ImmutableSet<String> TARGET_TYPES = ImmutableSet.of(Define.class.getSimpleName(),
-                                                                             Command.class.getSimpleName());
+    private static final Set<String> NOT_IN_DATASOURCE_TAG = Sets.newHashSet("LIST", "DDIC");
 
-    // 是否导航到java 反之导航到jsp
-    private boolean toJava = true;
 
     @Override
     public boolean isTheElement(@NotNull PsiElement element) {
@@ -46,60 +47,67 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
 
     @Override
     public Optional<? extends PsiElement[]> apply(@NotNull XmlToken from) {
-        if (toJava) {
-            return goToJava(from);
-        } else {
-            return goToJsp(from);
+        switch (toWhere) {
+            case JSP:
+                return goToJsp(from);
+            case JAVA:
+                return goToJava(from);
+            default:
+                return goToDtst(from);
         }
     }
 
     @Override
+    @SuppressWarnings("DialogTitleCapitalization")
     public String getName() {
-        return toJava ? "调用方法标记" : "被引用的dtst";
+        switch (toWhere) {
+            case JSP:
+                return "前往jsp标志";
+            case JAVA:
+                return "前往Java标志";
+            default:
+                return "前往dtst标志";
+        }
     }
 
     @NotNull
     @Override
     public Icon getIcon() {
-        return toJava ? SnowIcons.GO_BLUE : SnowIcons.GO_YELLOW;
+        switch (toWhere) {
+            case JSP:
+                return SnowIcons.GO_JSP;
+            case JAVA:
+                return SnowIcons.GO_JAVA;
+            default:
+                return SnowIcons.GO_DTST;
+        }
     }
 
     @NotNull
     @Override
     public String getTooltip(PsiElement array, @NotNull PsiElement target) {
-        return toJava ? "前往java方法" : "前往jsp";
+        switch (toWhere) {
+            case JSP:
+                return "前往jsp";
+            case JAVA:
+                return "前往java方法";
+            default:
+                return "前往dtst";
+        }
     }
 
     /**
-     * 是否时目标标签
+     * 是否是目标标签
      */
     private boolean isTargetType(XmlToken token) {
-        Boolean isTargetType = null;
-        if (DATA_CLASS.equals(token.getText())) {
-            // 判断当前元素是开始节点
+        toWhere = DtstToWhere.getToWhere(token.getText());
+        if (toWhere != null) {
             PsiElement nextSibling = token.getNextSibling();
             if (nextSibling instanceof PsiWhiteSpace) {
-                toJava = false;
-                isTargetType = true;
+                return "<".equals(token.getPrevSibling().getText());
             }
         }
-        if (isTargetType == null) {
-            if (TARGET_TYPES.contains(token.getText())) {
-                PsiElement parent = token.getParent();
-                // 判断当前节点时标签
-                if (parent instanceof XmlTag) {
-                    PsiElement nextSibling = token.getNextSibling();
-                    if (nextSibling instanceof PsiWhiteSpace) {
-                        isTargetType = true;
-                        toJava = true;
-                    }
-                }
-            }
-        }
-        if (isTargetType == null) {
-            isTargetType = false;
-        }
-        return isTargetType;
+        return false;
     }
 
     private Optional<? extends PsiElement[]> goToJsp(XmlToken xmlToken) {
@@ -129,7 +137,7 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
             XmlTag tag = (XmlTag) parent;
             String flowId = tag.getAttributeValue(DtstConstants.XML_TAG_FLOWID_ATTRIBUTE_NAME);
             if (StringUtils.isNotBlank(flowId)) {
-                String[] split = flowId.split(DtstConstants.FLOWID_SEPARATE);
+                String[] split = flowId.split(CommonConstants.COLON_SEPARATE);
                 if (split.length >= 2) {
                     return JavaUtils.findMethods(from.getProject(), split[0], split[1]);
                 } else {
@@ -142,4 +150,34 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
             return Optional.empty();
         }
     }
+
+    private Optional<? extends PsiElement[]> goToDtst(XmlToken from) {
+        PsiElement parent = from.getParent();
+        if (parent instanceof XmlTag) {
+            XmlTag tag = (XmlTag) parent;
+            String datasource = tag.getAttributeValue(DtstConstants.XML_TAG_DATASOURCE_ATTRIBUTE_NAME);
+            if (StringUtils.isNotBlank(datasource)) {
+                String[] split = datasource.split(CommonConstants.COLON_SEPARATE);
+                if (split.length >= 2) {
+                    if (!NOT_IN_DATASOURCE_TAG.contains(split[0])) {
+                        String dtstPath = split[1];
+                        ArrayList<PsiFile> dtst = DtstUtils.findDtstFileByPath(dtstPath, tag.getProject());
+                        if (CollectionUtils.isNotEmpty(dtst)) {
+                            return Optional.of(dtst.toArray(new PsiElement[0]));
+                        } else {
+                            return Optional.empty();
+                        }
+                    }
+                } else {
+                    return Optional.empty();
+                }
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
+        return Optional.empty();
+    }
 }
+

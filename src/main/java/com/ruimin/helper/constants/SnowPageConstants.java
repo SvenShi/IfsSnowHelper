@@ -16,7 +16,6 @@ public interface SnowPageConstants {
 
     //dataset标签 属性
     String DTST_ATTR_NAME_PATH = "path";
-    String PATH_SEPARATE = ".";
 
 }
 

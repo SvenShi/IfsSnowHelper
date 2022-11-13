@@ -7,7 +7,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -15,15 +14,14 @@ import com.intellij.psi.jsp.BaseJspFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlTag;
+import com.ruimin.helper.constants.CommonConstants;
 import com.ruimin.helper.constants.DtstConstants;
 import com.ruimin.helper.constants.SnowPageConstants;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author shiwei
@@ -35,47 +33,6 @@ public class SnowPageUtils {
 
     private SnowPageUtils() {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * 在dataset标签中寻找路径并转成file
-     *
-     * @param datasetTag
-     * @return
-     */
-    public static List<PsiFile> findFileInDatasetTag(XmlTag datasetTag) {
-        ArrayList<PsiFile> psiFiles = new ArrayList<>();
-        // 所属项目
-        Project project = datasetTag.getProject();
-        // 所属模块
-        Module module = ModuleUtil.findModuleForPsiElement(datasetTag);
-        if (module == null) {
-            return psiFiles;
-        }
-        PsiManager psiManager = PsiManager.getInstance(project);
-        // dataset标签的path属性
-        String path = datasetTag.getAttributeValue(SnowPageConstants.DTST_ATTR_NAME_PATH);
-        if (StringUtils.isNotBlank(path)) {
-            int index = StringUtils.lastIndexOf(path, SnowPageConstants.PATH_SEPARATE);
-            // 字符串处理为包名和datset名
-            String dtstName = StringUtils.substring(path, index + 1);
-            String packageName = StringUtils.substring(path, 0, index);
-            // 找到所在的包
-            Collection<VirtualFile> matchPackages = PackageIndex.getInstance(project)
-                                                                .getDirsByPackageName(packageName,false)
-                                                                .findAll();
-            for (VirtualFile matchPackage : matchPackages) {
-                // 匹配包下面的文件
-                VirtualFile child = matchPackage.findChild(dtstName + DtstConstants.DTST_FILE_EXTENSION_DOT);
-                if (child != null) {
-                    PsiFile file = psiManager.findFile(child);
-                    if (file != null) {
-                        psiFiles.add(file);
-                    }
-                }
-            }
-        }
-        return psiFiles;
     }
 
     /**
@@ -96,7 +53,7 @@ public class SnowPageUtils {
                 if (jspFile != null) {
                     for (XmlTag subTag : jspFile.getRootTag().findSubTags(SnowPageConstants.SNOW_PAGE_ROOT_TAG_NAME)) {
                         CollectionUtils.addAll(xmlTags,
-                                               subTag.findSubTags(SnowPageConstants.SNOW_PAGE_DATASET_TAG_NAME));
+                            subTag.findSubTags(SnowPageConstants.SNOW_PAGE_DATASET_TAG_NAME));
                     }
                 }
             }
@@ -117,7 +74,7 @@ public class SnowPageUtils {
         }
         String name = file.getVirtualFile().getName();
         name = name.replace(DtstConstants.DTST_FILE_EXTENSION_DOT, "");
-        return dtstPackName + SnowPageConstants.PATH_SEPARATE + name;
+        return dtstPackName + CommonConstants.DOT_SEPARATE + name;
     }
 
 
@@ -136,6 +93,6 @@ public class SnowPageUtils {
             fileAbsolutePath = fileAbsolutePath.substring(1);
         }
 
-        return fileAbsolutePath.replace("/", SnowPageConstants.PATH_SEPARATE);
+        return fileAbsolutePath.replace("/", CommonConstants.DOT_SEPARATE);
     }
 }
