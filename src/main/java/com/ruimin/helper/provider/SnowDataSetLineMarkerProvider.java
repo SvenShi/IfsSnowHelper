@@ -34,7 +34,7 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
     /**
      * 导航到哪里
      */
-    private DtstToWhere toWhere = DtstToWhere.DTST;
+    private DtstToWhere toWhere = null;
 
     private static final Set<String> NOT_IN_DATASOURCE_TAG = Sets.newHashSet("LIST", "DDIC");
 
@@ -47,64 +47,80 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
 
     @Override
     public Optional<? extends PsiElement[]> apply(@NotNull XmlToken from) {
-        switch (toWhere) {
-            case JSP:
-                return goToJsp(from);
-            case JAVA:
-                return goToJava(from);
-            default:
-                return goToDtst(from);
+        if (toWhere != null) {
+            switch (toWhere) {
+                case JSP:
+                    return goToJsp(from);
+                case JAVA:
+                    return goToJava(from);
+                default:
+                    return goToDtst(from);
+            }
         }
+        return Optional.empty();
     }
 
     @Override
     @SuppressWarnings("DialogTitleCapitalization")
     public String getName() {
-        switch (toWhere) {
-            case JSP:
-                return "前往jsp标志";
-            case JAVA:
-                return "前往Java标志";
-            default:
-                return "前往dtst标志";
+        if (toWhere != null) {
+            switch (toWhere) {
+                case JSP:
+                    return "前往jsp标志";
+                case JAVA:
+                    return "前往Java标志";
+                default:
+                    return "前往dtst标志";
+            }
         }
+        return "";
     }
 
     @NotNull
     @Override
     public Icon getIcon() {
-        switch (toWhere) {
-            case JSP:
-                return SnowIcons.GO_JSP;
-            case JAVA:
-                return SnowIcons.GO_JAVA;
-            default:
-                return SnowIcons.GO_DTST;
+        if (toWhere != null) {
+            switch (toWhere) {
+                case JSP:
+                    return SnowIcons.GO_JSP;
+                case JAVA:
+                    return SnowIcons.GO_JAVA;
+                default:
+                    return SnowIcons.GO_DTST;
+            }
         }
+        return SnowIcons.GO_BLACK;
     }
 
     @NotNull
     @Override
     public String getTooltip(PsiElement array, @NotNull PsiElement target) {
-        switch (toWhere) {
-            case JSP:
-                return "前往jsp";
-            case JAVA:
-                return "前往java方法";
-            default:
-                return "前往dtst";
+        if (toWhere != null) {
+            switch (toWhere) {
+                case JSP:
+                    return "前往jsp";
+                case JAVA:
+                    return "前往java方法";
+                default:
+                    return "前往dtst";
+            }
         }
+        return "";
     }
 
     /**
      * 是否是目标标签
      */
     private boolean isTargetType(XmlToken token) {
-        toWhere = DtstToWhere.getToWhere(token.getText());
-        if (toWhere != null) {
+        DtstToWhere where = DtstToWhere.getToWhere(token.getText());
+        if (where != null) {
             PsiElement nextSibling = token.getNextSibling();
             if (nextSibling instanceof PsiWhiteSpace) {
-                return "<".equals(token.getPrevSibling().getText());
+                boolean equals = "<".equals(token.getPrevSibling().getText());
+                if (equals){
+                    toWhere = where;
+                }
+                return equals;
             }
         }
         return false;
