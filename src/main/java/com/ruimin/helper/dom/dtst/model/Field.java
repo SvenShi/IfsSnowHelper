@@ -475,4 +475,6 @@ public interface Field extends DomElement {
     GenericAttributeValue<Integer> getMinsize();
 
 
+    @Attribute("prefix")
+    GenericAttributeValue<String> getPrefix();
 }

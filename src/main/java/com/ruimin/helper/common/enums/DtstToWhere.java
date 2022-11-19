@@ -14,8 +14,8 @@ import java.util.Set;
  * @description 文件类型
  */
 public enum DtstToWhere {
-    JAVA(Sets.newHashSet(Data.class.getSimpleName(), Command.class.getSimpleName())), JSP(
-        Sets.newHashSet(Define.class.getSimpleName())), DTST(Sets.newHashSet(Field.class.getSimpleName()));
+    JAVA(Sets.newHashSet(Define.class.getSimpleName(), Command.class.getSimpleName())), JSP(
+        Sets.newHashSet(Data.class.getSimpleName())), DTST(Sets.newHashSet(Field.class.getSimpleName()));
 
     /**
      * xml标签名

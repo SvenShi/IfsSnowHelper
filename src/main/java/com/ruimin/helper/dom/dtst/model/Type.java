@@ -14,7 +14,8 @@ public enum Type implements com.intellij.util.xml.NamedEnum {
 	DELRECORD ("delrecord"),
 	HREF ("href"),
 	NONE ("none"),
-	SYNCSUBMIT ("syncsubmit");
+	SYNCSUBMIT ("syncsubmit"),
+	CALL ("call");
 
 	private final String value;
 	private Type(String value) { this.value = value; }
