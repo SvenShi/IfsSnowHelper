@@ -54,15 +54,17 @@ public class SnowJspLineMarkerProvider extends SimpleLineMarkerProvider<XmlToken
         String buttonId = parent.getAttributeValue(SnowPageConstants.BUTTON_ATTR_NAME_ID);
         if (StringUtils.isNotBlank(dataset) && StringUtils.isNotBlank(buttonId)) {
             List<XmlFile> xmlFiles = dtstMap.get(dataset);
-            for (XmlFile xmlFile : xmlFiles) {
-                Data data = DtstUtils.getDataTagByDtstFile(xmlFile);
-                if (data != null) {
-                    List<Commands> commandses = data.getCommandses();
-                    for (Commands commands : commandses) {
-                        List<Command> commandList = commands.getCommands();
-                        for (Command command : commandList) {
-                            if (buttonId.equals(command.getId().getValue())) {
-                                psiElements.add(command.getXmlElement());
+            if (CollectionUtils.isNotEmpty(xmlFiles)){
+                for (XmlFile xmlFile : xmlFiles) {
+                    Data data = DtstUtils.getDataTagByDtstFile(xmlFile);
+                    if (data != null) {
+                        List<Commands> commandses = data.getCommandses();
+                        for (Commands commands : commandses) {
+                            List<Command> commandList = commands.getCommands();
+                            for (Command command : commandList) {
+                                if (buttonId.equals(command.getId().getValue())) {
+                                    psiElements.add(command.getXmlElement());
+                                }
                             }
                         }
                     }
