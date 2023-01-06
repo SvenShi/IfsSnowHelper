@@ -37,7 +37,7 @@ import java.util.Objects;
 public class SnowJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
     private static final Set<String> SQL_METHOD_NAME = Sets.newHashSet("selectOne", "selectList", "selectListWithLock",
-        "selectCount", "selectListIn", "selectCountIn");
+        "selectCount", "selectListIn", "selectCountIn", "executeUpdate");
 
 
     @Override
@@ -118,7 +118,7 @@ public class SnowJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
                 PsiElement reference = element.getContext();
                 if (reference instanceof PsiReferenceExpression) {
                     PsiElement callMethod = reference.getContext();
-                    if (callMethod instanceof PsiMethodCallExpression){
+                    if (callMethod instanceof PsiMethodCallExpression) {
                         return ((PsiMethodCallExpression) callMethod);
                     }
                 }
