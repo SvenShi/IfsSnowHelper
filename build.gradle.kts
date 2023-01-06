@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.ruimin"
-version = "1.47"
+version = "1.48"
 
 repositories {
     mavenCentral()
