@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mapper xmlns="http://sqlmap.rql.org/rql-mapper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://sqlmap.rql.org/rql-mapper http://sqlmap.rql.org/rql-mapper">
+
+	<!-- 	商票提示付款应答第一屏  复核第一屏-->
+	<select id="queryPayBuss" paramType="map" resultType="com.ruimin.ife.reg.bean.IfeCpesDrftInfVo">
+		SELECT
+		    c.drft_Typ,
+		    c.drft_Attr,
+		    c.cd_No,
+		    c.cd_Range,
+		    c.isse_Amt,
+		    c.isse_Dt,
+		    c.due_Dt,
+		    c.risk_Stat,
+		    c.drwr_Nm,
+		    c.accptr_Nm,
+		    rcv.id,
+		    rcv.APP_STAT,
+		    rcv.Sgn_Up_Mk,
+		    rcv.dshnr_Cd,
+		    rcv.dshnr_Rsn,
+		    rcv.rmk,
+		    rcv.prsnt_Dt,
+		    rcv.dh_Bk,
+		    rcv.dh_Nm,
+		    rcv.deduct_Acct_Stat as deduct_acct_Stat
+		FROM
+		    IFB_COMACPT_PRSNT_RCV rcv,
+		    IFE_CPES_DRFT_INF c 
+	    where rcv.drft_no = c.drft_no
+	    and rcv.app_stat in (#{appStat}) 
+        AND c.drft_Typ = #{drftTyp} 
+		AND rcv.org_id = #{orgId} 
+	    <if test="drftAttr !='' and drftAttr != null " > and c.drft_attr = #{drftAttr} </if>
+	    <if test="riskStat !='' and riskStat != null " > and c.risk_Stat in (#{riskStat}) </if>
+	    <if test="prsntDt !='' and prsntDt != null " > and rcv.prsnt_Dt = #{prsntDt} </if>
+	</select>
+	<!-- 	从任务池挑商票 -->
+	<select id="queryPayDrft" paramType="map" resultType="com.ruimin.ife.reg.bean.IfeRegAcptVO">
+		SELECT
+		    cpes.*,
+		    app.BUSS_ID as cpes_Buss_Id,
+		    app.app_dt,
+		    app.app_Br_Id
+		FROM
+		    IFE_APP_PRSNT app,
+		    ife_cpes_drft_inf cpes
+		WHERE  app.drft_no = cpes.drft_no 
+		and app.drft_no = cpes.drft_no   
+		and app.app_lock = #{appLock}
+		AND app.org_id = #{orgId}
+		AND app.app_stat = #{appCpesAppStat}
+		AND cpes.drft_typ = #{drftTyp}
+		<if test="drftAttr !='' and drftAttr !=null " > and cpes.drft_Attr = #{drftAttr} </if>
+		<if test="qDrftNo !='' and qDrftNo !=null " > and cpes.Drft_No = #{qDrftNo} </if>
+		<if test="appDt !='' and appDt !=null " > and app.app_dt = #{appDt} </if>
+		<if test="riskStat !='' and riskStat !=null " > and cpes.risk_Stat in (#{riskStat})</if>
+	</select>
+	
+	
+	<!-- 提示付款应答台账 -->
+	<select id="queryPrsntApprInfo" paramType="map" resultType="com.ruimin.ife.reg.bean.IfeCpesDrftInfVo">
+		SELECT
+		    c.drft_Typ,
+		    c.drft_Attr,
+		    c.risk_Stat,
+		    c.TFR_STAT,
+		    c.OWNER_NM,
+		    c.drft_No,
+		    c.isse_Amt,
+		    c.isse_Dt,
+		    c.due_Dt,
+		    c.ACCPTR_NM,
+		    c.accptr_Bk_Nm,
+		    b.id,
+		    b.APP_STAT,
+		    b.acct_stat
+		FROM
+		    
+		    ifb_comacpt_prsnt_rcv b,
+		    ife_cpes_drft_inf c
+		WHERE  b.drft_no = c.drft_no
+		 and  b.cpes_Stat = #{cpesStat}
+		<if test="qOrgId !=null and qOrgId!='' " > and b.org_id = #{qOrgId} </if>
+		<if test="qIsseStrDt !=null and qIsseStrDt!='' " > and c.ISSE_DT &gt;= #{qIsseStrDt} </if>
+		<if test="qIsseEndDt !=null and qIsseEndDt!='' " > and c.ISSE_DT &lt;= #{qIsseEndDt} </if>
+		<if test="qDueStrDt !=null and qDueStrDt!='' " > and c.DUE_DT &gt;= #{qDueStrDt} </if>
+		<if test="qDueEndDt !=null and qDueEndDt!='' " > and c.DUE_DT &lt;= #{qDueEndDt} </if>
+		<if test="qIsseMinAmt !=null and qIsseMinAmt!='' " > and c.ISSE_AMT &gt;= #{qIsseMinAmt} </if>
+		<if test="qIsseMaxAmt !=null and qIsseMaxAmt!='' " > and c.ISSE_AMT &lt;= #{qIsseMaxAmt} </if>
+		<if test="qDrftAttr !=null and qDrftAttr!='' " > and c.DRFT_ATTR = #{qDrftAttr} </if>
+		<if test="qDrftTyp !=null and qDrftTyp!='' " > and c.DRFT_TYP = #{qDrftTyp} </if>
+		<if test="qDrftNo !=null and qDrftNo!='' " > and c.DRFT_NO like #{qDrftNo} </if>
+		<if test="qRiskStat !=null and qRiskStat!='' " > and c.RISK_STAT = #{qRiskStat} </if>
+		<if test="qAccptrOrgId !=null and qAccptrOrgId!='' " > and c.ACPT_SVCR_ORG_ID = #{qAccptrOrgId} </if>
+	</select>
+
+
+<!-- 	查询 商票扣款记账-第一屏 -->
+	<select id="queryAcctDeduct" paramType="map" resultType="com.ruimin.ife.reg.bean.IfeCpesDrftInfVo">
+		SELECT
+		    c.*,
+		    rcv.id,
+		    rcv.APP_STAT,
+		    rcv.deduct_acct_stat,
+		    rcv.src_typ,
+		    rcv.trf_Dt,
+		    rcv.prsnt_Dt,
+		    rcv.dh_Bk,
+		    rcv.dh_Nm
+		FROM
+		    IFB_COMACPT_PRSNT_RCV rcv,
+		    ife_cpes_drft_inf c
+		WHERE c.cd_no = rcv.drft_no
+		AND c.drft_typ = #{drftTyp}
+		and rcv.org_Id = #{orgId}
+		and rcv.sgn_Up_Mk='SU00'
+		and rcv.app_stat=#{appStat}
+		AND rcv.deduct_acct_Stat !=#{cantDeductAcctStat}
+		<if test="qDrftNo !='' and qDrftNo !=null " >AND c.cd_no = #{qDrftNo}  </if>
+		<if test="qAccptrNm !='' and qAccptrNm !=null " >AND c.accptr_Nm like #{qAccptrNm}  </if>
+	</select>
+
+
+<!-- 商票提示付款应答维护 -->
+	<select id="queryDeduct" paramType="map" resultType="com.ruimin.ife.reg.bean.IfeRegAcptVO">
+		SELECT
+		    c.*,
+		    pay.id,
+		    pay.PAY_MODE
+		FROM
+		    ife_cpes_drft_inf c,
+		    IFE_PAY_MODE pay
+		WHERE pay.drft_no = c.cd_no
+		AND c.accptr_Bk_No=#{accptrBkNo}
+		AND c.DRFT_TYP  = #{drftTyp}
+		<if test="qDrftNo !='' and qDrftNo !=null " >AND c.cd_no = #{qDrftNo}  </if>
+		<if test="cdSource !='' and cdSource !=null " >AND c.CD_SOURCE = #{cdSource}  </if>
+		<if test="accptrNm !='' and accptrNm !=null " >AND c.accptr_Nm like #{accptrNm}  </if>
+	</select>
+	
+	<select id="queryPrsnt" paramType="String" resultType="com.ruimin.ife.reg.bean.IfeCpesDrftInfVo">
+		SELECT
+		    c.*,
+		    rcv.org_id,
+		    rcv.Dshnr_Rsn,
+		    rcv.Dshnr_Cd,
+		    rcv.Sgn_Up_Mk,
+		    rcv.rmk,
+		    rcv.prsnt_Dt,
+		    rcv.dh_Bk,
+		    rcv.dh_Nm
+		FROM
+		    IFE_CPES_DRFT_INF c,
+		    IFB_COMACPT_PRSNT_RCV rcv 
+		WHERE rcv.DRFT_NO = c.cd_NO
+		AND rcv.id = #{rcvId}
+	</select>
+	
+	<!-- 	查询 商票记账-第一屏 -->
+	<select id="queryAcct" paramType="map" resultType="com.ruimin.ife.reg.bean.IfeCpesDrftInfVo">
+		SELECT
+		    c.*,
+		    rcv.id,
+		    rcv.APP_STAT,
+		    rcv.acct_stat,
+		    rcv.src_typ,
+		    rcv.trf_Dt,
+		    rcv.prsnt_Dt,
+		    rcv.dh_Bk,
+		    rcv.dh_Nm
+		FROM
+		    IFB_COMACPT_PRSNT_RCV rcv,
+		    ife_cpes_drft_inf c
+		WHERE c.drft_no = rcv.drft_no
+		and rcv.org_Id = #{orgId}
+		AND rcv.cpes_Stat = #{cpesStat}
+		AND rcv.acct_Stat !=#{cantAcctStat}
+	</select>
+
+</mapper>
