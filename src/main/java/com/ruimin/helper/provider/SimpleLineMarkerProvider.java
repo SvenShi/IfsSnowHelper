@@ -19,6 +19,7 @@ import java.util.Optional;
  */
 public abstract class SimpleLineMarkerProvider<F extends PsiElement, T> extends RelatedItemLineMarkerProvider {
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element, @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
         if (!isTheElement(element)) {
