@@ -243,7 +243,7 @@ public final class RqlxUtils {
      * @return {@link List}<{@link PsiElement}>
      */
     public static List<PsiElement> findRqlReference(@NotNull String rqlxKey, Module module) {
-        return RqlxKeyStore.getElements(module, rqlxKey);
+        return RqlxKeyStore.getInstance(module.getProject()).getElements(module, rqlxKey);
     }
 
 

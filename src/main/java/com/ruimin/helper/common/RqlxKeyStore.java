@@ -38,18 +38,44 @@ import org.jetbrains.annotations.Nullable;
 public class RqlxKeyStore {
 
 
-    private static final HashMap<Module, HashMap<String, List<PsiElement>>> store = new HashMap<>();
-
-
-    private static final HashMap<PsiFile, Set<String>> fileMap = new HashMap<>();
-
-    private static int state = 0;
+    private static final HashMap<Project, RqlxKeyStore> instanceMap = new HashMap<>();
 
     private static final int INIT = 0;
-    private static final int RUNNING = 1;
+
+    private static final int INITING = 1;
+
+    private static final int RUNNING = 2;
+
+    private static final int STOPPED = 3;
 
 
-    private RqlxKeyStore() {
+    private final HashMap<Module, HashMap<String, List<PsiElement>>> store = new HashMap<>();
+
+
+    private final HashMap<PsiFile, Set<String>> fileMap = new HashMap<>();
+
+    private final Project project;
+
+    private int state = 0;
+
+    private int length = 0;
+
+
+    private RqlxKeyStore(Project project) {
+        this.project = project;
+    }
+
+    public static RqlxKeyStore getInstance(Project project) {
+        RqlxKeyStore rqlxKeyStore = instanceMap.get(project);
+        if (rqlxKeyStore == null) {
+            synchronized (RqlxKeyStore.class) {
+                if (instanceMap.get(project) == null) {
+                    rqlxKeyStore = new RqlxKeyStore(project);
+                    instanceMap.put(project, rqlxKeyStore);
+                }
+            }
+        }
+        return instanceMap.get(project);
     }
 
     /**
@@ -60,10 +86,7 @@ public class RqlxKeyStore {
      * @return {@link List}<{@link PsiElement}>
      */
     @Nullable
-    public static List<PsiElement> getElements(@NotNull Module module, @NotNull String RqlxKey) {
-        if (state == INIT) {
-            init(module);
-        }
+    public List<PsiElement> getElements(@NotNull Module module, @NotNull String RqlxKey) {
         if (state == RUNNING) {
             HashMap<String, List<PsiElement>> elementMap = store.get(module);
             if (elementMap != null) {
@@ -76,29 +99,36 @@ public class RqlxKeyStore {
 
     /**
      * 初始化
-     *
-     * @param module 模块
      */
-    public static void init(Module module) {
-        synchronized (RqlxKeyStore.class) {
+    public void init() {
+        synchronized (this) {
+            if (state == INITING || state == RUNNING) {
+                return;
+            }
             if (state == INIT) {
-                Project project = module.getProject();
-                for (Module mod : ModuleManager.getInstance(project).getModules()) {
-                    HashMap<String, List<PsiElement>> elementHashMap = new HashMap<>();
-                    Collection<VirtualFile> allJavaFile = JavaUtils.findAllJavaFile(mod.getModuleScope());
-                    // 遍历所有的java文件
-                    for (VirtualFile virtualFile : allJavaFile) {
-                        PsiFile file = PsiManager.getInstance(project).findFile(virtualFile);
-                        if (file != null) {
-                            ArrayList<PsiElement> rqlxKeyElement = getRqlxKeyElement(file);
-                            if (CollectionUtils.isNotEmpty(rqlxKeyElement)) {
-                                storeElement(elementHashMap, file, rqlxKeyElement);
+                try {
+                    state = INITING;
+                    for (Module mod : ModuleManager.getInstance(project).getModules()) {
+                        HashMap<String, List<PsiElement>> elementHashMap = new HashMap<>();
+                        Collection<VirtualFile> allJavaFile = JavaUtils.findAllJavaFile(mod.getModuleScope(false));
+                        // 遍历所有的java文件
+                        for (VirtualFile virtualFile : allJavaFile) {
+                            PsiFile file = PsiManager.getInstance(project).findFile(virtualFile);
+                            if (file != null) {
+                                ArrayList<PsiElement> rqlxKeyElement = getRqlxKeyElement(file);
+                                if (CollectionUtils.isNotEmpty(rqlxKeyElement)) {
+                                    storeElement(elementHashMap, file, rqlxKeyElement);
+                                }
                             }
                         }
+                        store.put(mod, elementHashMap);
                     }
-                    store.put(mod, elementHashMap);
+                    state = RUNNING;
+                } catch (Exception e) {
+                    store.clear();
+                    state = INITING;
+                    init();
                 }
-                state = RUNNING;
             }
         }
     }
@@ -109,8 +139,8 @@ public class RqlxKeyStore {
      *
      * @param file 文件
      */
-    public static void refreshFile(PsiFile file) {
-        synchronized (RqlxKeyStore.class) {
+    public void refreshFile(PsiFile file) {
+        synchronized (this) {
             if (state == RUNNING) {
                 if (file instanceof PsiJavaFile) {
                     ArrayList<PsiElement> rqlxKeyElement = getRqlxKeyElement(file);
@@ -135,8 +165,8 @@ public class RqlxKeyStore {
      *
      * @param file 文件
      */
-    public static void clearCache(PsiFile file) {
-        synchronized (RqlxKeyStore.class) {
+    public void clearCache(PsiFile file) {
+        synchronized (this) {
             if (state == RUNNING) {
                 if (file instanceof PsiJavaFile) {
                     PsiManager psiManager = PsiManager.getInstance(file.getProject());
@@ -155,6 +185,7 @@ public class RqlxKeyStore {
                                             PsiFile newFile = psiManager.findFile(virtualFile);
                                             if (file.equals(newFile)) {
                                                 iterator.remove();
+                                                length--;
                                             }
                                         }
                                     }
@@ -167,26 +198,14 @@ public class RqlxKeyStore {
         }
     }
 
-    /**
-     * 获取模块
-     *
-     * @return {@link Set}<{@link Module}>
-     */
-    public static Set<Module> getModules() {
-        return store.keySet();
-    }
 
     /**
      * 得到项目
      *
      * @return {@link Set}<{@link Project}>
      */
-    public static Set<Project> getProjects() {
-        HashSet<Project> projects = new HashSet<>();
-        for (Module module : store.keySet()) {
-            projects.add(module.getProject());
-        }
-        return projects;
+    public Project getProject() {
+        return project;
     }
 
     /**
@@ -195,7 +214,7 @@ public class RqlxKeyStore {
      * @param file 文件
      * @return boolean
      */
-    private static ArrayList<PsiElement> getRqlxKeyElement(PsiFile file) {
+    private ArrayList<PsiElement> getRqlxKeyElement(PsiFile file) {
         ArrayList<PsiElement> elements = new ArrayList<>();
         // 所有的方法名
         for (String rqlxMethodName : RqlxUtils.SQL_METHOD_NAME) {
@@ -237,7 +256,7 @@ public class RqlxKeyStore {
      * @param file 文件
      * @param rqlxKeyElement rqlx关键要素
      */
-    private static void storeElement(HashMap<String, List<PsiElement>> elementHashMap, PsiFile file,
+    private void storeElement(HashMap<String, List<PsiElement>> elementHashMap, PsiFile file,
         ArrayList<PsiElement> rqlxKeyElement) {
         for (PsiElement rqlxElement : rqlxKeyElement) {
             String text = rqlxElement.getText();
@@ -257,9 +276,16 @@ public class RqlxKeyStore {
                     fileMap.put(file, keys);
                 }
                 keys.add(rqlxKey);
+                length++;
             }
         }
     }
 
+    public void destroy() {
+        store.clear();
+        fileMap.clear();
+        instanceMap.remove(project);
+        state = STOPPED;
+    }
 
 }

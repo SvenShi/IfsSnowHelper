@@ -5,7 +5,7 @@ plugins {
 
 
 group = "com.ruimin"
-version = "2.00"
+version = "2.03"
 
 repositories {
     mavenCentral()
@@ -14,7 +14,7 @@ repositories {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2022.2")
+    version.set("2022.3")
     type.set("IU") // Target IDE Platform
 
     plugins.set(
