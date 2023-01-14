@@ -1,8 +1,11 @@
 package com.ruimin.helper.util;
 
 import com.google.common.collect.Lists;
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PropertyUtil;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -38,7 +41,7 @@ public final class JavaUtils {
     /**
      * Find settable psi field optional.
      *
-     * @param clazz        the clazz
+     * @param clazz the clazz
      * @param propertyName the property name
      * @return the optional
      */
@@ -82,13 +85,13 @@ public final class JavaUtils {
     /**
      * Find clazz optional.
      *
-     * @param project   the project
+     * @param project the project
      * @param clazzName the clazz name
      * @return the optional
      */
     public static Optional<PsiClass> findClazz(@NotNull Project project, @NotNull String clazzName) {
         String classNameNeedFind = clazzName;
-        if(classNameNeedFind.contains("$")){
+        if (classNameNeedFind.contains("$")) {
             classNameNeedFind = classNameNeedFind.replace("$", ".");
         }
         final JavaPsiFacade instance = JavaPsiFacade.getInstance(project);
@@ -98,23 +101,25 @@ public final class JavaUtils {
     /**
      * Find clazz optional.
      *
-     * @param project   the project
+     * @param project the project
      * @param clazzName the clazz name
      * @return the optional
      */
     public static Optional<PsiClass[]> findClasses(@NotNull Project project, @NotNull String clazzName) {
-        return Optional.ofNullable(JavaPsiFacade.getInstance(project).findClasses(clazzName, GlobalSearchScope.allScope(project)));
+        return Optional.of(
+            JavaPsiFacade.getInstance(project).findClasses(clazzName, GlobalSearchScope.allScope(project)));
     }
 
     /**
      * Find method optional.
      *
-     * @param project    the project
-     * @param clazzName  the clazz name
+     * @param project the project
+     * @param clazzName the clazz name
      * @param methodName the method name
      * @return the optional
      */
-    public static Optional<PsiMethod> findMethod(@NotNull Project project, @Nullable String clazzName, @Nullable String methodName) {
+    public static Optional<PsiMethod> findMethod(@NotNull Project project, @Nullable String clazzName,
+        @Nullable String methodName) {
         if (StringUtils.isBlank(clazzName) && StringUtils.isBlank(methodName)) {
             return Optional.empty();
         }
@@ -129,26 +134,30 @@ public final class JavaUtils {
     /**
      * Find method optional.
      *
-     * @param project    the project
-     * @param clazzName  the clazz name
+     * @param project the project
+     * @param clazzName the clazz name
      * @param methodName the method name
      * @return the optional
      */
-    public static Optional<PsiMethod[]> findMethods(@NotNull Project project, @Nullable String clazzName, @Nullable String methodName) {
+    public static List<PsiMethod> findMethods(@NotNull Project project, @NotNull String clazzName,
+        @Nullable String methodName) {
         if (StringUtils.isBlank(clazzName) && StringUtils.isBlank(methodName)) {
-            return Optional.empty();
+            return null;
         }
         Optional<PsiClass[]> classes = findClasses(project, clazzName);
-        if (classes.isPresent()) {
-
-            List<PsiMethod> collect = Arrays.stream(classes.get())
-                .map(psiClass -> psiClass.findMethodsByName(methodName, true))
-                .flatMap(Arrays::stream)
-                .collect(Collectors.toList());
-            return collect.isEmpty() ? Optional.empty() : Optional.of(collect.toArray(new PsiMethod[0]));
-
-        }
-        return Optional.empty();
+        return classes.map(psiClasses -> Arrays.stream(psiClasses)
+            .map(psiClass -> psiClass.findMethodsByName(methodName, true))
+            .flatMap(Arrays::stream)
+            .collect(Collectors.toList())).orElse(null);
     }
 
+    /**
+     * 找到所有java文件
+     *
+     * @param scope 模块范围
+     * @return {@link Collection}<{@link VirtualFile}>
+     */
+    public static Collection<VirtualFile> findAllJavaFile(@NotNull GlobalSearchScope scope) {
+        return FileTypeIndex.getFiles(JavaFileType.INSTANCE, scope);
+    }
 }

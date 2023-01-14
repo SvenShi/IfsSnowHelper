@@ -1,4 +1,4 @@
-package com.ruimin.helper.provider;
+package com.ruimin.helper.provider.line;
 
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
@@ -16,7 +16,6 @@ import com.ruimin.helper.util.JavaUtils;
 import com.ruimin.helper.util.SnowPageUtils;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import javax.swing.Icon;
 import org.apache.commons.collections.CollectionUtils;
@@ -29,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
  * @date 2022/7/22 下午 09:40
  * @description dataset文件跳转java
  */
-public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlToken, PsiElement> {
+public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlToken> {
 
     /**
      * 导航到哪里
@@ -40,13 +39,13 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
 
 
     @Override
-    public boolean isTheElement(@NotNull PsiElement element) {
-        return element instanceof XmlToken && isTargetType((XmlToken) element);
+    public boolean isTheElement(@NotNull XmlToken element) {
+        return isTargetType(element);
     }
 
 
     @Override
-    public Optional<? extends PsiElement[]> apply(@NotNull XmlToken from) {
+    public List<? extends PsiElement> apply(@NotNull XmlToken from) {
         if (toWhere != null) {
             switch (toWhere) {
                 case JSP:
@@ -57,7 +56,7 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
                     return goToDtst(from);
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     @Override
@@ -94,7 +93,7 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
 
     @NotNull
     @Override
-    public String getTooltip(PsiElement array, @NotNull PsiElement target) {
+    public String getTooltip() {
         if (toWhere != null) {
             switch (toWhere) {
                 case JSP:
@@ -117,7 +116,7 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
             PsiElement nextSibling = token.getNextSibling();
             if (nextSibling instanceof PsiWhiteSpace) {
                 boolean equals = "<".equals(token.getPrevSibling().getText());
-                if (equals){
+                if (equals) {
                     toWhere = where;
                 }
                 return equals;
@@ -126,10 +125,10 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
         return false;
     }
 
-    private Optional<? extends PsiElement[]> goToJsp(XmlToken xmlToken) {
+    private List<? extends PsiElement> goToJsp(XmlToken xmlToken) {
         String path = SnowPageUtils.getDtstPath(xmlToken.getContainingFile());
         if (path == null) {
-            return Optional.empty();
+            return null;
         }
         List<XmlTag> allDtstTag = SnowPageUtils.findAllDtstTag(xmlToken.getProject());
         ArrayList<PsiElement> psiElements = new ArrayList<>();
@@ -141,13 +140,13 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
             }
         }
         if (psiElements.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
 
-        return Optional.of(psiElements.toArray(new PsiElement[0]));
+        return psiElements;
     }
 
-    private Optional<? extends PsiElement[]> goToJava(XmlToken from) {
+    private List<? extends PsiElement> goToJava(XmlToken from) {
         PsiElement parent = from.getParent();
         if (parent instanceof XmlTag) {
             XmlTag tag = (XmlTag) parent;
@@ -157,17 +156,17 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
                 if (split.length >= 2) {
                     return JavaUtils.findMethods(from.getProject(), split[0], split[1]);
                 } else {
-                    return Optional.empty();
+                    return null;
                 }
             } else {
-                return Optional.empty();
+                return null;
             }
         } else {
-            return Optional.empty();
+            return null;
         }
     }
 
-    private Optional<? extends PsiElement[]> goToDtst(XmlToken from) {
+    private List<? extends PsiElement> goToDtst(XmlToken from) {
         PsiElement parent = from.getParent();
         if (parent instanceof XmlTag) {
             XmlTag tag = (XmlTag) parent;
@@ -179,21 +178,21 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
                         String dtstPath = split[1];
                         ArrayList<XmlFile> dtst = DtstUtils.findDtstFileByPath(dtstPath, tag.getProject());
                         if (CollectionUtils.isNotEmpty(dtst)) {
-                            return Optional.of(dtst.toArray(new PsiElement[0]));
+                            return dtst;
                         } else {
-                            return Optional.empty();
+                            return null;
                         }
                     }
                 } else {
-                    return Optional.empty();
+                    return null;
                 }
             } else {
-                return Optional.empty();
+                return null;
             }
         } else {
-            return Optional.empty();
+            return null;
         }
-        return Optional.empty();
+        return null;
     }
 }
 

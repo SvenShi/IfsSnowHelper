@@ -22,7 +22,7 @@ public interface Mapper extends DomElement {
      * @return the list of insert children.
      */
     @NotNull
-    List<Rql> getInserts();
+    List<Insert> getInserts();
 
     /**
      * Adds new child to the list of insert children.
@@ -38,7 +38,7 @@ public interface Mapper extends DomElement {
      * @return the list of delete children.
      */
     @NotNull
-    List<Rql> getDeletes();
+    List<Delete> getDeletes();
 
     /**
      * Adds new child to the list of delete children.
@@ -54,7 +54,7 @@ public interface Mapper extends DomElement {
      * @return the list of update children.
      */
     @NotNull
-    List<Rql> getUpdates();
+    List<Update> getUpdates();
 
     /**
      * Adds new child to the list of update children.

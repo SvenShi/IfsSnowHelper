@@ -1,7 +1,10 @@
 package com.ruimin.helper.util;
 
 import com.google.common.collect.Sets;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -15,16 +18,21 @@ import com.intellij.util.xml.DomService;
 import com.ruimin.helper.constants.CommonConstants;
 import com.ruimin.helper.constants.RqlxConstants;
 import com.ruimin.helper.dom.dtst.model.Data;
+import com.ruimin.helper.dom.rql.model.Delete;
+import com.ruimin.helper.dom.rql.model.Insert;
 import com.ruimin.helper.dom.rql.model.Mapper;
 import com.ruimin.helper.dom.rql.model.Rql;
 import com.ruimin.helper.dom.rql.model.Select;
+import com.ruimin.helper.dom.rql.model.Update;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.bouncycastle.math.raw.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +59,36 @@ public final class RqlxUtils {
     }
 
     /**
+     * 获取rqlx key
+     *
+     * @param rql rql
+     * @return {@link String}
+     */
+    public static String getRqlxKeyByRqlTag(@NotNull Rql rql) {
+        String id = rql.getId().getValue();
+        XmlTag xmlTag = rql.getXmlTag();
+        Module module = rql.getModule();
+        if (xmlTag != null && module != null) {
+            PsiFile file = xmlTag.getContainingFile();
+            String filePath = file.getVirtualFile().getPath();
+            ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
+            VirtualFile[] roots = rootManager.getSourceRoots(false);
+            for (VirtualFile root : roots) {
+                String path = root.getPath();
+                filePath = StringUtils.remove(filePath, path);
+            }
+            if (filePath.startsWith("/") || filePath.startsWith("\\")) {
+                filePath = filePath.substring(1);
+            }
+            filePath = filePath.replace("/", ".");
+            filePath = filePath.replace("\\", ".");
+            filePath = StringUtils.remove(filePath, RqlxConstants.RQLX_FILE_EXTENSION_DOT);
+            return filePath + CommonConstants.DOT_SEPARATE + id;
+        }
+        return null;
+    }
+
+    /**
      * 根据rqlKey获取所有相应的标签
      *
      * @param scope 范围
@@ -73,12 +111,12 @@ public final class RqlxUtils {
                         for (XmlFile xmlFile : xmlFiles) {
                             Mapper mapper = getMapperTagByRqlxFile(xmlFile);
                             if (mapper != null) {
-                                for (Rql delete : mapper.getDeletes()) {
+                                for (Delete delete : mapper.getDeletes()) {
                                     if (methodName.equals(delete.getId().getValue())) {
                                         xmlTags.add(delete.getXmlTag());
                                     }
                                 }
-                                for (Rql insert : mapper.getInserts()) {
+                                for (Insert insert : mapper.getInserts()) {
                                     if (methodName.equals(insert.getId().getValue())) {
                                         xmlTags.add(insert.getXmlTag());
                                     }
@@ -88,7 +126,7 @@ public final class RqlxUtils {
                                         xmlTags.add(select.getXmlTag());
                                     }
                                 }
-                                for (Rql update : mapper.getUpdates()) {
+                                for (Update update : mapper.getUpdates()) {
                                     if (methodName.equals(update.getId().getValue())) {
                                         xmlTags.add(update.getXmlTag());
                                     }

@@ -49,11 +49,13 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
+        <!-- dtst引用-->
+        <psi.referenceContributor language="XML"
+                implementation="com.ruimin.helper.contributor.DtstReferenceContributor"/>
+        <!-- java引用-->
+        <psi.referenceContributor language="JAVA"
+                implementation="com.ruimin.helper.contributor.JavaReferenceContributor"/>
 
-
-        <!-- Ctrl+B, 定位类的跳转, 定位方法的跳转 -->
-        <gotoTargetPresentationProvider order="first"
-                implementation="com.ruimin.helper.provider.GotoDtstXmlSchemaRendererProvider"/>
         <!--文件描述-->
         <!-- dtst文件属性提示 -->
         <dom.fileMetaData id="snow.DtstDescription"
@@ -65,12 +67,17 @@
                 implementation="com.ruimin.helper.dom.rql.description.RqlxDescription"/>
         <!-- dtst 跳转到 java、jsp -->
         <codeInsight.lineMarkerProvider id="snow.SnowDataSetLineMarkerProvider" language="XML"
-                implementationClass="com.ruimin.helper.provider.SnowDataSetLineMarkerProvider"/>
+                implementationClass="com.ruimin.helper.provider.line.SnowDataSetLineMarkerProvider"/>
+        <!-- rqlx 跳转到 java -->
+        <codeInsight.lineMarkerProvider id="snow.SnowRqlxLineMarkerProvider" language="XML"
+                implementationClass="com.ruimin.helper.provider.line.SnowRqlxLineMarkerProvider"/>
         <!-- java 跳转到 dtst -->
         <codeInsight.lineMarkerProvider id="snow.SnowJavaLineMarkerProvider" language="JAVA"
-                implementationClass="com.ruimin.helper.provider.SnowJavaLineMarkerProvider"/>
+                implementationClass="com.ruimin.helper.provider.line.SnowJavaLineMarkerProvider"/>
         <!-- jsp 跳转到 dtst -->
         <codeInsight.lineMarkerProvider id="snow.SnowJspLineMarkerProvider" language="JSP"
-                implementationClass="com.ruimin.helper.provider.SnowJspLineMarkerProvider"/>
+                implementationClass="com.ruimin.helper.provider.line.SnowJspLineMarkerProvider"/>
+
+
     </extensions>
 </idea-plugin>

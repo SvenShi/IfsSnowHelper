@@ -1,7 +1,8 @@
-package com.ruimin.helper.provider;
+package com.ruimin.helper.provider.line;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
@@ -15,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import javax.swing.Icon;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,19 +27,19 @@ import org.jetbrains.annotations.NotNull;
  * @date 2022/7/23 下午 07:24
  * @description jsp 跳转 jsp
  */
-public class SnowJspLineMarkerProvider extends SimpleLineMarkerProvider<XmlToken, PsiElement> {
+public class SnowJspLineMarkerProvider extends SimpleLineMarkerProvider<XmlToken> {
 
     private boolean isButton = false;
 
     private final Map<String, List<XmlFile>> dtstMap = new HashMap<>();
 
     @Override
-    public boolean isTheElement(@NotNull PsiElement element) {
-        return element instanceof XmlToken && isTargetType((XmlToken) element);
+    public boolean isTheElement(@NotNull XmlToken element) {
+        return isTargetType(element);
     }
 
     @Override
-    public Optional<? extends PsiElement[]> apply(@NotNull XmlToken from) {
+    public List<? extends PsiElement> apply(@NotNull XmlToken from) {
         if (isButton) {
             return processButton(from);
         } else {
@@ -47,14 +47,14 @@ public class SnowJspLineMarkerProvider extends SimpleLineMarkerProvider<XmlToken
         }
     }
 
-    private Optional<? extends PsiElement[]> processButton(@NotNull XmlToken from) {
-        ArrayList<PsiElement> psiElements = new ArrayList<>();
+    private List<? extends PsiElement> processButton(@NotNull XmlToken from) {
+        ArrayList<XmlElement> xmlElements = new ArrayList<>();
         XmlTag parent = (XmlTag) from.getParent();
         String dataset = parent.getAttributeValue(SnowPageConstants.BUTTON_ATTR_NAME_DATASET);
         String buttonId = parent.getAttributeValue(SnowPageConstants.BUTTON_ATTR_NAME_ID);
         if (StringUtils.isNotBlank(dataset) && StringUtils.isNotBlank(buttonId)) {
             List<XmlFile> xmlFiles = dtstMap.get(dataset);
-            if (CollectionUtils.isNotEmpty(xmlFiles)){
+            if (CollectionUtils.isNotEmpty(xmlFiles)) {
                 for (XmlFile xmlFile : xmlFiles) {
                     Data data = DtstUtils.getDataTagByDtstFile(xmlFile);
                     if (data != null) {
@@ -63,7 +63,7 @@ public class SnowJspLineMarkerProvider extends SimpleLineMarkerProvider<XmlToken
                             List<Command> commandList = commands.getCommands();
                             for (Command command : commandList) {
                                 if (buttonId.equals(command.getId().getValue())) {
-                                    psiElements.add(command.getXmlElement());
+                                    xmlElements.add(command.getXmlElement());
                                 }
                             }
                         }
@@ -71,24 +71,19 @@ public class SnowJspLineMarkerProvider extends SimpleLineMarkerProvider<XmlToken
                 }
             }
         }
-        if (CollectionUtils.isNotEmpty(psiElements)) {
-            return Optional.of(psiElements.toArray(new PsiElement[0]));
-        }
-
-        return Optional.empty();
+        return xmlElements;
     }
 
-    private Optional<? extends PsiElement[]> processDtst(@NotNull XmlToken from) {
+    private List<? extends PsiElement> processDtst(@NotNull XmlToken from) {
         XmlTag parent = (XmlTag) from.getParent();
         String id = parent.getAttributeValue(SnowPageConstants.DTST_ATTR_NAME_ID);
         String path = parent.getAttributeValue(SnowPageConstants.DTST_ATTR_NAME_PATH);
-        List<XmlFile> dtst = DtstUtils.findDtstFileByPath(
-            path, parent.getProject());
+        List<XmlFile> dtst = DtstUtils.findDtstFileByPath(path, parent.getProject());
         if (dtst.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
         dtstMap.put(id, dtst);
-        return Optional.of(dtst.toArray(new PsiElement[0]));
+        return dtst;
     }
 
     @Override
@@ -97,7 +92,7 @@ public class SnowJspLineMarkerProvider extends SimpleLineMarkerProvider<XmlToken
     }
 
     @Override
-    public @NotNull String getTooltip(PsiElement array, @NotNull PsiElement target) {
+    public @NotNull String getTooltip() {
         return "前往dtst";
     }
 
