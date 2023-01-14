@@ -2,6 +2,7 @@ package com.ruimin.helper.util;
 
 import com.google.common.collect.Lists;
 import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -111,24 +112,15 @@ public final class JavaUtils {
     }
 
     /**
-     * Find method optional.
+     * Find clazz optional.
      *
-     * @param project the project
+     * @param module the project
      * @param clazzName the clazz name
-     * @param methodName the method name
      * @return the optional
      */
-    public static Optional<PsiMethod> findMethod(@NotNull Project project, @Nullable String clazzName,
-        @Nullable String methodName) {
-        if (StringUtils.isBlank(clazzName) && StringUtils.isBlank(methodName)) {
-            return Optional.empty();
-        }
-        Optional<PsiClass> clazz = findClazz(project, clazzName);
-        if (clazz.isPresent()) {
-            PsiMethod[] methods = clazz.get().findMethodsByName(methodName, true);
-            return ArrayUtils.isEmpty(methods) ? Optional.<PsiMethod>empty() : Optional.of(methods[0]);
-        }
-        return Optional.empty();
+    public static Optional<PsiClass[]> findClasses(@NotNull Module module, @NotNull String clazzName) {
+        return Optional.of(
+            JavaPsiFacade.getInstance(module.getProject()).findClasses(clazzName, module.getModuleScope()));
     }
 
     /**
@@ -141,10 +133,25 @@ public final class JavaUtils {
      */
     public static List<PsiMethod> findMethods(@NotNull Project project, @NotNull String clazzName,
         @Nullable String methodName) {
-        if (StringUtils.isBlank(clazzName) && StringUtils.isBlank(methodName)) {
-            return null;
-        }
         Optional<PsiClass[]> classes = findClasses(project, clazzName);
+        return classes.map(psiClasses -> Arrays.stream(psiClasses)
+            .map(psiClass -> psiClass.findMethodsByName(methodName, true))
+            .flatMap(Arrays::stream)
+            .collect(Collectors.toList())).orElse(null);
+    }
+
+
+    /**
+     * 找到方法
+     *
+     * @param module 模块
+     * @param clazzName clazz名字
+     * @param methodName 方法名称
+     * @return {@link List}<{@link PsiMethod}>
+     */
+    public static List<PsiMethod> findMethods(@NotNull Module module, @NotNull String clazzName,
+        @Nullable String methodName) {
+        Optional<PsiClass[]> classes = findClasses(module, clazzName);
         return classes.map(psiClasses -> Arrays.stream(psiClasses)
             .map(psiClass -> psiClass.findMethodsByName(methodName, true))
             .flatMap(Arrays::stream)
@@ -160,4 +167,5 @@ public final class JavaUtils {
     public static Collection<VirtualFile> findAllJavaFile(@NotNull GlobalSearchScope scope) {
         return FileTypeIndex.getFiles(JavaFileType.INSTANCE, scope);
     }
+
 }

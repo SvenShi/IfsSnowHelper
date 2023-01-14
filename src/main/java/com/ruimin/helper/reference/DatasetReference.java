@@ -6,6 +6,8 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.completion.JavaGlobalMemberLookupElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulator;
@@ -82,14 +84,17 @@ public class DatasetReference extends PsiReferenceBase<XmlAttributeValue> implem
         if (StringUtils.isNotBlank(flowId)) {
             String[] split = flowId.split(CommonConstants.COLON_SEPARATE);
             if (split.length >= 2) {
-                List<PsiMethod> methods = JavaUtils.findMethods(myElement.getProject(), split[0], split[1]);
-                ArrayList<ResolveResult> resolveResults = new ArrayList<>();
-                if (CollectionUtils.isNotEmpty(methods)) {
-                    for (PsiMethod method : methods) {
-                        resolveResults.add(new PsiElementResolveResult(method));
+                Module module = ModuleUtil.findModuleForPsiElement(myElement);
+                if (module != null) {
+                    List<PsiMethod> methods = JavaUtils.findMethods(module, split[0], split[1]);
+                    ArrayList<ResolveResult> resolveResults = new ArrayList<>();
+                    if (CollectionUtils.isNotEmpty(methods)) {
+                        for (PsiMethod method : methods) {
+                            resolveResults.add(new PsiElementResolveResult(method));
+                        }
                     }
+                    return resolveResults.toArray(new ResolveResult[0]);
                 }
-                return resolveResults.toArray(new ResolveResult[0]);
             }
         }
         return new ResolveResult[0];

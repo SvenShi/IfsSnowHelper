@@ -5,7 +5,6 @@ import com.intellij.jsp.highlighter.NewJspFileType;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
@@ -41,12 +40,13 @@ public class SnowPageUtils {
     /**
      * 查询项目中的所有page的dtst标签
      */
-    public static List<XmlTag> findAllDtstTag(@NotNull Project project) {
+    public static List<XmlTag> findAllDtstTag(@NotNull Module module) {
         long l = System.currentTimeMillis();
-        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+        GlobalSearchScope moduleScope = module.getModuleScope(false);
+
         // 获取所有的jsp文件
-        Collection<VirtualFile> files = FileTypeIndex.getFiles(NewJspFileType.INSTANCE, scope);
-        PsiManager psiManager = PsiManager.getInstance(project);
+        Collection<VirtualFile> files = FileTypeIndex.getFiles(NewJspFileType.INSTANCE, moduleScope);
+        PsiManager psiManager = PsiManager.getInstance(module.getProject());
         ArrayList<XmlTag> xmlTags = new ArrayList<>();
         // 便利查找到所有的snow:dataset标签
         for (VirtualFile item : files) {

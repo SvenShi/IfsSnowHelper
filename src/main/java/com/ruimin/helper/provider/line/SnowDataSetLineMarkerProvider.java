@@ -1,6 +1,11 @@
 package com.ruimin.helper.provider.line;
 
+import C.o.P;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.XmlFile;
@@ -127,23 +132,23 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
 
     private List<? extends PsiElement> goToJsp(XmlToken xmlToken) {
         String path = SnowPageUtils.getDtstPath(xmlToken.getContainingFile());
-        if (path == null) {
-            return null;
-        }
-        List<XmlTag> allDtstTag = SnowPageUtils.findAllDtstTag(xmlToken.getProject());
-        ArrayList<PsiElement> psiElements = new ArrayList<>();
-
-        for (XmlTag dtstTag : allDtstTag) {
-            String attributeValue = dtstTag.getAttributeValue(SnowPageConstants.DTST_ATTR_NAME_PATH);
-            if (path.equals(attributeValue)) {
-                psiElements.add(dtstTag);
+        if (StringUtils.isNotBlank(path)) {
+            Module module = ModuleUtil.findModuleForPsiElement(xmlToken);
+            if (module != null) {
+                List<XmlTag> allDtstTag = SnowPageUtils.findAllDtstTag(module);
+                if (CollectionUtils.isNotEmpty(allDtstTag)) {
+                    ArrayList<PsiElement> psiElements = new ArrayList<>();
+                    for (XmlTag dtstTag : allDtstTag) {
+                        String attributeValue = dtstTag.getAttributeValue(SnowPageConstants.DTST_ATTR_NAME_PATH);
+                        if (path.equals(attributeValue)) {
+                            psiElements.add(dtstTag);
+                        }
+                    }
+                    return psiElements;
+                }
             }
         }
-        if (psiElements.isEmpty()) {
-            return null;
-        }
-
-        return psiElements;
+        return null;
     }
 
     private List<? extends PsiElement> goToJava(XmlToken from) {
@@ -154,16 +159,14 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
             if (StringUtils.isNotBlank(flowId)) {
                 String[] split = flowId.split(CommonConstants.COLON_SEPARATE);
                 if (split.length >= 2) {
-                    return JavaUtils.findMethods(from.getProject(), split[0], split[1]);
-                } else {
-                    return null;
+                    Module module = ModuleUtil.findModuleForPsiElement(from);
+                    if (module != null) {
+                        return JavaUtils.findMethods(module, split[0], split[1]);
+                    }
                 }
-            } else {
-                return null;
             }
-        } else {
-            return null;
         }
+        return null;
     }
 
     private List<? extends PsiElement> goToDtst(XmlToken from) {
@@ -179,18 +182,10 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
                         ArrayList<XmlFile> dtst = DtstUtils.findDtstFileByPath(dtstPath, tag.getProject());
                         if (CollectionUtils.isNotEmpty(dtst)) {
                             return dtst;
-                        } else {
-                            return null;
                         }
                     }
-                } else {
-                    return null;
                 }
-            } else {
-                return null;
             }
-        } else {
-            return null;
         }
         return null;
     }
