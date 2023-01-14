@@ -1,25 +1,21 @@
 package com.ruimin.helper.reference;
 
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulator;
+import com.intellij.psi.EmptyResolveResult;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
-import com.intellij.psi.PsiLiteralExpression;
-import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlTag;
+import com.intellij.refactoring.rename.inplace.MyLookupExpression;
 import com.intellij.util.IncorrectOperationException;
-import com.ruimin.helper.constants.CommonConstants;
-import com.ruimin.helper.util.JavaUtils;
-import com.ruimin.helper.util.RqlxUtils;
+import com.ruimin.helper.common.util.RqlxUtils;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
@@ -33,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * @date 2023/01/14 上午 04:07
  * @description
  */
-public class RqlxReference extends PsiReferenceBase<PsiLiteralExpression> implements PsiPolyVariantReference {
+public class RqlxToJavaReference extends PsiReferenceBase<XmlAttributeValue> implements PsiPolyVariantReference {
 
 
     /**
@@ -41,7 +37,7 @@ public class RqlxReference extends PsiReferenceBase<PsiLiteralExpression> implem
      *
      * @param element Underlying element.
      */
-    public RqlxReference(@NotNull PsiLiteralExpression element) {
+    public RqlxToJavaReference(@NotNull XmlAttributeValue element) {
         super(Objects.requireNonNull(element), new TextRange(1, element.getText().length() - 1));
     }
 
@@ -70,16 +66,21 @@ public class RqlxReference extends PsiReferenceBase<PsiLiteralExpression> implem
      */
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-        String rqlxKey = myElement.getText();
-        Collection<XmlAttributeValue> xmlTagByRqlKey = RqlxUtils.findXmlTagByRqlKey(myElement.getResolveScope(), rqlxKey);
-        if (CollectionUtils.isNotEmpty(xmlTagByRqlKey)) {
-            ArrayList<ResolveResult> resolveResults = new ArrayList<>();
-            for (XmlAttributeValue attributeValue : xmlTagByRqlKey) {
-                resolveResults.add(new PsiElementResolveResult(attributeValue));
+        String id = myElement.getValue();
+        String rqlxKey = RqlxUtils.getRqlxKey(myElement.getContainingFile(), id);
+        if (StringUtils.isNotBlank(rqlxKey)) {
+            List<PsiElement> rqlReference = RqlxUtils.findRqlReference(rqlxKey,
+                ModuleUtil.findModuleForPsiElement(myElement));
+            if (CollectionUtils.isNotEmpty(rqlReference)) {
+                ArrayList<ResolveResult> resolveResults = new ArrayList<>();
+                for (PsiElement element : rqlReference) {
+                    PsiElementResolveResult resolveResult = new PsiElementResolveResult(element);
+                    resolveResults.add(resolveResult);
+                }
+                return resolveResults.toArray(new ResolveResult[0]);
             }
-            return resolveResults.toArray(new ResolveResult[0]);
         }
-        return new ResolveResult[0];
+        return new ResolveResult[]{EmptyResolveResult.INSTANCE};
     }
 
 }

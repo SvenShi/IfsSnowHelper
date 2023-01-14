@@ -1,4 +1,4 @@
-package com.ruimin.helper.util;
+package com.ruimin.helper.common.util;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
@@ -20,8 +20,8 @@ import com.intellij.util.Query;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.DomService;
-import com.ruimin.helper.constants.CommonConstants;
-import com.ruimin.helper.constants.DtstConstants;
+import com.ruimin.helper.common.constants.CommonConstants;
+import com.ruimin.helper.common.constants.DtstConstants;
 import com.ruimin.helper.dom.dtst.model.Command;
 import com.ruimin.helper.dom.dtst.model.Commands;
 import com.ruimin.helper.dom.dtst.model.Data;
@@ -134,7 +134,7 @@ public final class DtstUtils {
         if (module != null) {
             Collection<String> flowIds = findFlowIdsByMethod(psiMethod);
             if (CollectionUtils.isNotEmpty(flowIds)) {
-                return findXmlTagByFlowId(module.getModuleScope(false), flowIds.toArray(new String[0]));
+                return findXmlTagByFlowId(module.getModuleScope(), flowIds.toArray(new String[0]));
             }
         }
 

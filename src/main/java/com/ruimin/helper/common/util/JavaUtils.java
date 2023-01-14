@@ -1,4 +1,4 @@
-package com.ruimin.helper.util;
+package com.ruimin.helper.common.util;
 
 import com.google.common.collect.Lists;
 import com.intellij.ide.highlighter.JavaFileType;
@@ -10,8 +10,7 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PropertyUtil;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import com.intellij.util.indexing.roots.IndexableFileScanner.IndexableFileVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

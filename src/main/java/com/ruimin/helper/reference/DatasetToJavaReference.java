@@ -1,34 +1,20 @@
 package com.ruimin.helper.reference;
 
-import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.codeInsight.completion.InsertHandler;
-import com.intellij.codeInsight.completion.InsertionContext;
-import com.intellij.codeInsight.completion.JavaGlobalMemberLookupElement;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulator;
-import com.intellij.psi.JavaDirectoryService;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.ClassUtil;
-import com.intellij.psi.util.PsiClassUtil;
-import com.intellij.psi.util.PsiMethodUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.IncorrectOperationException;
-import com.ruimin.helper.constants.CommonConstants;
-import com.ruimin.helper.util.JavaUtils;
-import com.siyeh.ig.psiutils.MethodUtils;
+import com.ruimin.helper.common.constants.CommonConstants;
+import com.ruimin.helper.common.util.JavaUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * @date 2023/01/14 上午 04:07
  * @description
  */
-public class DatasetReference extends PsiReferenceBase<XmlAttributeValue> implements PsiPolyVariantReference {
+public class DatasetToJavaReference extends PsiReferenceBase<XmlAttributeValue> implements PsiPolyVariantReference {
 
 
     /**
@@ -51,7 +37,7 @@ public class DatasetReference extends PsiReferenceBase<XmlAttributeValue> implem
      *
      * @param element Underlying element.
      */
-    public DatasetReference(@NotNull XmlAttributeValue element) {
+    public DatasetToJavaReference(@NotNull XmlAttributeValue element) {
         super(Objects.requireNonNull(element), new TextRange(1, element.getText().length() - 1));
     }
 

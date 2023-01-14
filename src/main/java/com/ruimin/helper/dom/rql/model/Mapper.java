@@ -5,6 +5,8 @@ package com.ruimin.helper.dom.rql.model;
 
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.Namespace;
+import com.intellij.util.xml.SubTagList;
+import com.intellij.util.xml.SubTagsList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
  */
 @Namespace("RqlxXml")
 public interface Mapper extends DomElement {
+
+    String TAG_NAME = "mapper";
 
     /**
      * Returns the list of insert children.
@@ -94,6 +98,10 @@ public interface Mapper extends DomElement {
      * @return created child
      */
     Rql addDdl();
+
+
+    @SubTagsList({"insert", "update", "delete", "select", "ddl"})
+    List<Rql> getRqls();
 
 
 }

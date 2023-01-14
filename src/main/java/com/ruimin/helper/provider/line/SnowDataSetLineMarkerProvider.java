@@ -1,24 +1,21 @@
 package com.ruimin.helper.provider.line;
 
-import C.o.P;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
 import com.ruimin.helper.common.enums.DtstToWhere;
-import com.ruimin.helper.constants.CommonConstants;
-import com.ruimin.helper.constants.DtstConstants;
-import com.ruimin.helper.constants.SnowIcons;
-import com.ruimin.helper.constants.SnowPageConstants;
-import com.ruimin.helper.util.DtstUtils;
-import com.ruimin.helper.util.JavaUtils;
-import com.ruimin.helper.util.SnowPageUtils;
+import com.ruimin.helper.common.constants.CommonConstants;
+import com.ruimin.helper.common.constants.DtstConstants;
+import com.ruimin.helper.common.constants.SnowIcons;
+import com.ruimin.helper.common.constants.SnowPageConstants;
+import com.ruimin.helper.common.util.DtstUtils;
+import com.ruimin.helper.common.util.JavaUtils;
+import com.ruimin.helper.common.util.SnowPageUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -52,14 +49,10 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
     @Override
     public List<? extends PsiElement> apply(@NotNull XmlToken from) {
         if (toWhere != null) {
-            switch (toWhere) {
-                case JSP:
-                    return goToJsp(from);
-                case JAVA:
-                    return goToJava(from);
-                default:
-                    return goToDtst(from);
+            if (toWhere == DtstToWhere.JSP) {
+                return goToJsp(from);
             }
+            return goToDtst(from);
         }
         return null;
     }
@@ -68,14 +61,10 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
     @SuppressWarnings("DialogTitleCapitalization")
     public String getName() {
         if (toWhere != null) {
-            switch (toWhere) {
-                case JSP:
-                    return "前往jsp标志";
-                case JAVA:
-                    return "前往Java标志";
-                default:
-                    return "前往dtst标志";
+            if (toWhere == DtstToWhere.JSP) {
+                return "前往jsp标志";
             }
+            return "前往dtst标志";
         }
         return "";
     }
@@ -84,14 +73,10 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
     @Override
     public Icon getIcon() {
         if (toWhere != null) {
-            switch (toWhere) {
-                case JSP:
-                    return SnowIcons.GO_JSP;
-                case JAVA:
-                    return SnowIcons.GO_JAVA;
-                default:
-                    return SnowIcons.GO_DTST;
+            if (toWhere == DtstToWhere.JSP) {
+                return SnowIcons.GO_JSP;
             }
+            return SnowIcons.GO_DTST;
         }
         return SnowIcons.GO_BLACK;
     }
@@ -100,14 +85,10 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
     @Override
     public String getTooltip() {
         if (toWhere != null) {
-            switch (toWhere) {
-                case JSP:
-                    return "前往jsp";
-                case JAVA:
-                    return "前往java方法";
-                default:
-                    return "前往dtst";
+            if (toWhere == DtstToWhere.JSP) {
+                return "前往jsp";
             }
+            return "前往dtst";
         }
         return "";
     }
@@ -151,23 +132,6 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
         return null;
     }
 
-    private List<? extends PsiElement> goToJava(XmlToken from) {
-        PsiElement parent = from.getParent();
-        if (parent instanceof XmlTag) {
-            XmlTag tag = (XmlTag) parent;
-            String flowId = tag.getAttributeValue(DtstConstants.XML_TAG_FLOWID_ATTRIBUTE_NAME);
-            if (StringUtils.isNotBlank(flowId)) {
-                String[] split = flowId.split(CommonConstants.COLON_SEPARATE);
-                if (split.length >= 2) {
-                    Module module = ModuleUtil.findModuleForPsiElement(from);
-                    if (module != null) {
-                        return JavaUtils.findMethods(module, split[0], split[1]);
-                    }
-                }
-            }
-        }
-        return null;
-    }
 
     private List<? extends PsiElement> goToDtst(XmlToken from) {
         PsiElement parent = from.getParent();

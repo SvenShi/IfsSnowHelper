@@ -1,4 +1,4 @@
-package com.ruimin.helper.constants;
+package com.ruimin.helper.common.constants;
 
 /**
  * @author shiwei

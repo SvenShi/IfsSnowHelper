@@ -14,13 +14,12 @@ import java.util.Set;
  * @description 文件类型
  */
 public enum DtstToWhere {
-    JAVA(Sets.newHashSet(Define.class.getSimpleName(), Command.class.getSimpleName())), JSP(
-        Sets.newHashSet(Data.class.getSimpleName())), DTST(Sets.newHashSet(Field.class.getSimpleName()));
+    JSP(Sets.newHashSet(Data.class.getSimpleName())), DTST(Sets.newHashSet(Field.class.getSimpleName()));
 
     /**
      * xml标签名
      */
-    private Set<String> XmlTagNames;
+    private final Set<String> XmlTagNames;
 
     DtstToWhere(Set<String> xmlTagNames) {
         XmlTagNames = xmlTagNames;

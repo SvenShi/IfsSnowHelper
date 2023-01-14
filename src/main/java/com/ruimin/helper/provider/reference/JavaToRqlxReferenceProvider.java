@@ -1,25 +1,16 @@
 package com.ruimin.helper.provider.reference;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpressionList;
+import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiLiteralExpression;
-import com.intellij.psi.PsiParameterList;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.PsiReferenceProvider;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ProcessingContext;
-import com.ruimin.helper.constants.DtstConstants;
-import com.ruimin.helper.reference.DatasetReference;
-import com.ruimin.helper.reference.RqlxReference;
-import com.ruimin.helper.util.RqlxUtils;
-import com.sun.xml.txw2.TXW;
-import java.util.ArrayList;
-import java.util.Collection;
+import com.ruimin.helper.reference.JavaToRqlxReference;
+import com.ruimin.helper.common.util.RqlxUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +35,7 @@ public class JavaToRqlxReferenceProvider extends PsiReferenceProvider {
                     if (prevSibling instanceof PsiReferenceExpression) {
                         for (PsiElement child : prevSibling.getChildren()) {
                             if (RqlxUtils.SQL_METHOD_NAME.contains(child.getText())) {
-                                return new PsiReference[]{new RqlxReference(expression)};
+                                return new PsiReference[]{new JavaToRqlxReference(expression)};
                             }
                         }
                     }

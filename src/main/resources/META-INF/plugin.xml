@@ -46,12 +46,14 @@
     <depends>com.intellij.modules.xml</depends>
     <depends optional="true" config-file="snow-injections.xml">org.intellij.intelliLang</depends>
 
+
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
+
         <!-- dtst引用-->
         <psi.referenceContributor language="XML"
-                implementation="com.ruimin.helper.contributor.DtstReferenceContributor"/>
+                implementation="com.ruimin.helper.contributor.XmlReferenceContributor"/>
         <!-- java引用-->
         <psi.referenceContributor language="JAVA"
                 implementation="com.ruimin.helper.contributor.JavaReferenceContributor"/>
@@ -65,19 +67,24 @@
         <dom.fileMetaData id="snow.RqlxDescription"
                 rootTagName="mapper"
                 implementation="com.ruimin.helper.dom.rql.description.RqlxDescription"/>
+
         <!-- dtst 跳转到 java、jsp -->
         <codeInsight.lineMarkerProvider id="snow.SnowDataSetLineMarkerProvider" language="XML"
                 implementationClass="com.ruimin.helper.provider.line.SnowDataSetLineMarkerProvider"/>
         <!-- rqlx 跳转到 java -->
         <codeInsight.lineMarkerProvider id="snow.SnowRqlxLineMarkerProvider" language="XML"
                 implementationClass="com.ruimin.helper.provider.line.SnowRqlxLineMarkerProvider"/>
-        <!-- java 跳转到 dtst -->
-        <codeInsight.lineMarkerProvider id="snow.SnowJavaLineMarkerProvider" language="JAVA"
-                implementationClass="com.ruimin.helper.provider.line.SnowJavaLineMarkerProvider"/>
+
         <!-- jsp 跳转到 dtst -->
         <codeInsight.lineMarkerProvider id="snow.SnowJspLineMarkerProvider" language="JSP"
                 implementationClass="com.ruimin.helper.provider.line.SnowJspLineMarkerProvider"/>
 
 
     </extensions>
+
+    <applicationListeners>
+        <listener
+                class="com.ruimin.helper.listener.FileChangeListener"
+                topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+    </applicationListeners>
 </idea-plugin>

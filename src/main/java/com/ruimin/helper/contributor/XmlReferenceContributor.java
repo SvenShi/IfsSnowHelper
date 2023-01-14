@@ -3,10 +3,9 @@ package com.ruimin.helper.contributor;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
-import com.intellij.psi.impl.source.tree.JavaElementType;
-import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlElementType;
-import com.ruimin.helper.provider.reference.DatasetReferenceProvider;
+import com.ruimin.helper.provider.reference.DataSetToJavaReferenceProvider;
+import com.ruimin.helper.provider.reference.RqlxToJavaReferenceProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,11 +14,13 @@ import org.jetbrains.annotations.NotNull;
  * @date 2023/01/14 上午 03:25
  * @description
  */
-public class DtstReferenceContributor extends PsiReferenceContributor {
+public class XmlReferenceContributor extends PsiReferenceContributor {
 
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
         registrar.registerReferenceProvider(PlatformPatterns.psiElement(XmlElementType.XML_ATTRIBUTE_VALUE),
-            new DatasetReferenceProvider());
+            new DataSetToJavaReferenceProvider());
+        registrar.registerReferenceProvider(PlatformPatterns.psiElement(XmlElementType.XML_ATTRIBUTE_VALUE),
+            new RqlxToJavaReferenceProvider());
     }
 }

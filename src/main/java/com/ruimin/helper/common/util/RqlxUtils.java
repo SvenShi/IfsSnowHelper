@@ -1,4 +1,4 @@
-package com.ruimin.helper.util;
+package com.ruimin.helper.common.util;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -16,8 +17,9 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.DomService;
-import com.ruimin.helper.constants.CommonConstants;
-import com.ruimin.helper.constants.RqlxConstants;
+import com.ruimin.helper.common.RqlxKeyStore;
+import com.ruimin.helper.common.constants.CommonConstants;
+import com.ruimin.helper.common.constants.RqlxConstants;
 import com.ruimin.helper.dom.dtst.model.Data;
 import com.ruimin.helper.dom.rql.model.Delete;
 import com.ruimin.helper.dom.rql.model.Insert;
@@ -29,12 +31,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.bouncycastle.math.raw.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,26 +68,50 @@ public final class RqlxUtils {
      * @param rql rql
      * @return {@link String}
      */
+    @Nullable
     public static String getRqlxKeyByRqlTag(@NotNull Rql rql) {
         String id = rql.getId().getValue();
         XmlTag xmlTag = rql.getXmlTag();
         Module module = rql.getModule();
         if (xmlTag != null && module != null) {
             PsiFile file = xmlTag.getContainingFile();
-            String filePath = file.getVirtualFile().getPath();
-            ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-            VirtualFile[] roots = rootManager.getSourceRoots(false);
-            for (VirtualFile root : roots) {
-                String path = root.getPath();
-                filePath = StringUtils.remove(filePath, path);
+            return getRqlxFilePathByFile(file) + CommonConstants.DOT_SEPARATE + id;
+        }
+        return null;
+    }
+
+    /**
+     * 获取rqlx key
+     *
+     * @param file 文件
+     * @param id id
+     * @return {@link String}
+     */
+    public static @NotNull String getRqlxKey(@NotNull PsiFile file, @NotNull String id) {
+        return getRqlxFilePathByFile(file) + CommonConstants.DOT_SEPARATE + id;
+    }
+
+    /**
+     * 被文件前缀rqlx关键
+     *
+     * @param file 文件
+     * @return {@link String}
+     */
+    @Nullable
+    public static String getRqlxFilePathByFile(@NotNull PsiFile file) {
+        String path = file.getVirtualFile().getPath();
+        Module module = ModuleUtil.findModuleForPsiElement(file);
+        if (module != null) {
+            String packagePath = path;
+            for (VirtualFile virtualFile : ModuleRootManager.getInstance(module).getSourceRoots()) {
+                packagePath = StringUtils.remove(packagePath, virtualFile.getPath());
             }
-            if (filePath.startsWith("/") || filePath.startsWith("\\")) {
-                filePath = filePath.substring(1);
+            if (packagePath.startsWith("/") || packagePath.startsWith("\\")) {
+                packagePath = packagePath.substring(1);
             }
-            filePath = filePath.replace("/", ".");
-            filePath = filePath.replace("\\", ".");
-            filePath = StringUtils.remove(filePath, RqlxConstants.RQLX_FILE_EXTENSION_DOT);
-            return filePath + CommonConstants.DOT_SEPARATE + id;
+            packagePath = packagePath.replace("/", ".");
+            packagePath = packagePath.replace("\\", ".");
+            return packagePath.replace(RqlxConstants.RQLX_FILE_EXTENSION_DOT, "");
         }
         return null;
     }
@@ -100,7 +123,8 @@ public final class RqlxUtils {
      * @param rqlKeys 需要对应的flowid
      * @return 查找到的xmltag
      */
-    public static Collection<XmlAttributeValue> findXmlTagByRqlKey(@NotNull GlobalSearchScope scope, String... rqlKeys) {
+    public static Collection<XmlAttributeValue> findXmlTagByRqlKey(@NotNull GlobalSearchScope scope,
+        String... rqlKeys) {
         ArrayList<XmlAttributeValue> xmlAttributeValues = new ArrayList<>();
         HashSet<String> rqlKeySet = Sets.newHashSet(rqlKeys);
         Project project = scope.getProject();
@@ -119,29 +143,9 @@ public final class RqlxUtils {
                         for (XmlFile xmlFile : xmlFiles) {
                             Mapper mapper = getMapperTagByRqlxFile(xmlFile);
                             if (mapper != null) {
-                                for (Delete delete : mapper.getDeletes()) {
-                                    if (methodName.equals(delete.getId().getValue())) {
-                                        xmlAttributeValues.add(delete.getId().getXmlAttributeValue());
-                                    }
-                                }
-                                for (Insert insert : mapper.getInserts()) {
-                                    if (methodName.equals(insert.getId().getValue())) {
-                                        xmlAttributeValues.add(insert.getId().getXmlAttributeValue());
-                                    }
-                                }
-                                for (Select select : mapper.getSelects()) {
-                                    if (methodName.equals(select.getId().getValue())) {
-                                        xmlAttributeValues.add(select.getId().getXmlAttributeValue());
-                                    }
-                                }
-                                for (Update update : mapper.getUpdates()) {
-                                    if (methodName.equals(update.getId().getValue())) {
-                                        xmlAttributeValues.add(update.getId().getXmlAttributeValue());
-                                    }
-                                }
-                                for (Rql ddl : mapper.getDdls()) {
-                                    if (methodName.equals(ddl.getId().getValue())) {
-                                        xmlAttributeValues.add(ddl.getId().getXmlAttributeValue());
+                                for (Rql rql : mapper.getRqls()) {
+                                    if (methodName.equals(rql.getId().getValue())) {
+                                        xmlAttributeValues.add(rql.getId().getXmlAttributeValue());
                                     }
                                 }
                             }
@@ -234,4 +238,17 @@ public final class RqlxUtils {
         }
         return null;
     }
+
+
+    /**
+     * 找到rql参考
+     *
+     * @param rqlxKey rqlx关键
+     * @return {@link List}<{@link PsiElement}>
+     */
+    public static List<PsiElement> findRqlReference(@NotNull String rqlxKey, Module module) {
+        return RqlxKeyStore.getElements(module, rqlxKey);
+    }
+
+
 }

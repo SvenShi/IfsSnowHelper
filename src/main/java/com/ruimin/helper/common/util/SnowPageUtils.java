@@ -1,4 +1,4 @@
-package com.ruimin.helper.util;
+package com.ruimin.helper.common.util;
 
 
 import com.intellij.jsp.highlighter.NewJspFileType;
@@ -15,9 +15,9 @@ import com.intellij.psi.jsp.BaseJspFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlTag;
-import com.ruimin.helper.constants.CommonConstants;
-import com.ruimin.helper.constants.DtstConstants;
-import com.ruimin.helper.constants.SnowPageConstants;
+import com.ruimin.helper.common.constants.CommonConstants;
+import com.ruimin.helper.common.constants.DtstConstants;
+import com.ruimin.helper.common.constants.SnowPageConstants;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,7 +42,7 @@ public class SnowPageUtils {
      */
     public static List<XmlTag> findAllDtstTag(@NotNull Module module) {
         long l = System.currentTimeMillis();
-        GlobalSearchScope moduleScope = module.getModuleScope(false);
+        GlobalSearchScope moduleScope = module.getModuleScope();
 
         // 获取所有的jsp文件
         Collection<VirtualFile> files = FileTypeIndex.getFiles(NewJspFileType.INSTANCE, moduleScope);
@@ -89,7 +89,7 @@ public class SnowPageUtils {
             return null;
         }
 
-        for (VirtualFile sourceRoot : ModuleRootManager.getInstance(module).getSourceRoots(false)) {
+        for (VirtualFile sourceRoot : ModuleRootManager.getInstance(module).getSourceRoots()) {
             fileAbsolutePath = fileAbsolutePath.replace(sourceRoot.getPath(), "");
         }
         if (fileAbsolutePath.startsWith("/")) {
