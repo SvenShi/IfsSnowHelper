@@ -13,6 +13,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiReferenceExpression;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.constants.SnowIcons;
 import com.ruimin.helper.util.DtstUtils;
@@ -36,16 +37,13 @@ import java.util.Objects;
  */
 public class SnowJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
-    private static final Set<String> SQL_METHOD_NAME = Sets.newHashSet("selectOne", "selectList", "selectListWithLock",
-        "selectCount", "selectListIn", "selectCountIn", "executeUpdate");
-
 
     @Override
     protected void collectNavigationMarkers(@NotNull PsiElement element,
         @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> result) {
         PsiMethodCallExpression rqlTarget = isRqlTarget(element);
         if (rqlTarget != null) {
-            List<XmlTag> results = getRqlResults(rqlTarget);
+            List<XmlAttributeValue> results = getRqlResults(rqlTarget);
             if (CollectionUtils.isNotEmpty(results)) {
                 NavigationGutterIconBuilder<PsiElement> builder = NavigationGutterIconBuilder.create(SnowIcons.GO_RQLX)
                     .setTargets(results)
@@ -78,8 +76,8 @@ public class SnowJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
      * @param expression 表达式
      * @return {@link List}<{@link XmlTag}>
      */
-    private List<XmlTag> getRqlResults(PsiMethodCallExpression expression) {
-        ArrayList<XmlTag> xmlTags = new ArrayList<>();
+    private List<XmlAttributeValue> getRqlResults(PsiMethodCallExpression expression) {
+        ArrayList<XmlAttributeValue> attributeValues = new ArrayList<>();
         PsiExpressionList argumentList = expression.getArgumentList();
         PsiExpression[] expressions = argumentList.getExpressions();
         if (!ArrayUtils.isEmpty(expressions)) {
@@ -87,11 +85,12 @@ public class SnowJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
                 String rqlxKey = expressions[0].getText();
                 if (StringUtils.isNotBlank(rqlxKey)) {
                     rqlxKey = rqlxKey.replaceAll("\"", "");
-                    xmlTags = new ArrayList<>(RqlxUtils.findXmlTagByRqlKey(expression.getResolveScope(), rqlxKey));
+                    attributeValues = new ArrayList<>(
+                        RqlxUtils.findXmlTagByRqlKey(expression.getResolveScope(), rqlxKey));
                 }
             }
         }
-        return xmlTags;
+        return attributeValues;
     }
 
 
@@ -114,7 +113,7 @@ public class SnowJavaLineMarkerProvider extends RelatedItemLineMarkerProvider {
      */
     private PsiMethodCallExpression isRqlTarget(PsiElement element) {
         if (element instanceof PsiIdentifier) {
-            if (SQL_METHOD_NAME.contains(element.getText())) {
+            if (RqlxUtils.SQL_METHOD_NAME.contains(element.getText())) {
                 PsiElement reference = element.getContext();
                 if (reference instanceof PsiReferenceExpression) {
                     PsiElement callMethod = reference.getContext();

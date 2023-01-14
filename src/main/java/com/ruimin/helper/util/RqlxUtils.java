@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomFileElement;
@@ -29,6 +30,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -48,6 +50,9 @@ public final class RqlxUtils {
     private RqlxUtils() {
         throw new UnsupportedOperationException();
     }
+
+    public static final Set<String> SQL_METHOD_NAME = Sets.newHashSet("selectOne", "selectList", "selectListWithLock",
+        "selectCount", "selectListIn", "selectCountIn", "executeUpdate");
 
     /**
      * 查询项目中的所有dtst的data标签
@@ -95,13 +100,16 @@ public final class RqlxUtils {
      * @param rqlKeys 需要对应的flowid
      * @return 查找到的xmltag
      */
-    public static Collection<XmlTag> findXmlTagByRqlKey(@NotNull GlobalSearchScope scope, String... rqlKeys) {
-        ArrayList<XmlTag> xmlTags = new ArrayList<>();
+    public static Collection<XmlAttributeValue> findXmlTagByRqlKey(@NotNull GlobalSearchScope scope, String... rqlKeys) {
+        ArrayList<XmlAttributeValue> xmlAttributeValues = new ArrayList<>();
         HashSet<String> rqlKeySet = Sets.newHashSet(rqlKeys);
         Project project = scope.getProject();
         if (CollectionUtils.isNotEmpty(rqlKeySet) && project != null) {
             for (String key : rqlKeySet) {
                 if (StringUtils.isNotBlank(key)) {
+                    if (key.contains("\"")) {
+                        key = key.replace("\"", "");
+                    }
                     int fileAndMethodIndex = StringUtils.lastIndexOf(key, CommonConstants.DOT_SEPARATE);
                     // 字符串处理为包名和rqlx名
                     String methodName = StringUtils.substring(key, fileAndMethodIndex + 1);
@@ -113,27 +121,27 @@ public final class RqlxUtils {
                             if (mapper != null) {
                                 for (Delete delete : mapper.getDeletes()) {
                                     if (methodName.equals(delete.getId().getValue())) {
-                                        xmlTags.add(delete.getXmlTag());
+                                        xmlAttributeValues.add(delete.getId().getXmlAttributeValue());
                                     }
                                 }
                                 for (Insert insert : mapper.getInserts()) {
                                     if (methodName.equals(insert.getId().getValue())) {
-                                        xmlTags.add(insert.getXmlTag());
+                                        xmlAttributeValues.add(insert.getId().getXmlAttributeValue());
                                     }
                                 }
                                 for (Select select : mapper.getSelects()) {
                                     if (methodName.equals(select.getId().getValue())) {
-                                        xmlTags.add(select.getXmlTag());
+                                        xmlAttributeValues.add(select.getId().getXmlAttributeValue());
                                     }
                                 }
                                 for (Update update : mapper.getUpdates()) {
                                     if (methodName.equals(update.getId().getValue())) {
-                                        xmlTags.add(update.getXmlTag());
+                                        xmlAttributeValues.add(update.getId().getXmlAttributeValue());
                                     }
                                 }
                                 for (Rql ddl : mapper.getDdls()) {
                                     if (methodName.equals(ddl.getId().getValue())) {
-                                        xmlTags.add(ddl.getXmlTag());
+                                        xmlAttributeValues.add(ddl.getId().getXmlAttributeValue());
                                     }
                                 }
                             }
@@ -142,7 +150,7 @@ public final class RqlxUtils {
                 }
             }
         }
-        return xmlTags;
+        return xmlAttributeValues;
     }
 
     /**
