@@ -1,10 +1,11 @@
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.5.2"
+    id("org.jetbrains.intellij") version "1.12.0"
 }
 
+
 group = "com.ruimin"
-version = "1.50"
+version = "2.00"
 
 repositories {
     mavenCentral()
@@ -19,7 +20,6 @@ intellij {
     plugins.set(
         listOf(
             "org.intellij.intelliLang",
-            "com.intellij.java",
             "com.intellij.jsp"
         )
     )
@@ -35,8 +35,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("212")
-        untilBuild.set("223.*")
+        sinceBuild.set("212.2")
+        untilBuild.set("231.*")
     }
 
     signPlugin {

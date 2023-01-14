@@ -4,7 +4,6 @@ package com.ruimin.helper.dom.rql.model;
 
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.NameValue;
 import com.intellij.util.xml.Required;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;

@@ -5,7 +5,6 @@ package com.ruimin.helper.dom.rql.model;
 
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.Namespace;
-import com.intellij.util.xml.SubTagList;
 import com.intellij.util.xml.SubTagsList;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;

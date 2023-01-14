@@ -1,7 +1,6 @@
 package com.ruimin.helper.reference;
 
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.util.NlsSafe;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulator;
 import com.intellij.psi.EmptyResolveResult;
@@ -10,10 +9,7 @@ import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
-import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.refactoring.rename.inplace.MyLookupExpression;
-import com.intellij.util.IncorrectOperationException;
 import com.ruimin.helper.common.util.RqlxUtils;
 import java.util.ArrayList;
 import java.util.List;

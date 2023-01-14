@@ -3,11 +3,11 @@
 package com.ruimin.helper.dom.rql.model;
 
 
-import com.intellij.util.xml.*;
 import com.intellij.util.xml.DomElement;
-import org.jetbrains.annotations.NotNull;
-
+import com.intellij.util.xml.GenericDomValue;
+import com.intellij.util.xml.Required;
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * http://sqlmap.rql.org/rql-mapper:ifsElemType interface.

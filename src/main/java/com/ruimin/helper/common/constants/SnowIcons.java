@@ -1,8 +1,7 @@
 package com.ruimin.helper.common.constants;
 
 import com.intellij.openapi.util.IconLoader;
-
-import javax.swing.*;
+import javax.swing.Icon;
 
 /**
  * @author shiwei

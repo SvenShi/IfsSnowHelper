@@ -1,7 +1,6 @@
 package com.ruimin.helper.dom.rql.description;
 
 import com.intellij.util.xml.DomFileDescription;
-import com.ruimin.helper.dom.dtst.model.Data;
 import com.ruimin.helper.dom.rql.model.Mapper;
 
 /**

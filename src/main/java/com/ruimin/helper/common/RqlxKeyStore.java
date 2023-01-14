@@ -28,7 +28,6 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.uast.UIfExpression;
 
 /**
  * @author shiwei

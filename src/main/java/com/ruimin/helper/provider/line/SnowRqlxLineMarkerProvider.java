@@ -1,25 +1,16 @@
 package com.ruimin.helper.provider.line;
 
 import com.google.common.collect.Sets;
-import com.intellij.codeInsight.CommentUtil;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.XmlToken;
 import com.intellij.util.xml.DomUtil;
 import com.ruimin.helper.common.constants.SnowIcons;
-import com.ruimin.helper.common.util.JavaUtils;
 import com.ruimin.helper.common.util.RqlxUtils;
 import com.ruimin.helper.dom.rql.model.Rql;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import javax.swing.Icon;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;

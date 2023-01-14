@@ -1,6 +1,9 @@
 package com.ruimin.helper.dom.dtst.model;
 
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.Attribute;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.NameValue;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -1,16 +1,14 @@
 package com.ruimin.helper.provider.reference;
 
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpressionList;
-import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
-import com.ruimin.helper.reference.JavaToRqlxReference;
 import com.ruimin.helper.common.util.RqlxUtils;
+import com.ruimin.helper.reference.JavaToRqlxReference;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 

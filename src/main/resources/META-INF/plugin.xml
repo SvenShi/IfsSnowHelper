@@ -14,26 +14,11 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-<h1 id="ifssnowhelper">IfsSnowHelper</h1>
-<h2>简介</h2>
-<p>本插件为个人兴趣使然在业余时间开发，对idea插件开发的一次简单尝试与学习。</p>
-<p>公司自研框架在开发过程中，搜索dtst、jsp以及对应的java方法时比较麻烦，所以就写了这个插件，用来简化开发。</p>
-<h3>功能特点</h3>
-<ul>
-    <li>[x] Java方法跳转到DTST中引用处</li>
-    <li>[x] dtst跳转到引用的方法处</li>
-    <li>[x] Jsp<code>&lt;snow:dataset&gt;</code>标签跳转到对应dtst中</li>
-    <li>[x] Jsp<code>&lt;snow:button&gt;</code>标签跳转到对应dtst中</li>
-    <li>[x] rqlx文件注入sql语法提示，需要在idea设置中配置方言，如果需要数据库表名、字段提示需要在idea中连接数据库，并且配置SQL Resolution Scopes中设置对应的映射</li>
-</ul>
-
-<h4>1.40 新增功能</h4>
-<ul>
-    <li>[x] Java代码跳转到rqlx文件sql处</li>
-    <li>[x] 识别dtst中的datasource属性并支持跳转到引用的dtst中</li>
-    <li>[x] Jsp中的<code>&lt;snow:button&gt;</code>标签现已支持跳转到dtst中</li>
-</ul>
-<p>知识库链接：<a href="https://kg.rmitec.cn/knowledge/open.knowledge/view/271">https://kg.rmitec.cn/knowledge/open.knowledge/view/271</a></p>
+        <h1 id="ifssnowhelper">IfsSnowHelper</h1>
+        <h2>简介</h2>
+        <p>本插件为个人兴趣使然在业余时间开发，对idea插件开发的一次简单尝试与学习。</p>
+        <p>公司自研框架在开发过程中，搜索dtst、jsp以及对应的java方法时比较麻烦，所以就写了这个插件，用来简化开发。</p>
+        <p>知识库链接：<a href="https://kg.rmitec.cn/knowledge/open.knowledge/view/271">https://kg.rmitec.cn/knowledge/open.knowledge/view/271</a></p>
       ]]>
     </description>
 

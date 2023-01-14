@@ -6,12 +6,11 @@ import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.psi.PsiElement;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
+import javax.swing.Icon;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.util.Collection;
 
 /**
  * The type Simple line marker provider.
