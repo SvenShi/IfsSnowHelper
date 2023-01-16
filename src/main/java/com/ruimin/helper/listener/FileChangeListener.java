@@ -21,35 +21,41 @@ public class FileChangeListener implements BulkFileListener {
 
     @Override
     public void before(@NotNull List<? extends @NotNull VFileEvent> events) {
-        for (VFileEvent event : events) {
-            @NotNull Project[] projects = ProjectManager.getInstance().getOpenProjects();
-            VirtualFile file = event.getFile();
-            if (file != null) {
-                for (Project project : projects) {
-                    PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                    if (psiFile != null) {
-                        RqlxKeyStore.getInstance(project).clearCache(psiFile);
+        try {
+            for (VFileEvent event : events) {
+                @NotNull Project[] projects = ProjectManager.getInstance().getOpenProjects();
+                VirtualFile file = event.getFile();
+                if (file != null) {
+                    for (Project project : projects) {
+                        PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+                        if (psiFile != null) {
+                            RqlxKeyStore.getInstance(project).clearCache(psiFile);
+                        }
                     }
-                }
 
+                }
             }
+        } catch (Exception ignored) {
         }
     }
 
     @Override
     public void after(@NotNull List<? extends @NotNull VFileEvent> events) {
         @NotNull Project[] projects = ProjectManager.getInstance().getOpenProjects();
-        for (VFileEvent event : events) {
-            VirtualFile file = event.getFile();
-            if (file != null) {
-                for (Project project : projects) {
-                    PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                    if (psiFile != null) {
-                        RqlxKeyStore.getInstance(project).refreshFile(psiFile);
+        try {
+            for (VFileEvent event : events) {
+                VirtualFile file = event.getFile();
+                if (file != null) {
+                    for (Project project : projects) {
+                        PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+                        if (psiFile != null) {
+                            RqlxKeyStore.getInstance(project).refreshFile(psiFile);
+                        }
                     }
-                }
 
+                }
             }
+        } catch (Exception ignored) {
         }
     }
 }
