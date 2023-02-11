@@ -16,8 +16,7 @@
     <description><![CDATA[
         <h1 id="ifssnowhelper">IfsSnowHelper</h1>
         <h2>简介</h2>
-        <p>本插件为个人兴趣使然在业余时间开发，对idea插件开发的一次简单尝试与学习。</p>
-        <p>公司自研框架在开发过程中，搜索dtst、jsp以及对应的java方法时比较麻烦，所以就写了这个插件，用来简化开发。</p>
+        <p>公司自研框架中特殊文件的相互跳转，以及其中各种java方法的引用跳转</p>
         <p>知识库链接：<a href="https://kg.rmitec.cn/knowledge/open.knowledge/view/271">https://kg.rmitec.cn/knowledge/open.knowledge/view/271</a></p>
       ]]>
     </description>
