@@ -5,6 +5,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -47,10 +48,6 @@ public class RqlxKeyStorage {
      */
     private static final HashMap<Project, RqlxKeyStorage> instanceMap = new HashMap<>();
 
-    /**
-     * 初始化
-     */
-    private static final int INIT = 0;
 
     /**
      * 初始化中
@@ -77,7 +74,14 @@ public class RqlxKeyStorage {
     /**
      * 文件对应的rqlx key
      */
-    private final HashMap<PsiFile, Set<String>> fileMap = new HashMap<>();
+    private final HashMap<String, Set<String>> fileMap = new HashMap<>();
+
+
+    /**
+     * 读取文件记录
+     */
+    private final HashSet<String> readFileRecord = new HashSet<>();
+
 
     /**
      * 项目
@@ -87,7 +91,7 @@ public class RqlxKeyStorage {
     /**
      * 当前状态
      */
-    private int state = 0;
+    private int state = 3;
 
     /**
      * 仓库总长度
@@ -134,38 +138,37 @@ public class RqlxKeyStorage {
     /**
      * 初始化
      */
-    public void init() {
+    public void init(@NotNull ProgressIndicator indicator) {
         synchronized (this) {
-            if (state == INITING || state == RUNNING) {
-                return;
-            }
-            if (state == INIT) {
+            if (state == STOPPED) {
                 try {
                     state = INITING;
+                    indicator.setIndeterminate(false);
                     log.info(project.getName() + " 开始初始化rqlx key 存储器！");
                     for (Module mod : ModuleManager.getInstance(project).getModules()) {
+                        indicator.setText("正在扫描 " + mod.getName() + " Java文件中的Rqlx key");
                         HashMap<String, List<PsiElement>> elementHashMap = new HashMap<>();
                         Collection<VirtualFile> allJavaFile = JavaUtils.findAllJavaFile(mod.getModuleScope());
+                        double progress = 0.0;
+                        double step = 1.0 / allJavaFile.size();
                         log.info("等待扫描的java文件共" + allJavaFile.size() + "个");
                         // 遍历所有的java文件
                         for (VirtualFile virtualFile : allJavaFile) {
+                            indicator.setText2(virtualFile.getName());
+                            readFileRecord.add(virtualFile.getPath());
                             PsiFile file = PsiManager.getInstance(project).findFile(virtualFile);
-                            if (file != null) {
-                                ArrayList<PsiElement> rqlxKeyElement = getRqlxKeyElement(file);
-                                if (CollectionUtils.isNotEmpty(rqlxKeyElement)) {
-                                    storeElement(elementHashMap, file, rqlxKeyElement);
-                                }
-                            }
+                            storeElement(elementHashMap, file);
+                            indicator.setFraction(progress += step);
                         }
                         storage.put(mod, elementHashMap);
                     }
-                    log.info("初始化完毕！共" + length + "个元素存储完毕");
                     state = RUNNING;
+                    log.info("初始化完毕！共" + length + "个元素存储完毕");
                 } catch (Exception e) {
                     log.info("发生异常！等待重新尝试！", e);
                     storage.clear();
                     state = INITING;
-                    init();
+                    init(indicator);
                 }
             }
         }
@@ -182,21 +185,20 @@ public class RqlxKeyStorage {
             if (state == RUNNING) {
                 if (file instanceof PsiJavaFile) {
                     log.info(
-                        project.getName() + " 更新文件[" + file.getName() + "]的rqlx key 索引，存储器总长度：" + length);
-                    ArrayList<PsiElement> rqlxKeyElement = getRqlxKeyElement(file);
-                    if (CollectionUtils.isNotEmpty(rqlxKeyElement)) {
-                        Module module = ModuleUtil.findModuleForFile(file);
-                        if (module != null) {
-                            HashMap<String, List<PsiElement>> elementHashMap = storage.get(module);
-                            if (elementHashMap == null) {
-                                elementHashMap = new HashMap<>();
-                                storage.put(module, elementHashMap);
-                            }
-                            storeElement(elementHashMap, file, rqlxKeyElement);
+                        project.getName() + " 更新文件[" + file.getName() + "]的rqlx key 缓存，存储器总长度：" + length);
+                    removeFile(file);
+                    Module module = ModuleUtil.findModuleForFile(file);
+                    if (module != null) {
+                        readFileRecord.add(file.getVirtualFile().getPath());
+                        HashMap<String, List<PsiElement>> elementHashMap = storage.get(module);
+                        if (elementHashMap == null) {
+                            elementHashMap = new HashMap<>();
+                            storage.put(module, elementHashMap);
                         }
+                        int size = storeElement(elementHashMap, file);
+                        log.info(project.getName() + " 文件[" + file.getName() + "]rqlx key 缓存更新完毕，更新" + size
+                            + "个元素，存储器总长度：" + length);
                     }
-                    log.info(project.getName() + " 文件[" + file.getName() + "]rqlx key 索引更新完毕，更新"
-                        + rqlxKeyElement.size() + "个元素，存储器总长度：" + length);
                 }
             }
         }
@@ -207,14 +209,16 @@ public class RqlxKeyStorage {
      *
      * @param file 文件
      */
-    public void clearCache(PsiFile file) {
+    public void removeFile(PsiFile file) {
         synchronized (this) {
             if (state == RUNNING) {
-                if (file instanceof PsiJavaFile) {
+                VirtualFile handleVirtualFile = file.getVirtualFile();
+                if (file instanceof PsiJavaFile && isHasRead(handleVirtualFile)) {
                     log.info(project.getName() + " 开始清除文件[" + file.getName() + "]的缓存，存储器总长度：" + length);
                     int tempLength = length;
-                    PsiManager psiManager = PsiManager.getInstance(file.getProject());
-                    Set<String> keys = fileMap.get(file);
+                    String fileKey = handleVirtualFile.getPath();
+                    readFileRecord.remove(fileKey);
+                    Set<String> keys = fileMap.get(fileKey);
                     if (CollectionUtils.isNotEmpty(keys)) {
                         for (String key : keys) {
                             Module module = ModuleUtil.findModuleForFile(file);
@@ -224,19 +228,16 @@ public class RqlxKeyStorage {
                                     Iterator<PsiElement> iterator = elements.iterator();
                                     while (iterator.hasNext()) {
                                         PsiElement element = iterator.next();
-                                        VirtualFile virtualFile = PsiUtil.getVirtualFile(element);
-                                        if (virtualFile != null) {
-                                            PsiFile newFile = psiManager.findFile(virtualFile);
-                                            if (file.equals(newFile)) {
-                                                iterator.remove();
-                                                length--;
-                                            }
+                                        PsiElement elementAt = file.findElementAt(element.getTextOffset());
+                                        if (elementAt != null && element.getText().equals(elementAt.getText())) {
+                                            iterator.remove();
+                                            length--;
                                         }
                                     }
                                 }
                             }
                         }
-                        fileMap.remove(file);
+                        fileMap.remove(fileKey);
                     }
                     log.info(
                         project.getName() + " 文件[" + file.getName() + "]缓存清除成功！共清除[" + (tempLength - length)
@@ -262,6 +263,7 @@ public class RqlxKeyStorage {
      * @param file 文件
      * @return boolean
      */
+    @NotNull
     private ArrayList<PsiElement> getRqlxKeyElement(PsiFile file) {
         ArrayList<PsiElement> elements = new ArrayList<>();
         // 所有的方法名
@@ -271,26 +273,32 @@ public class RqlxKeyStorage {
                 // 是否包含方法名
                 for (Integer index : indexes) {
                     // 得到该位置的元素
-                    PsiElement elementAtOffset = PsiUtil.getElementAtOffset(file, index);
-                    if (elementAtOffset instanceof PsiIdentifier && rqlxMethodName.equals(elementAtOffset.getText())
-                        && !CommentUtil.isComment(elementAtOffset)) {
-                        PsiElement express = elementAtOffset.getParent();
-                        if (express instanceof PsiReferenceExpression) {
-                            PsiElement callExpress = express.getParent();
-                            if (callExpress instanceof PsiMethodCallExpression) {
-                                PsiElement expressList = callExpress.getLastChild();
-                                PsiElement[] children = expressList.getChildren();
-                                if (children.length > 1) {
-                                    PsiElement child = children[1];
-                                    if (child instanceof PsiLiteralExpression) {
-                                        PsiLiteralExpression rqlxElement = (PsiLiteralExpression) child;
-                                        elements.add(rqlxElement);
+                    if (index < file.getTextLength()) {
+                        PsiElement elementAtOffset = PsiUtil.getElementAtOffset(file, index);
+                        if (elementAtOffset instanceof PsiIdentifier && rqlxMethodName.equals(elementAtOffset.getText())
+                            && !CommentUtil.isComment(elementAtOffset)) {
+                            PsiElement express = elementAtOffset.getParent();
+                            if (express instanceof PsiReferenceExpression) {
+                                PsiElement callExpress = express.getParent();
+                                if (callExpress instanceof PsiMethodCallExpression) {
+                                    PsiElement expressList = callExpress.getLastChild();
+                                    PsiElement[] children = expressList.getChildren();
+                                    if (children.length > 1) {
+                                        PsiElement child = children[1];
+                                        if (child instanceof PsiLiteralExpression) {
+                                            PsiLiteralExpression rqlxElement = (PsiLiteralExpression) child;
+                                            String text = rqlxElement.getText();
+                                            if (text.contains(".") && text.startsWith("\"") && text.endsWith("\"")) {
+                                                elements.add(rqlxElement);
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
+                    } else {
+                        log.warn("获取元素时下标超长！index:" + index + ",fileTextLength:" + file.getTextLength());
                     }
-
                 }
             }
         }
@@ -302,14 +310,21 @@ public class RqlxKeyStorage {
      *
      * @param elementHashMap 散列映射元素
      * @param file 文件
-     * @param rqlxKeyElement rqlx关键要素
      */
-    private void storeElement(HashMap<String, List<PsiElement>> elementHashMap, PsiFile file,
-        ArrayList<PsiElement> rqlxKeyElement) {
-        for (PsiElement rqlxElement : rqlxKeyElement) {
-            String text = rqlxElement.getText();
-            if (text.contains(".") && text.startsWith("\"") && text.endsWith("\"")) {
-                // 存放资源
+    private int storeElement(HashMap<String, List<PsiElement>> elementHashMap, PsiFile file) {
+        if (file != null) {
+            VirtualFile virtualFile = file.getVirtualFile();
+            String filePath = virtualFile.getPath();
+            Set<String> keys = fileMap.get(filePath);
+            if (keys == null) {
+                keys = new HashSet<>();
+                fileMap.put(filePath, keys);
+            }
+
+            ArrayList<PsiElement> rqlxKeyElement = getRqlxKeyElement(file);
+            for (PsiElement rqlxElement : rqlxKeyElement) {
+                String text = rqlxElement.getText();
+                // 存放资源 去掉双引号
                 String rqlxKey = text.substring(1, text.length() - 1);
                 List<PsiElement> psiElements = elementHashMap.get(rqlxKey);
                 if (psiElements == null) {
@@ -317,16 +332,12 @@ public class RqlxKeyStorage {
                     elementHashMap.put(rqlxKey, psiElements);
                 }
                 psiElements.add(rqlxElement);
-
-                Set<String> keys = fileMap.get(file);
-                if (keys == null) {
-                    keys = new HashSet<>();
-                    fileMap.put(file, keys);
-                }
                 keys.add(rqlxKey);
                 length++;
             }
+            return rqlxKeyElement.size();
         }
+        return 0;
     }
 
     public void destroy() {
@@ -336,5 +347,37 @@ public class RqlxKeyStorage {
         state = STOPPED;
         log.info(project.getName() + " rqlx key 存储器 已销毁！");
     }
+
+    /**
+     * 获得读取的文件长度
+     *
+     * @return int
+     */
+    public int getReadFileSize() {
+        return readFileRecord.size();
+    }
+
+    /**
+     * 是否读取过文件
+     *
+     * @param file 文件
+     * @return boolean
+     */
+    public boolean isHasRead(VirtualFile file) {
+        return readFileRecord.contains(file.getPath());
+    }
+
+    public boolean isInitializing() {
+        return state == INITING;
+    }
+
+    public boolean isRunning() {
+        return state == RUNNING;
+    }
+
+    public boolean isStopped() {
+        return state == STOPPED;
+    }
+
 
 }

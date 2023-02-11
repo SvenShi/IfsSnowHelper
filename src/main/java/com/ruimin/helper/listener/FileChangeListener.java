@@ -31,7 +31,7 @@ public class FileChangeListener implements BulkFileListener {
                     if (valid) {
                         PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
                         if (psiFile instanceof PsiJavaFile) {
-                            RqlxKeyStorage.getInstance(project).clearCache(psiFile);
+                            RqlxKeyStorage.getInstance(project).removeFile(psiFile);
                         }
                     }
                 }
