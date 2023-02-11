@@ -17,7 +17,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.DomService;
-import com.ruimin.helper.common.RqlxKeyStore;
+import com.ruimin.helper.common.RqlxKeyStorage;
 import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.common.constants.RqlxConstants;
 import com.ruimin.helper.dom.dtst.model.Data;
@@ -243,7 +243,7 @@ public final class RqlxUtils {
      * @return {@link List}<{@link PsiElement}>
      */
     public static List<PsiElement> findRqlReference(@NotNull String rqlxKey, Module module) {
-        return RqlxKeyStore.getInstance(module.getProject()).getElements(module, rqlxKey);
+        return RqlxKeyStorage.getInstance(module.getProject()).getElements(module, rqlxKey);
     }
 
 

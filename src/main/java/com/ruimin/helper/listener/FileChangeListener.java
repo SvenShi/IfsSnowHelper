@@ -6,8 +6,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiManager;
-import com.ruimin.helper.common.RqlxKeyStore;
+import com.ruimin.helper.common.RqlxKeyStorage;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,8 +30,8 @@ public class FileChangeListener implements BulkFileListener {
                     boolean valid = file.isValid();
                     if (valid) {
                         PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                        if (psiFile != null) {
-                            RqlxKeyStore.getInstance(project).clearCache(psiFile);
+                        if (psiFile instanceof PsiJavaFile) {
+                            RqlxKeyStorage.getInstance(project).clearCache(psiFile);
                         }
                     }
                 }
@@ -49,8 +50,8 @@ public class FileChangeListener implements BulkFileListener {
                     boolean valid = file.isValid();
                     if (valid) {
                         PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                        if (psiFile != null) {
-                            RqlxKeyStore.getInstance(project).refreshFile(psiFile);
+                        if (psiFile instanceof PsiJavaFile) {
+                            RqlxKeyStorage.getInstance(project).refreshFile(psiFile);
                         }
                     }
                 }

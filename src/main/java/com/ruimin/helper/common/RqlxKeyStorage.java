@@ -1,6 +1,7 @@
 package com.ruimin.helper.common;
 
 import com.intellij.codeInsight.CommentUtil;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtil;
@@ -35,43 +36,76 @@ import org.jetbrains.annotations.Nullable;
  * @date 2023/01/14 下午 10:40
  * @description 保存key和class的关联关系
  */
-public class RqlxKeyStore {
+
+public class RqlxKeyStorage {
+
+    public static final Logger log = Logger.getInstance(RqlxKeyStorage.class);
 
 
-    private static final HashMap<Project, RqlxKeyStore> instanceMap = new HashMap<>();
+    /**
+     * 每个项目都有独立的实例
+     */
+    private static final HashMap<Project, RqlxKeyStorage> instanceMap = new HashMap<>();
 
+    /**
+     * 初始化
+     */
     private static final int INIT = 0;
 
+    /**
+     * 初始化中
+     */
     private static final int INITING = 1;
 
+    /**
+     * 运行中
+     */
     private static final int RUNNING = 2;
 
+    /**
+     * 已停止
+     */
     private static final int STOPPED = 3;
 
 
-    private final HashMap<Module, HashMap<String, List<PsiElement>>> store = new HashMap<>();
+    /**
+     * 存储
+     */
+    private final HashMap<Module, HashMap<String, List<PsiElement>>> storage = new HashMap<>();
 
 
+    /**
+     * 文件对应的rqlx key
+     */
     private final HashMap<PsiFile, Set<String>> fileMap = new HashMap<>();
 
+    /**
+     * 项目
+     */
     private final Project project;
 
+    /**
+     * 当前状态
+     */
     private int state = 0;
 
+    /**
+     * 仓库总长度
+     */
     private int length = 0;
 
 
-    private RqlxKeyStore(Project project) {
+    private RqlxKeyStorage(Project project) {
         this.project = project;
     }
 
-    public static RqlxKeyStore getInstance(Project project) {
-        RqlxKeyStore rqlxKeyStore = instanceMap.get(project);
-        if (rqlxKeyStore == null) {
-            synchronized (RqlxKeyStore.class) {
+    public static RqlxKeyStorage getInstance(Project project) {
+        RqlxKeyStorage rqlxKeyStorage = instanceMap.get(project);
+        if (rqlxKeyStorage == null) {
+            synchronized (RqlxKeyStorage.class) {
                 if (instanceMap.get(project) == null) {
-                    rqlxKeyStore = new RqlxKeyStore(project);
-                    instanceMap.put(project, rqlxKeyStore);
+                    rqlxKeyStorage = new RqlxKeyStorage(project);
+                    instanceMap.put(project, rqlxKeyStorage);
                 }
             }
         }
@@ -88,7 +122,7 @@ public class RqlxKeyStore {
     @Nullable
     public List<PsiElement> getElements(@NotNull Module module, @NotNull String RqlxKey) {
         if (state == RUNNING) {
-            HashMap<String, List<PsiElement>> elementMap = store.get(module);
+            HashMap<String, List<PsiElement>> elementMap = storage.get(module);
             if (elementMap != null) {
                 return elementMap.get(RqlxKey);
             }
@@ -108,9 +142,11 @@ public class RqlxKeyStore {
             if (state == INIT) {
                 try {
                     state = INITING;
+                    log.info(project.getName() + " 开始初始化rqlx key 存储器！");
                     for (Module mod : ModuleManager.getInstance(project).getModules()) {
                         HashMap<String, List<PsiElement>> elementHashMap = new HashMap<>();
-                        Collection<VirtualFile> allJavaFile = JavaUtils.findAllJavaFile(mod.getModuleScope(false));
+                        Collection<VirtualFile> allJavaFile = JavaUtils.findAllJavaFile(mod.getModuleScope());
+                        log.info("等待扫描的java文件共" + allJavaFile.size() + "个");
                         // 遍历所有的java文件
                         for (VirtualFile virtualFile : allJavaFile) {
                             PsiFile file = PsiManager.getInstance(project).findFile(virtualFile);
@@ -121,11 +157,13 @@ public class RqlxKeyStore {
                                 }
                             }
                         }
-                        store.put(mod, elementHashMap);
+                        storage.put(mod, elementHashMap);
                     }
+                    log.info("初始化完毕！共" + length + "个元素存储完毕");
                     state = RUNNING;
                 } catch (Exception e) {
-                    store.clear();
+                    log.info("发生异常！等待重新尝试！", e);
+                    storage.clear();
                     state = INITING;
                     init();
                 }
@@ -143,18 +181,22 @@ public class RqlxKeyStore {
         synchronized (this) {
             if (state == RUNNING) {
                 if (file instanceof PsiJavaFile) {
+                    log.info(
+                        project.getName() + " 更新文件[" + file.getName() + "]的rqlx key 索引，存储器总长度：" + length);
                     ArrayList<PsiElement> rqlxKeyElement = getRqlxKeyElement(file);
                     if (CollectionUtils.isNotEmpty(rqlxKeyElement)) {
                         Module module = ModuleUtil.findModuleForFile(file);
                         if (module != null) {
-                            HashMap<String, List<PsiElement>> elementHashMap = store.get(module);
+                            HashMap<String, List<PsiElement>> elementHashMap = storage.get(module);
                             if (elementHashMap == null) {
                                 elementHashMap = new HashMap<>();
-                                store.put(module, elementHashMap);
+                                storage.put(module, elementHashMap);
                             }
                             storeElement(elementHashMap, file, rqlxKeyElement);
                         }
                     }
+                    log.info(project.getName() + " 文件[" + file.getName() + "]rqlx key 索引更新完毕，更新"
+                        + rqlxKeyElement.size() + "个元素，存储器总长度：" + length);
                 }
             }
         }
@@ -169,6 +211,8 @@ public class RqlxKeyStore {
         synchronized (this) {
             if (state == RUNNING) {
                 if (file instanceof PsiJavaFile) {
+                    log.info(project.getName() + " 开始清除文件[" + file.getName() + "]的缓存，存储器总长度：" + length);
+                    int tempLength = length;
                     PsiManager psiManager = PsiManager.getInstance(file.getProject());
                     Set<String> keys = fileMap.get(file);
                     if (CollectionUtils.isNotEmpty(keys)) {
@@ -192,7 +236,11 @@ public class RqlxKeyStore {
                                 }
                             }
                         }
+                        fileMap.remove(file);
                     }
+                    log.info(
+                        project.getName() + " 文件[" + file.getName() + "]缓存清除成功！共清除[" + (tempLength - length)
+                            + "]个元素，存储器总长度：" + length);
                 }
             }
         }
@@ -209,7 +257,7 @@ public class RqlxKeyStore {
     }
 
     /**
-     * 得到rqlx关键要素
+     * 得到包含rqlx key 的元素
      *
      * @param file 文件
      * @return boolean
@@ -282,10 +330,11 @@ public class RqlxKeyStore {
     }
 
     public void destroy() {
-        store.clear();
+        storage.clear();
         fileMap.clear();
         instanceMap.remove(project);
         state = STOPPED;
+        log.info(project.getName() + " rqlx key 存储器 已销毁！");
     }
 
 }

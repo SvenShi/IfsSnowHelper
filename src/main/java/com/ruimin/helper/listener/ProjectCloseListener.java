@@ -2,7 +2,7 @@ package com.ruimin.helper.listener;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
-import com.ruimin.helper.common.RqlxKeyStore;
+import com.ruimin.helper.common.RqlxKeyStorage;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,6 +20,6 @@ public class ProjectCloseListener implements ProjectManagerListener {
      */
     @Override
     public void projectClosing(@NotNull Project project) {
-        RqlxKeyStore.getInstance(project).destroy();
+        RqlxKeyStorage.getInstance(project).destroy();
     }
 }
