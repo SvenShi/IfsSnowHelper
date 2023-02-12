@@ -1,4 +1,5 @@
-![helperLogo](/src/main/resources/META-INF/pluginIcon.svg "helperLogo")
+
+<img src="src/main/resources/META-INF/pluginIcon.svg"  alt="helperLogo" width="200">
 
 ## IfsSnowHelper
 
@@ -75,9 +76,9 @@
 
 ##### 箭头分为三种颜色分别对应不同文件：
 
-- ![](/src/main/resources/icons/go-blue.svg) 对应java文件，点击后跳转对应方法；
 
-- ![](/src/main/resources/icons/go-green.svg) 对应dtst文件，点击后跳转到对应dtst文件；
+- <img src="src/main/resources/icons/go-blue.svg" alt="blue" width="20" > 对应java文件，点击后跳转对应方法；
 
-- ![](/src/main/resources/icons/go-yellow.svg)
-  对应jsp文件，点击后跳转到对应jsp文件；（只可能显示在dtst文件的`<Data>`标签左侧）
+- <img src="src/main/resources/icons/go-green.svg" alt="green" width="20" > 对应dtst文件，点击后跳转到对应dtst文件；
+
+- <img src="src/main/resources/icons/go-yellow.svg" alt="yellow" width="20" >对应jsp文件，点击后跳转到对应jsp文件；（只可能显示在dtst文件的`<Data>`标签左侧）
