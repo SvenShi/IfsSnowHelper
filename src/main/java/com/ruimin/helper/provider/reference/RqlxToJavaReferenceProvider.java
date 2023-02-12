@@ -1,5 +1,6 @@
 package com.ruimin.helper.provider.reference;
 
+import com.intellij.patterns.XmlAttributeValuePattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
@@ -26,8 +27,8 @@ public class RqlxToJavaReferenceProvider extends PsiReferenceProvider {
         XmlTag rootTag = xmlFile.getRootTag();
         if (rootTag != null && Mapper.TAG_NAME.equals(rootTag.getName())) {
             XmlAttributeValue attribute = (XmlAttributeValue) element;
-            String hostName = attribute.getHostName();
-            if ("id".equals(hostName)) {
+            String localName = XmlAttributeValuePattern.getLocalName(attribute);
+            if ("id".equals(localName)) {
                 return new PsiReference[]{new RqlxToJavaReference(attribute)};
             }
         }

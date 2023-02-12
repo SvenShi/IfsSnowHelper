@@ -1,5 +1,6 @@
 package com.ruimin.helper.provider.reference;
 
+import com.intellij.patterns.XmlAttributeValuePattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
@@ -27,8 +28,8 @@ public class DataSetToJavaReferenceProvider extends PsiReferenceProvider {
         XmlTag rootTag = xmlFile.getRootTag();
         if (rootTag != null && Data.TAG_NAME.equals(rootTag.getName())) {
             XmlAttributeValue attribute = (XmlAttributeValue) element;
-            String hostName = attribute.getHostName();
-            if (DtstConstants.XML_TAG_FLOWID_ATTRIBUTE_NAME.equals(hostName)) {
+            String localName = XmlAttributeValuePattern.getLocalName(attribute);
+            if (DtstConstants.XML_TAG_FLOWID_ATTRIBUTE_NAME.equals(localName)) {
                 return new PsiReference[]{new DatasetToJavaReference(attribute)};
             }
         }
