@@ -45,12 +45,18 @@
 #### 如何使用
 
 插件安装成功后在jsp、dtst、java文件的编辑区域左侧会出现箭头点击箭头即可转向对应文件。
-
-![](/src/main/resources/img/arrow.png)
+![](/image/jsp2dtst.gif)
 
 在使用过程中，如果项目比较复杂dtst、jsp文件较多的情况下索引较慢，箭头可能会等待一段时间才会出现
 
-##### 箭头分为三种颜色分别对应不同文件：
+##### 引用方式跳转
+- dtst跳转到java
+  ![](/image/dtst2java.gif)
+- java跳转到rqlx
+  ![](/image/java2rqlx.gif)
+
+##### 箭头分为四种颜色分别对应不同文件：
+- <img src="src/main/resources/icons/go-red.svg" alt="red" width="20" > 对应rqlx文件，点击后跳转到对应sql处（1.40版本新增）
 
 - <img src="src/main/resources/icons/go-blue.svg" alt="blue" width="20" > 对应java文件，点击后跳转对应方法；
 
