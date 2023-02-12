@@ -1,4 +1,4 @@
-![helperLogo](D:\WorkSpace\Project\personal\IfsSnowHelper\src\main\resources\META-INF\pluginIcon.svg "helperLogo")
+![helperLogo](src\main\resources\META-INF\pluginIcon.svg "helperLogo")
 
 ## IfsSnowHelper
 
@@ -62,22 +62,22 @@
 1. 下载插件
 2. 无需解压将zip文件拖入idea界面（也可以在idea插件管理界面使用安装本地插件功能选择zip文件安装）
 3. 在idea设置中为xml文件类型添加三个文件后缀`*.dtst`,`*.dtmd`,`*.rqlx`
-   ![](D:\WorkSpace\Project\personal\IfsSnowHelper\src\main\resources\img\fileType.png)
+   ![](src\main\resources\img\fileType.png)
 4. 至此重启idea后即安装成功！
 
 #### 如何使用
 
 插件安装成功后在jsp、dtst、java文件的编辑区域左侧会出现箭头点击箭头即可转向对应文件。
 
-![](D:\WorkSpace\Project\personal\IfsSnowHelper\src\main\resources\img\arrow.png)
+![](src\main\resources\img\arrow.png)
 
 在使用过程中，如果项目比较复杂dtst、jsp文件较多的情况下索引较慢，箭头可能会等待一段时间才会出现
 
 ##### 箭头分为三种颜色分别对应不同文件：
 
-- ![](D:\WorkSpace\Project\personal\IfsSnowHelper\src\main\resources\icons\go-blue.svg) 对应java文件，点击后跳转对应方法；
+- ![](src\main\resources\icons\go-blue.svg) 对应java文件，点击后跳转对应方法；
 
-- ![](D:\WorkSpace\Project\personal\IfsSnowHelper\src\main\resources\icons\go-green.svg) 对应dtst文件，点击后跳转到对应dtst文件；
+- ![](src\main\resources\icons\go-green.svg) 对应dtst文件，点击后跳转到对应dtst文件；
 
-- ![](D:\WorkSpace\Project\personal\IfsSnowHelper\src\main\resources\icons\go-yellow.svg)
+- ![](src\main\resources\icons\go-yellow.svg)
   对应jsp文件，点击后跳转到对应jsp文件；（只可能显示在dtst文件的`<Data>`标签左侧）
