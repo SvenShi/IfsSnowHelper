@@ -42,6 +42,8 @@
 
 插件市场已发布！搜索IfsSnowHelper即可。目前还在审核！
 
+#### 如何使用
+
 插件安装成功后在jsp、dtst、java文件的编辑区域左侧会出现箭头点击箭头即可转向对应文件。
 
 ![](/src/main/resources/img/arrow.png)
