@@ -10,6 +10,7 @@ public interface DtstConstants {
 
     // dtst文件后缀
     String DTST_FILE_EXTENSION = "dtst";
+    String DTMD_FILE_EXTENSION = "dtmd";
     String DTST_FILE_EXTENSION_DOT = CommonConstants.DOT_SEPARATE + DTST_FILE_EXTENSION;
 
 
