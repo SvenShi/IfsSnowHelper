@@ -15,6 +15,13 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
         <h1 id="ifssnowhelper">IfsSnowHelper</h1>
+        <h2>introduction</h2>
+        <p>This plug-in is developed in my spare time due to my personal interest. It is a simple attempt and study of the development of idea plug-in.</p>
+        <p>The company developed the framework of special files to jump to each other, and the various java methods in the reference jump</p>
+        <p>GitHub：<a href="https://github.com/SvenShi/IfsSnowHelper">https://github.com/SvenShi/IfsSnowHelper</a></p>
+
+
+
         <h2>简介</h2>
         <p>本插件为个人兴趣使然在业余时间开发，对idea插件开发的一次简单尝试与学习。</p>
         <p>公司自研框架中特殊文件的相互跳转，以及其中各种java方法的引用跳转</p>
