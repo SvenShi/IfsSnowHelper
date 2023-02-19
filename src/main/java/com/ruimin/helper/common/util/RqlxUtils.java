@@ -25,10 +25,10 @@ import com.intellij.psi.util.PsiUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.BooleanValueHolder;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.DomService;
+import com.ruimin.helper.common.bean.Holder;
 import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.common.constants.RqlxConstants;
 import com.ruimin.helper.dom.dtst.model.Data;
@@ -153,53 +153,19 @@ public final class RqlxUtils {
      * @return boolean
      */
     private static boolean isRqlxTarget(String rqlxKey, PsiElement element, String rqlxKeySuffix) {
-        PsiElement psiReferenceExpression = element.getParent().getParent().getPrevSibling();
-        if (rqlxKey.equals(removeRqlxKeyQuot(rqlxKeySuffix)) && StringUtils.containsAny(
-            psiReferenceExpression.getText(), SQL_METHOD_NAMES)) {
+        PsiElement psiReferenceExpression = element.getParent().getParent().getParent().getFirstChild();
+        if (rqlxKey.equals(rqlxKeySuffix) && isRqlxMethodName(psiReferenceExpression.getText())) {
             return true;
         } else {
             if (psiReferenceExpression instanceof PsiReferenceExpression) {
-                boolean isRqlMethod = StringUtils.containsAny(psiReferenceExpression.getText(), SQL_METHOD_NAMES);
+                boolean isRqlMethod = isRqlxMethodName(psiReferenceExpression.getText());
                 if (isRqlMethod) {
                     // 是一个rql的查询方法，能进入这段逻辑证明，其中有特殊字符或者根本就不匹配
                     return false;
                 } else {
                     // 需要递归寻找调用的方法拼串后再进行判断
-                    PsiReference reference = psiReferenceExpression.getReference();
-                    if (reference != null) {
-                        PsiElement resolve = reference.resolve();
-                        if (resolve instanceof PsiMethod) {
-                            PsiMethod method = (PsiMethod) resolve;
-                            PsiType returnType = method.getReturnType();
-                            if (returnType != null && returnType.equalsToText(String.class.getName())) {
-                                BooleanValueHolder booleanValueHolder = new BooleanValueHolder(false);
-                                method.accept(new JavaRecursiveElementVisitor() {
-                                    @Override
-                                    public void visitReturnStatement(@NotNull PsiReturnStatement statement) {
-                                        PsiExpression returnValue = statement.getReturnValue();
-                                        if (returnValue != null) {
-                                            returnValue.accept(new JavaRecursiveElementVisitor() {
-                                                @Override
-                                                public void visitLiteralExpression(
-                                                    @NotNull PsiLiteralExpression expression) {
-                                                    String text = expression.getText();
-                                                    if (StringUtils.isNotBlank(text) && text.contains(
-                                                        CommonConstants.DOT_SEPARATE)) {
-                                                        boolean rqlxTarget = isRqlxTarget(rqlxKey,
-                                                            psiReferenceExpression,
-                                                            removeRqlxKeyQuot(text) + rqlxKeySuffix);
-                                                        booleanValueHolder.setValue(rqlxTarget);
-                                                    }
-                                                }
-                                            });
-                                        }
-
-                                    }
-                                });
-                                return booleanValueHolder.getValue();
-                            }
-                        }
-                    }
+                    String splicedRqlxKey = getSplicedRqlxKey(psiReferenceExpression, rqlxKeySuffix);
+                    return rqlxKey.equals(splicedRqlxKey);
                 }
             }
         }
@@ -247,9 +213,6 @@ public final class RqlxUtils {
         if (CollectionUtils.isNotEmpty(rqlKeySet) && project != null) {
             for (String key : rqlKeySet) {
                 if (StringUtils.isNotBlank(key)) {
-                    if (key.contains("\"")) {
-                        key = key.replace("\"", "");
-                    }
                     int fileAndMethodIndex = StringUtils.lastIndexOf(key, CommonConstants.DOT_SEPARATE);
                     // 字符串处理为包名和rqlx名
                     String methodName = StringUtils.substring(key, fileAndMethodIndex + 1);
@@ -376,9 +339,94 @@ public final class RqlxUtils {
     }
 
 
+    /**
+     * 删除rqlx key 两边的引号
+     *
+     * @param rqlxKey rqlx关键
+     * @return {@link String}
+     */
     public static String removeRqlxKeyQuot(@NotNull String rqlxKey) {
         return StringUtils.remove(rqlxKey, "\"");
     }
 
 
+    /**
+     * 判断是否是rqlx的java方法
+     *
+     * @param methodName 方法名称
+     * @return boolean
+     */
+    public static boolean isRqlxMethodName(String methodName) {
+        return StringUtils.containsAny(methodName, SQL_METHOD_NAMES);
+    }
+
+    /**
+     * 是否是拼接的rqlx Key
+     *
+     * @param referenceExpression 引用表达式
+     * @return boolean
+     */
+    public static boolean isSpliceRqlxKey(PsiElement referenceExpression) {
+        if (referenceExpression == null) {
+            return false;
+        }
+        if (isRqlxMethodName(referenceExpression.getText())) {
+            return true;
+        } else {
+            return isSpliceRqlxKey(referenceExpression.getParent().getParent().getPrevSibling());
+        }
+    }
+
+    /**
+     * 得到拼接的rqlx key
+     *
+     * @param referenceExpression 引用表达式
+     * @param rqlxKey rqlx key
+     * @return {@link String}
+     */
+    @Nullable
+    public static String getSplicedRqlxKey(PsiElement referenceExpression, String rqlxKey) {
+        if (referenceExpression == null) {
+            return null;
+        }
+        if (isRqlxMethodName(referenceExpression.getText())) {
+            return rqlxKey;
+        }
+        PsiReference reference = referenceExpression.getReference();
+        if (reference != null) {
+            PsiElement resolve = reference.resolve();
+            if (resolve instanceof PsiMethod) {
+                PsiMethod method = (PsiMethod) resolve;
+                PsiType returnType = method.getReturnType();
+                if (returnType != null && returnType.equalsToText(String.class.getName())) {
+                    Holder<String> rqlxKeyHolder = new Holder<>("");
+                    method.accept(new JavaRecursiveElementVisitor() {
+                        @Override
+                        public void visitReturnStatement(@NotNull PsiReturnStatement statement) {
+                            PsiExpression returnValue = statement.getReturnValue();
+                            if (returnValue != null) {
+                                returnValue.accept(new JavaRecursiveElementVisitor() {
+                                    @Override
+                                    public void visitLiteralExpression(
+                                        @NotNull PsiLiteralExpression expression) {
+                                        String text = expression.getText();
+                                        if (StringUtils.isNotBlank(text) && text.contains(
+                                            CommonConstants.DOT_SEPARATE)) {
+                                            String splicedRqlxKey = getSplicedRqlxKey(
+                                                referenceExpression.getParent().getParent().getParent().getFirstChild(),
+                                                StringUtils.removeQuot(text) + rqlxKey);
+                                            rqlxKeyHolder.set(splicedRqlxKey);
+                                        }
+                                    }
+                                });
+                            }
+
+                        }
+                    });
+                    return rqlxKeyHolder.get();
+                }
+            }
+        }
+        return null;
+    }
 }

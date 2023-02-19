@@ -1,15 +1,14 @@
 package com.ruimin.helper.provider.reference;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiExpressionList;
 import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import com.ruimin.helper.common.util.RqlxUtils;
+import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.reference.JavaToRqlxReference;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,22 +22,27 @@ public class JavaToRqlxReferenceProvider extends PsiReferenceProvider {
     @Override
     public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
         @NotNull ProcessingContext context) {
-        PsiLiteralExpression expression = (PsiLiteralExpression) element;
-        String text = expression.getText();
-        if (StringUtils.isNotBlank(text)) {
-            if (text.contains(".") && text.startsWith("\"") && text.endsWith("\"")) {
-                PsiElement parent = element.getParent();
-                if (parent instanceof PsiExpressionList) {
-                    PsiElement prevSibling = parent.getPrevSibling();
-                    if (prevSibling instanceof PsiReferenceExpression) {
-                        for (PsiElement child : prevSibling.getChildren()) {
-                            if (StringUtils.containsAny(child.getText(), RqlxUtils.SQL_METHOD_NAMES)) {
-                                return new PsiReference[]{new JavaToRqlxReference(expression)};
-                            }
-                        }
+        if (element instanceof PsiLiteralExpression) {
+            PsiLiteralExpression expression = (PsiLiteralExpression) element;
+            PsiElement callExpression = expression.getParent().getParent();
+            if (callExpression instanceof PsiMethodCallExpression) {
+                PsiElement referenceExpression = callExpression.getFirstChild();
+                if (RqlxUtils.isRqlxMethodName(referenceExpression.getText())) {
+                    // 直接就是rqlx select的方法
+                    return new PsiReference[]{
+                        new JavaToRqlxReference(expression, StringUtils.removeQuot(expression.getText()))};
+                } else if (RqlxUtils.isSpliceRqlxKey(referenceExpression)) {
+                    //     调用方法拼接的
+                    String rqlxKey = RqlxUtils.getSplicedRqlxKey(referenceExpression,
+                        StringUtils.removeQuot(expression.getText()));
+                    if (StringUtils.isNotBlank(rqlxKey)){
+                        return new PsiReference[]{
+                            new JavaToRqlxReference(expression, rqlxKey)};
                     }
                 }
             }
+
+
         }
         return PsiReference.EMPTY_ARRAY;
     }

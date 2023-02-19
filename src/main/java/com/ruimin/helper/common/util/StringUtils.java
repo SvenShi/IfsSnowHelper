@@ -30,4 +30,8 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         }
         return indexes;
     }
+
+    public static String removeQuot(String text) {
+        return StringUtils.remove(text, "\"");
+    }
 }

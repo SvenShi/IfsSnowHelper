@@ -27,12 +27,18 @@ public class JavaToRqlxReference extends PsiReferenceBase<PsiLiteralExpression> 
 
 
     /**
+     * rqlx key
+     */
+    private final String rqlxKey;
+
+    /**
      * Reference range is obtained from {@link ElementManipulator#getRangeInElement(PsiElement)}.
      *
      * @param element Underlying element.
      */
-    public JavaToRqlxReference(@NotNull PsiLiteralExpression element) {
+    public JavaToRqlxReference(@NotNull PsiLiteralExpression element, String rqlxKey) {
         super(Objects.requireNonNull(element), new TextRange(1, element.getText().length() - 1));
+        this.rqlxKey = rqlxKey;
     }
 
 
@@ -60,8 +66,8 @@ public class JavaToRqlxReference extends PsiReferenceBase<PsiLiteralExpression> 
      */
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-        String rqlxKey = myElement.getText();
-        Collection<XmlAttributeValue> xmlTagByRqlKey = RqlxUtils.findXmlTagByRqlKey(myElement.getResolveScope(), rqlxKey);
+        Collection<XmlAttributeValue> xmlTagByRqlKey = RqlxUtils.findXmlTagByRqlKey(myElement.getResolveScope(),
+            rqlxKey);
         if (CollectionUtils.isNotEmpty(xmlTagByRqlKey)) {
             ArrayList<ResolveResult> resolveResults = new ArrayList<>();
             for (XmlAttributeValue attributeValue : xmlTagByRqlKey) {
