@@ -24,18 +24,18 @@ public class JavaToRqlxReferenceProvider extends PsiReferenceProvider {
         @NotNull ProcessingContext context) {
         if (element instanceof PsiLiteralExpression) {
             PsiLiteralExpression expression = (PsiLiteralExpression) element;
-            PsiElement callExpression = expression.getParent().getParent();
-            if (callExpression instanceof PsiMethodCallExpression) {
+            PsiMethodCallExpression callExpression = RqlxUtils.getLatestMethodCallExpressionFromParent(expression);
+            if (callExpression != null) {
                 PsiElement referenceExpression = callExpression.getFirstChild();
                 if (RqlxUtils.isRqlxMethodName(referenceExpression.getText())) {
                     // 直接就是rqlx select的方法
                     return new PsiReference[]{
-                        new JavaToRqlxReference(expression, StringUtils.removeQuot(expression.getText()))};
+                        new JavaToRqlxReference(expression, StringUtils.removeQuot(element.getText()))};
                 } else if (RqlxUtils.isSpliceRqlxKey(referenceExpression)) {
                     //     调用方法拼接的
                     String rqlxKey = RqlxUtils.getSplicedRqlxKey(referenceExpression,
-                        StringUtils.removeQuot(expression.getText()));
-                    if (StringUtils.isNotBlank(rqlxKey)){
+                        StringUtils.removeQuot(element.getText()));
+                    if (StringUtils.isNotBlank(rqlxKey)) {
                         return new PsiReference[]{
                             new JavaToRqlxReference(expression, rqlxKey)};
                     }

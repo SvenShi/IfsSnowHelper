@@ -10,10 +10,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaRecursiveElementVisitor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiExpressionList;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLiteralExpression;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceExpression;
 import com.intellij.psi.PsiReturnStatement;
@@ -135,7 +137,7 @@ public final class RqlxUtils {
             for (Integer index : StringUtils.indexOfAll(text, rqlxId)) {
                 PsiElement elementAtOffset = PsiUtil.getElementAtOffset(file, index);
                 String offsetRqlxId = elementAtOffset.getText();
-                boolean target = isRqlxTarget(rqlxKey, elementAtOffset, removeRqlxKeyQuot(offsetRqlxId));
+                boolean target = isRqlxTarget(rqlxKey, elementAtOffset.getParent(), removeRqlxKeyQuot(offsetRqlxId));
                 if (target) {
                     elements.add(elementAtOffset);
                 }
@@ -153,19 +155,22 @@ public final class RqlxUtils {
      * @return boolean
      */
     private static boolean isRqlxTarget(String rqlxKey, PsiElement element, String rqlxKeySuffix) {
-        PsiElement psiReferenceExpression = element.getParent().getParent().getParent().getFirstChild();
-        if (rqlxKey.equals(rqlxKeySuffix) && isRqlxMethodName(psiReferenceExpression.getText())) {
-            return true;
-        } else {
-            if (psiReferenceExpression instanceof PsiReferenceExpression) {
-                boolean isRqlMethod = isRqlxMethodName(psiReferenceExpression.getText());
-                if (isRqlMethod) {
-                    // 是一个rql的查询方法，能进入这段逻辑证明，其中有特殊字符或者根本就不匹配
-                    return false;
-                } else {
-                    // 需要递归寻找调用的方法拼串后再进行判断
-                    String splicedRqlxKey = getSplicedRqlxKey(psiReferenceExpression, rqlxKeySuffix);
-                    return rqlxKey.equals(splicedRqlxKey);
+        PsiMethodCallExpression callExpression = getLatestMethodCallExpressionFromParent(element);
+        if (callExpression != null) {
+            PsiElement psiReferenceExpression = callExpression.getFirstChild();
+            if (rqlxKey.equals(rqlxKeySuffix) && isRqlxMethodName(psiReferenceExpression.getText())) {
+                return true;
+            } else {
+                if (psiReferenceExpression instanceof PsiReferenceExpression) {
+                    boolean isRqlMethod = isRqlxMethodName(psiReferenceExpression.getText());
+                    if (isRqlMethod) {
+                        // 是一个rql的查询方法，能进入这段逻辑证明，其中有特殊字符或者根本就不匹配
+                        return false;
+                    } else {
+                        // 需要递归寻找调用的方法拼串后再进行判断
+                        String splicedRqlxKey = getSplicedRqlxKey(psiReferenceExpression, rqlxKeySuffix);
+                        return rqlxKey.equals(splicedRqlxKey);
+                    }
                 }
             }
         }
@@ -373,8 +378,15 @@ public final class RqlxUtils {
         if (isRqlxMethodName(referenceExpression.getText())) {
             return true;
         } else {
-            return isSpliceRqlxKey(referenceExpression.getParent().getParent().getPrevSibling());
+            PsiMethodCallExpression callExpression = getLatestMethodCallExpressionFromParent(
+                referenceExpression);
+            PsiMethodCallExpression parentCallExpression = getLatestMethodCallExpressionFromParent(
+                callExpression);
+            if (parentCallExpression != null) {
+                return isSpliceRqlxKey(parentCallExpression.getFirstChild());
+            }
         }
+        return false;
     }
 
     /**
@@ -407,15 +419,22 @@ public final class RqlxUtils {
                             if (returnValue != null) {
                                 returnValue.accept(new JavaRecursiveElementVisitor() {
                                     @Override
-                                    public void visitLiteralExpression(
-                                        @NotNull PsiLiteralExpression expression) {
+                                    public void visitLiteralExpression(@NotNull PsiLiteralExpression expression) {
                                         String text = expression.getText();
                                         if (StringUtils.isNotBlank(text) && text.contains(
                                             CommonConstants.DOT_SEPARATE)) {
-                                            String splicedRqlxKey = getSplicedRqlxKey(
-                                                referenceExpression.getParent().getParent().getParent().getFirstChild(),
-                                                StringUtils.removeQuot(text) + rqlxKey);
-                                            rqlxKeyHolder.set(splicedRqlxKey);
+                                            // 调用第一遍是传进来的参数的方法本身
+                                            PsiMethodCallExpression callExpression = getLatestMethodCallExpressionFromParent(
+                                                referenceExpression);
+                                            // 调用第二遍是是本方法的上一层方法
+                                            PsiMethodCallExpression parentCallExpression = getLatestMethodCallExpressionFromParent(
+                                                callExpression);
+                                            if (parentCallExpression != null) {
+                                                String splicedRqlxKey = getSplicedRqlxKey(
+                                                    parentCallExpression.getFirstChild(),
+                                                    StringUtils.removeQuot(text) + rqlxKey);
+                                                rqlxKeyHolder.set(splicedRqlxKey);
+                                            }
                                         }
                                     }
                                 });
@@ -428,5 +447,26 @@ public final class RqlxUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * 得到最新方法调用表达式
+     *
+     * @param element 元素
+     * @return {@link PsiMethodCallExpression}
+     */
+    @Nullable
+    public static PsiMethodCallExpression getLatestMethodCallExpressionFromParent(PsiElement element) {
+        if (element == null) {
+            return null;
+        }
+        PsiElement parent = element.getParent();
+        if (!(parent instanceof PsiExpression) && !(parent instanceof PsiExpressionList)) {
+            return null;
+        }
+        if (parent instanceof PsiMethodCallExpression) {
+            return ((PsiMethodCallExpression) parent);
+        }
+        return getLatestMethodCallExpressionFromParent(parent);
     }
 }
