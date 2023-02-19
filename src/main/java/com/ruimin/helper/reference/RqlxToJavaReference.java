@@ -1,5 +1,6 @@
 package com.ruimin.helper.reference;
 
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulator;
@@ -63,10 +64,11 @@ public class RqlxToJavaReference extends PsiReferenceBase<XmlAttributeValue> imp
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
         String id = myElement.getValue();
-        String rqlxKey = RqlxUtils.getRqlxKey(myElement.getContainingFile(), id);
-        if (StringUtils.isNotBlank(rqlxKey)) {
-            List<PsiElement> rqlReference = RqlxUtils.findRqlReference(rqlxKey,
-                ModuleUtil.findModuleForPsiElement(myElement));
+        String rqlxPath = RqlxUtils.getRqlxPathByFile(myElement.getContainingFile());
+        Module module = ModuleUtil.findModuleForPsiElement(myElement);
+
+        if (StringUtils.isNotBlank(rqlxPath) && module != null) {
+            List<PsiElement> rqlReference = RqlxUtils.findRqlReference(rqlxPath, id, module);
             if (CollectionUtils.isNotEmpty(rqlReference)) {
                 ArrayList<ResolveResult> resolveResults = new ArrayList<>();
                 for (PsiElement element : rqlReference) {

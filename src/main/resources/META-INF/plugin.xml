@@ -72,15 +72,5 @@
 
         <!-- 项目打开事件-->
         <postStartupActivity implementation="com.ruimin.helper.listener.ProjectStartupListener"/>
-
     </extensions>
-
-    <applicationListeners>
-        <listener
-                class="com.ruimin.helper.listener.FileChangeListener"
-                topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
-        <listener
-                class="com.ruimin.helper.listener.ProjectCloseListener"
-                topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
 </idea-plugin>

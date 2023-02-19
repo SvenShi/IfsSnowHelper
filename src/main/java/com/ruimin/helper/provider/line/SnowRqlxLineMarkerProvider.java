@@ -11,6 +11,7 @@ import com.ruimin.helper.common.util.RqlxUtils;
 import com.ruimin.helper.dom.rql.model.Rql;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.Icon;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -37,9 +38,9 @@ public class SnowRqlxLineMarkerProvider extends SimpleLineMarkerProvider<XmlToke
         if (rql != null) {
             Module module = rql.getModule();
             if (module != null) {
-                String rqlxKey = RqlxUtils.getRqlxKeyByRqlTag(rql);
-                if (StringUtils.isNotBlank(rqlxKey)) {
-                    return RqlxUtils.findRqlReference(rqlxKey, module);
+                String rqlxPath = RqlxUtils.getRqlxPathByFile(Objects.requireNonNull(rql.getXmlElement()).getContainingFile());
+                if (StringUtils.isNotBlank(rqlxPath)) {
+                    return RqlxUtils.findRqlReference(rqlxPath, rql.getId().getValue(), module);
                 }
             }
         }

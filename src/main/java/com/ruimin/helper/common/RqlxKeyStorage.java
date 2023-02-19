@@ -267,7 +267,7 @@ public class RqlxKeyStorage {
     private ArrayList<PsiElement> getRqlxKeyElement(PsiFile file) {
         ArrayList<PsiElement> elements = new ArrayList<>();
         // 所有的方法名
-        for (String rqlxMethodName : RqlxUtils.SQL_METHOD_NAME) {
+        for (String rqlxMethodName : RqlxUtils.SQL_METHOD_NAMES) {
             List<Integer> indexes = StringUtils.indexOfAll(file.getText(), rqlxMethodName);
             if (CollectionUtils.isNotEmpty(indexes)) {
                 // 是否包含方法名

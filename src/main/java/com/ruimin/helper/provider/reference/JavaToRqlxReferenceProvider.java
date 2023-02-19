@@ -32,7 +32,7 @@ public class JavaToRqlxReferenceProvider extends PsiReferenceProvider {
                     PsiElement prevSibling = parent.getPrevSibling();
                     if (prevSibling instanceof PsiReferenceExpression) {
                         for (PsiElement child : prevSibling.getChildren()) {
-                            if (RqlxUtils.SQL_METHOD_NAME.contains(child.getText())) {
+                            if (StringUtils.containsAny(child.getText(), RqlxUtils.SQL_METHOD_NAMES)) {
                                 return new PsiReference[]{new JavaToRqlxReference(expression)};
                             }
                         }
