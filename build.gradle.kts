@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.12.0"
+    id("org.jetbrains.intellij") version "1.13.0"
 }
 
 
@@ -16,11 +16,11 @@ repositories {
 intellij {
     version.set("2022.3")
     type.set("IU") // Target IDE Platform
+    instrumentCode.set(false)
 
     plugins.set(
         listOf(
-            "org.intellij.intelliLang",
-            "com.intellij.jsp"
+            "org.intellij.intelliLang", "com.intellij.jsp"
         )
     )
 
