@@ -30,7 +30,6 @@ public class ProjectStartupListener extends PostStartupActivity {
      */
     private void associateFileType() {
 
-
         ApplicationManager.getApplication().invokeLater(()->{
             WriteAction.run(()->{
                 FileTypeManager typeManager = FileTypeManager.getInstance();
