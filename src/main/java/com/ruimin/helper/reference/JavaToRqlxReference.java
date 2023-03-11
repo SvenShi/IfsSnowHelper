@@ -1,5 +1,7 @@
 package com.ruimin.helper.reference;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulator;
 import com.intellij.psi.PsiElement;
@@ -66,14 +68,17 @@ public class JavaToRqlxReference extends PsiReferenceBase<PsiLiteralExpression> 
      */
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-        Collection<XmlAttributeValue> xmlTagByRqlKey = RqlxUtils.findXmlTagByRqlKey(myElement.getResolveScope(),
-            rqlxKey);
-        if (CollectionUtils.isNotEmpty(xmlTagByRqlKey)) {
-            ArrayList<ResolveResult> resolveResults = new ArrayList<>();
-            for (XmlAttributeValue attributeValue : xmlTagByRqlKey) {
-                resolveResults.add(new PsiElementResolveResult(attributeValue));
+        Module module = ModuleUtil.findModuleForPsiElement(myElement);
+        if (module != null) {
+            Collection<XmlAttributeValue> xmlTagByRqlKey = RqlxUtils.findXmlTagByRqlKey(module.getModuleScope(),
+                rqlxKey);
+            if (CollectionUtils.isNotEmpty(xmlTagByRqlKey)) {
+                ArrayList<ResolveResult> resolveResults = new ArrayList<>();
+                for (XmlAttributeValue attributeValue : xmlTagByRqlKey) {
+                    resolveResults.add(new PsiElementResolveResult(attributeValue));
+                }
+                return resolveResults.toArray(new ResolveResult[0]);
             }
-            return resolveResults.toArray(new ResolveResult[0]);
         }
         return new ResolveResult[0];
     }
