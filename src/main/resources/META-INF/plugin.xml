@@ -12,8 +12,9 @@
     <change-notes><![CDATA[
       <h4>2.22</h4>
       <ul>
-          <li>移除原有的rqlx key缓存，改为调用idea api避免开启时的加载时间</li>
-          <li>rqlx key现在可以解析使用方法拼接的rqlx key，通过点击传参跳转</li>
+          <li>代码包名、类名重构</li>
+          <li>弃用jsp文件使用箭头跳转dtst文件的方式，改为使用引用方式跳转dtst</li>
+          <li>jsp 文件中的 JavaScript xxx_interface_dataset 以及 xxx_dataset变量引用到dataSet声明处</li>
       </ul>
       ]]>
     </change-notes>
