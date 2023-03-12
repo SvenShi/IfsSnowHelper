@@ -56,13 +56,16 @@
         <!-- java引用-->
         <psi.referenceContributor language="JAVA"
                 implementation="com.ruimin.helper.contributor.JavaReferenceContributor"/>
+        <!-- jsp引用-->
+        <psi.referenceContributor language="JSP"
+                implementation="com.ruimin.helper.contributor.JspReferenceContributor"/>
 
-        <!--文件描述-->
-        <!-- dtst文件属性提示 -->
+        <!-- xml文件描述-->
+        <!-- dtst文件 -->
         <dom.fileMetaData id="snow.DtstDescription"
                 rootTagName="Data"
                 implementation="com.ruimin.helper.dom.dtst.description.DtstDescription"/>
-        <!-- Rqlx文件属性提示 -->
+        <!-- Rqlx文件 -->
         <dom.fileMetaData id="snow.RqlxDescription"
                 rootTagName="mapper"
                 implementation="com.ruimin.helper.dom.rql.description.RqlxDescription"/>
@@ -74,9 +77,6 @@
         <codeInsight.lineMarkerProvider id="snow.SnowRqlxLineMarkerProvider" language="XML"
                 implementationClass="com.ruimin.helper.provider.line.SnowRqlxLineMarkerProvider"/>
 
-        <!-- jsp 跳转到 dtst -->
-        <codeInsight.lineMarkerProvider id="snow.SnowJspLineMarkerProvider" language="JSP"
-                implementationClass="com.ruimin.helper.provider.line.SnowJspLineMarkerProvider"/>
 
         <!-- 项目打开事件-->
         <postStartupActivity implementation="com.ruimin.helper.listener.ProjectStartupListener"/>

@@ -18,6 +18,8 @@ public interface SnowPageConstants {
     String DTST_ATTR_NAME_PATH = "path";
     String DTST_ATTR_NAME_ID = "id";
 
+    String DTST_EXPRESSION_SUFFIX = "_dataset";
+
     // 按钮标签属性
     String BUTTON_ATTR_NAME_DATASET = "dataset";
     String BUTTON_ATTR_NAME_ID = "id";

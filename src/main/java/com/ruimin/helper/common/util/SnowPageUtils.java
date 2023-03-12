@@ -11,8 +11,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.jsp.BaseJspFile;
+import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.common.constants.DtstConstants;
@@ -112,8 +114,57 @@ public class SnowPageUtils {
         } else {
             FileViewProvider fileViewProvider = containingFile.getViewProvider();
             PsiFile psi = fileViewProvider.getPsi(fileViewProvider.getBaseLanguage());
-            return psi instanceof BaseJspFile ? (BaseJspFile)psi : null;
+            return psi instanceof BaseJspFile ? (BaseJspFile) psi : null;
         }
     }
 
+    /**
+     * 找到所有数据集标签
+     *
+     * @param jspFile jsp文件
+     * @return {@link List}<{@link XmlTag}>
+     */
+    public static List<XmlTag> getDataSetTag(JspFile jspFile) {
+        List<XmlTag> pageTags = getPageTag(jspFile);
+        List<XmlTag> datasetTags = new ArrayList<>();
+        for (XmlTag pageTag : pageTags) {
+            XmlTag[] subTags = pageTag.findSubTags(SnowPageConstants.SNOW_PAGE_DATASET_TAG_NAME);
+            datasetTags.addAll(List.of(subTags));
+        }
+        return datasetTags;
+    }
+
+    /**
+     * 找到所有页面标签
+     *
+     * @param jspFile jsp文件
+     * @return {@link List}<{@link XmlTag}>
+     */
+    public static List<XmlTag> getPageTag(JspFile jspFile) {
+        XmlTag rootTag = jspFile.getRootTag();
+        XmlTag[] subTags = rootTag.findSubTags(SnowPageConstants.SNOW_PAGE_ROOT_TAG_NAME);
+        return List.of(subTags);
+    }
+
+    /**
+     * 得到标签
+     *
+     * @param attribute 属性
+     * @return {@link XmlTag}
+     */
+    public static XmlTag findTag(XmlElement attribute) {
+        if (attribute == null) {
+            return null;
+        }
+        if (attribute instanceof XmlTag) {
+            return (XmlTag) attribute;
+        }
+        PsiElement parent = attribute.getParent();
+
+        if (parent instanceof XmlElement) {
+            return findTag((XmlElement) parent);
+        } else {
+            return null;
+        }
+    }
 }

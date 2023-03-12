@@ -189,30 +189,37 @@ public final class DtstUtils {
      * 找到dtst根据文件路径
      *
      * @param dtstPath dtst路径
-     * @param project 项目
-     * @return {@link XmlFile}
+     * @param scope 范围
+     * @return {@link ArrayList}<{@link XmlFile}>
      */
-    public static ArrayList<XmlFile> findDtstFileByPath(String dtstPath, Project project) {
+    public static ArrayList<XmlFile> findDtstFileByPath(String dtstPath,@NotNull GlobalSearchScope scope) {
         ArrayList<XmlFile> psiFiles = new ArrayList<>();
-        // 所属项目
-        PsiManager psiManager = PsiManager.getInstance(project);
-        // dataset标签的path属性
-        if (StringUtils.isNotBlank(dtstPath)) {
-            int index = StringUtils.lastIndexOf(dtstPath, CommonConstants.DOT_SEPARATE);
-            // 字符串处理为包名和datset名
-            String dtstName = StringUtils.substring(dtstPath, index + 1);
-            String packageName = StringUtils.substring(dtstPath, 0, index);
-            // 找到所在的包
-            Collection<VirtualFile> matchPackages = PackageIndex.getInstance(project)
-                .getDirsByPackageName(packageName, false)
-                .findAll();
-            for (VirtualFile matchPackage : matchPackages) {
-                // 匹配包下面的文件
-                VirtualFile child = matchPackage.findChild(dtstName + DtstConstants.DTST_FILE_EXTENSION_DOT);
-                if (child != null) {
-                    PsiFile file = psiManager.findFile(child);
-                    if (file != null && isDtstFile(file)) {
-                        psiFiles.add((XmlFile) file);
+        Project project = scope.getProject();
+        if (project != null) {
+            // 所属项目
+            PsiManager psiManager = PsiManager.getInstance(project);
+            // dataset标签的path属性
+            if (StringUtils.isNotBlank(dtstPath)) {
+                int index = StringUtils.lastIndexOf(dtstPath, CommonConstants.DOT_SEPARATE);
+                // 字符串处理为包名和dataset名
+                String dtstName = StringUtils.substring(dtstPath, index + 1);
+                String packageName = StringUtils.substring(dtstPath, 0, index);
+                // 找到所在的包
+                Collection<VirtualFile> matchPackages = PackageIndex.getInstance(project)
+                    .getDirsByPackageName(packageName, false)
+                    .findAll();
+                for (VirtualFile matchPackage : matchPackages) {
+                    // 匹配包下面的文件
+                    VirtualFile child = matchPackage.findChild(dtstName + DtstConstants.DTST_FILE_EXTENSION_DOT);
+                    if (child != null) {
+                        boolean contains = scope.contains(child);
+                        if (contains){
+                            PsiFile file = psiManager.findFile(child);
+                            if (file != null && isDtstFile(file)) {
+                                psiFiles.add((XmlFile) file);
+                            }
+                        }
+
                     }
                 }
             }

@@ -142,9 +142,12 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
                 if (split.length >= 2) {
                     if (!NOT_IN_DATASOURCE_TAG.contains(split[0])) {
                         String dtstPath = split[1];
-                        ArrayList<XmlFile> dtst = DtstUtils.findDtstFileByPath(dtstPath, tag.getProject());
-                        if (CollectionUtils.isNotEmpty(dtst)) {
-                            return dtst;
+                        Module module = ModuleUtil.findModuleForPsiElement(tag);
+                        if (module != null){
+                            ArrayList<XmlFile> dtst = DtstUtils.findDtstFileByPath(dtstPath, module.getModuleScope());
+                            if (CollectionUtils.isNotEmpty(dtst)) {
+                                return dtst;
+                            }
                         }
                     }
                 }
