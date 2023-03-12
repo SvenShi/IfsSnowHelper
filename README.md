@@ -10,23 +10,14 @@
 
 #### 功能特点
 
-- [x] Java方法跳转到DTST中引用处
-- [x] dtst跳转到引用的方法处
-- [x] dtst跳转到Jsp `<snow:dataset>` 标签引用处
-- [x] Jsp`<snow:dataset>`标签跳转到对应dtst中
-- [x] Rqlx文件跳转到Java代码引用处
-- [x] Java代码中的Rqlx key跳转到对应的Rqlx文件
-- [x] rqlx文件注入sql语法提示，需要在idea设置中配置方言，如果需要数据库表名、字段提示需要在idea中连接数据库，并且配置SQL
-  Resolution Scopes中设置对应的映射
-
-##### 计划新增
-
-- [ ] Jsp文件dataset标签采用引用方式跳转dtst
-- [ ] 移除Jsp文件dataset标签箭头跳转dtst
-- [ ] Jsp文件button标签采用引用方式跳转dtst
-- [ ] 移除Jsp文件button标签箭头跳转dtst
-- [ ] jsp文件sform标签采用引用方式跳转jsp
-- [ ] dtst datasource属性使用引用方式跳转dtst,移除箭头跳转
+- [x] Java方法与dtst文件的flowId互相跳转，Java方法重命名同时重命名flowId
+- [x] Jsp `<snow:dataset>` 标签的path与dtst文件互相跳转
+- [x] rqlx文件标签的id与Java代码中的rqlx key互相跳转
+- [x] dtst、dtmd文件关联xml文件，rqlx文件注入sql语法提示（需要在idea设置中配置方言，如果需要数据库表名、字段提示需要在idea中连接数据库，并且配置SQL
+  Resolution Scopes中设置对应的映射）
+- [ ] dtst中flowId的自动补全
+- [ ] JavaScript中的自动补全
+- [ ] Java代码中的rqlx key自动补全
 
 #### 随缘更新
 
