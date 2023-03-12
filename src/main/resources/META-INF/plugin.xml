@@ -10,7 +10,7 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="shiwei@rmitec.cn">shiwei</vendor>
     <change-notes><![CDATA[
-      <h4>2.31</h4>
+      <h4>2.32</h4>
       <ul>
           <li>代码包名、类名重构</li>
           <li>弃用jsp文件使用箭头跳转dtst文件的方式，改为使用引用方式跳转dtst</li>

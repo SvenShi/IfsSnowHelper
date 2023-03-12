@@ -1,6 +1,5 @@
 package com.ruimin.helper.js.reference;
 
-import com.intellij.jsp.psi.impl.jspXml.JspXmlFile;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -16,9 +15,9 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.ruimin.helper.core.util.StringUtils;
 import com.ruimin.helper.jsp.constans.JspConstants;
 import com.ruimin.helper.jsp.utils.SnowJspUtils;
-import com.ruimin.helper.core.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -70,11 +69,9 @@ public class JavaScriptQueryReference extends PsiReferenceBase<JSReferenceExpres
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
         PsiFile containingFile = myElement.getContainingFile();
-        if (containingFile instanceof JspXmlFile) {
-            VirtualFile virtualFile = containingFile.getVirtualFile();
-            if (virtualFile != null) {
-                containingFile = PsiManager.getInstance(myElement.getProject()).findFile(virtualFile);
-            }
+        VirtualFile virtualFile = containingFile.getVirtualFile();
+        if (virtualFile != null) {
+            containingFile = PsiManager.getInstance(myElement.getProject()).findFile(virtualFile);
         }
         if (containingFile != null) {
             List<XmlTag> queryTags = SnowJspUtils.findAllTagInFile((XmlFile) containingFile,
