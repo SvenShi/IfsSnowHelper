@@ -78,19 +78,19 @@ public class SnowPageButtonIdReference extends PsiReferenceBase<XmlAttributeValu
         if (module != null) {
             String buttonId = myElement.getValue();
             XmlTag buttonTag = SnowPageUtils.findTag(myElement);
-            String dataSetId = buttonTag.getAttributeValue(SnowPageConstants.BUTTON_ATTR_NAME_DATASET);
+            String dataSetId = buttonTag.getAttributeValue(SnowPageConstants.ATTR_NAME_DATASET);
             if (StringUtils.isNotBlank(dataSetId) && StringUtils.isNotBlank(buttonId)) {
                 DomManager domManager = DomManager.getDomManager(myElement.getProject());
-                List<XmlTag> dataSetList = SnowPageUtils.getDataSetTag(
-                    ((JspFile) myElement.getContainingFile()));
+                List<XmlTag> dataSetList = SnowPageUtils.findAllTagInFile(
+                    ((JspFile) myElement.getContainingFile()),SnowPageConstants.DATASET_TAG_NAME);
                 ArrayList<ResolveResult> resolveResults = new ArrayList<>();
                 for (XmlTag dataSetTag : dataSetList) {
-                    XmlAttribute dataSetIdAttr = dataSetTag.getAttribute(SnowPageConstants.DTST_ATTR_NAME_ID);
+                    XmlAttribute dataSetIdAttr = dataSetTag.getAttribute(SnowPageConstants.ATTR_NAME_ID);
                     if (dataSetIdAttr != null) {
                         String id = dataSetIdAttr.getValue();
                         if (dataSetId.equals(id)) {
                             String dataSetPath = dataSetTag.getAttributeValue(
-                                SnowPageConstants.DTST_ATTR_NAME_PATH);
+                                SnowPageConstants.ATTR_NAME_PATH);
                             if (StringUtils.isNotBlank(dataSetPath)) {
                                 ArrayList<XmlFile> dtstFiles = DtstUtils.findDtstFileByPath(dataSetPath,
                                     module.getModuleScope());

@@ -10,17 +10,21 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.jsp.BaseJspFile;
-import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.common.constants.DtstConstants;
 import com.ruimin.helper.common.constants.SnowPageConstants;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +45,7 @@ public class SnowPageUtils {
     /**
      * 查询项目中的所有page的dtst标签
      */
-    public static List<XmlTag> findAllDtstTag(@NotNull Module module) {
+    public static List<XmlTag> getAllDtstTag(@NotNull Module module) {
         long l = System.currentTimeMillis();
         GlobalSearchScope moduleScope = module.getModuleScope();
 
@@ -55,9 +59,8 @@ public class SnowPageUtils {
             if (file != null) {
                 BaseJspFile jspFile = getJspFile(file);
                 if (jspFile != null) {
-                    for (XmlTag subTag : jspFile.getRootTag().findSubTags(SnowPageConstants.SNOW_PAGE_ROOT_TAG_NAME)) {
-                        CollectionUtils.addAll(xmlTags,
-                            subTag.findSubTags(SnowPageConstants.SNOW_PAGE_DATASET_TAG_NAME));
+                    for (XmlTag subTag : jspFile.getRootTag().findSubTags(SnowPageConstants.PAGE_TAG_NAME)) {
+                        CollectionUtils.addAll(xmlTags, subTag.findSubTags(SnowPageConstants.DATASET_TAG_NAME));
                     }
                 }
             }
@@ -119,31 +122,46 @@ public class SnowPageUtils {
     }
 
     /**
-     * 找到所有数据集标签
-     *
-     * @param jspFile jsp文件
-     * @return {@link List}<{@link XmlTag}>
-     */
-    public static List<XmlTag> getDataSetTag(JspFile jspFile) {
-        List<XmlTag> pageTags = getPageTag(jspFile);
-        List<XmlTag> datasetTags = new ArrayList<>();
-        for (XmlTag pageTag : pageTags) {
-            XmlTag[] subTags = pageTag.findSubTags(SnowPageConstants.SNOW_PAGE_DATASET_TAG_NAME);
-            datasetTags.addAll(List.of(subTags));
-        }
-        return datasetTags;
-    }
-
-    /**
      * 找到所有页面标签
      *
      * @param jspFile jsp文件
      * @return {@link List}<{@link XmlTag}>
      */
-    public static List<XmlTag> getPageTag(JspFile jspFile) {
+    public static List<XmlTag> findAllTagInFile(@NotNull XmlFile jspFile, @NotNull String tagName) {
         XmlTag rootTag = jspFile.getRootTag();
-        XmlTag[] subTags = rootTag.findSubTags(SnowPageConstants.SNOW_PAGE_ROOT_TAG_NAME);
-        return List.of(subTags);
+        if (rootTag != null) {
+            ArrayList<XmlTag> pageTags = new ArrayList<>();
+            findAllTag(rootTag, pageTags, tagName);
+            return pageTags;
+        }
+        return Collections.emptyList();
+    }
+
+    private static void findAllTag(XmlTag rootTag, ArrayList<XmlTag> pageTags, String tagName) {
+        if (rootTag == null) {
+            return;
+        }
+        for (XmlTag subTag : rootTag.getSubTags()) {
+            findAllTag(subTag, pageTags, tagName);
+            if (tagName.equals(subTag.getName())) {
+                pageTags.add(subTag);
+            }
+            if (SnowPageConstants.INCLUDE_TAG_NAME.equals(subTag.getName())) {
+                XmlAttribute attribute = subTag.getAttribute(SnowPageConstants.ATTR_NAME_FILE);
+                if (attribute != null) {
+                    XmlAttributeValue valueElement = attribute.getValueElement();
+                    if (valueElement != null) {
+                        for (PsiReference reference : valueElement.getReferences()) {
+                            PsiElement resolve = reference.resolve();
+                            if (resolve instanceof XmlFile) {
+                                XmlFile xmlFile = (XmlFile) resolve;
+                                findAllTag(xmlFile.getRootTag(), pageTags, tagName);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**

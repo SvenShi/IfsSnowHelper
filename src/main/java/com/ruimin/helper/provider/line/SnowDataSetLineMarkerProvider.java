@@ -115,11 +115,11 @@ public class SnowDataSetLineMarkerProvider extends SimpleLineMarkerProvider<XmlT
         if (StringUtils.isNotBlank(path)) {
             Module module = ModuleUtil.findModuleForPsiElement(xmlToken);
             if (module != null) {
-                List<XmlTag> allDtstTag = SnowPageUtils.findAllDtstTag(module);
+                List<XmlTag> allDtstTag = SnowPageUtils.getAllDtstTag(module);
                 if (CollectionUtils.isNotEmpty(allDtstTag)) {
                     ArrayList<PsiElement> psiElements = new ArrayList<>();
                     for (XmlTag dtstTag : allDtstTag) {
-                        String attributeValue = dtstTag.getAttributeValue(SnowPageConstants.DTST_ATTR_NAME_PATH);
+                        String attributeValue = dtstTag.getAttributeValue(SnowPageConstants.ATTR_NAME_PATH);
                         if (path.equals(attributeValue)) {
                             psiElements.add(dtstTag);
                         }

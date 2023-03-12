@@ -21,11 +21,11 @@ public enum PageTagEnum {
     /**
      * 数据集
      */
-    DataSet(SnowPageConstants.SNOW_PAGE_DATASET_TAG_NAME) {
+    DataSet(SnowPageConstants.DATASET_TAG_NAME) {
         @Override
         public PsiReference @NotNull [] getReference(XmlAttributeValue attributeValue) {
             String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
-            if (SnowPageConstants.DTST_ATTR_NAME_PATH.equals(attributeName)) {
+            if (SnowPageConstants.ATTR_NAME_PATH.equals(attributeName)) {
                 return new PsiReference[]{new SnowPageDataSetPathReference(attributeValue)};
             }
             return PsiReference.EMPTY_ARRAY;
@@ -34,13 +34,13 @@ public enum PageTagEnum {
     /**
      * 按钮
      */
-    Button(SnowPageConstants.SNOW_PAGE_BUTTON_TAG_NAME) {
+    Button(SnowPageConstants.BUTTON_TAG_NAME) {
         @Override
         public PsiReference @NotNull [] getReference(XmlAttributeValue attributeValue) {
             String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
-            if (SnowPageConstants.BUTTON_ATTR_NAME_ID.equals(attributeName)) {
+            if (SnowPageConstants.ATTR_NAME_ID.equals(attributeName)) {
                 return new PsiReference[]{new SnowPageButtonIdReference(attributeValue)};
-            } else if (SnowPageConstants.BUTTON_ATTR_NAME_DATASET.equals(attributeName)) {
+            } else if (SnowPageConstants.ATTR_NAME_DATASET.equals(attributeName)) {
                 return new PsiReference[]{new SnowPageButtonDataSetReference(attributeValue)};
             }
             return PsiReference.EMPTY_ARRAY;

@@ -9,20 +9,22 @@ package com.ruimin.helper.common.constants;
 public interface SnowPageConstants {
 
     // 标签名
-    String SNOW_PAGE_ROOT_TAG_NAME = "snow:page";
-    String SNOW_PAGE_DATASET_TAG_NAME = "snow:dataset";
-    String SNOW_PAGE_BUTTON_TAG_NAME = "snow:button";
+    String PAGE_TAG_NAME = "snow:page";
+    String DATASET_TAG_NAME = "snow:dataset";
+    String BUTTON_TAG_NAME = "snow:button";
+    String QUERY_TAG_NAME = "snow:query";
+    String INCLUDE_TAG_NAME = "include";
 
 
     // dataset标签 属性
-    String DTST_ATTR_NAME_PATH = "path";
-    String DTST_ATTR_NAME_ID = "id";
+    String ATTR_NAME_PATH = "path";
+    String ATTR_NAME_ID = "id";
+    String ATTR_NAME_DATASET = "dataset";
+    String ATTR_NAME_FILE = "file";
+
 
     String DTST_EXPRESSION_SUFFIX = "_dataset";
-
-    // 按钮标签属性
-    String BUTTON_ATTR_NAME_DATASET = "dataset";
-    String BUTTON_ATTR_NAME_ID = "id";
+    String QUERY_EXPRESSION_SUFFIX = "_interface_dataset";
 
 }
 

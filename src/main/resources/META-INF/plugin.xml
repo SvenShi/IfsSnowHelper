@@ -60,6 +60,10 @@
         <psi.referenceContributor language="JSP"
                 implementation="com.ruimin.helper.contributor.JspReferenceContributor"/>
 
+        <!-- JavaScript引用-->
+        <psi.referenceContributor language="JavaScript"
+                implementation="com.ruimin.helper.contributor.JavaScriptReferenceContributor"/>
+
         <!-- xml文件描述-->
         <!-- dtst文件 -->
         <dom.fileMetaData id="snow.DtstDescription"

@@ -19,5 +19,6 @@ public class JspReferenceContributor extends PsiReferenceContributor {
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
         registrar.registerReferenceProvider(PlatformPatterns.psiElement(XmlElementType.XML_ATTRIBUTE_VALUE),
             new SnowPageReferenceProvider());
+        // registrar.registerReferenceProvider(PlatformPatterns.psiElement(), new SnowPageJsReferenceProvider());
     }
 }

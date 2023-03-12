@@ -1,15 +1,20 @@
 package com.ruimin.helper.reference;
 
+import com.intellij.jsp.psi.impl.jspXml.JspXmlFile;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.ElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
-import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.common.constants.SnowPageConstants;
 import com.ruimin.helper.common.util.SnowPageUtils;
@@ -26,15 +31,16 @@ import org.jetbrains.annotations.Nullable;
  * @date 2023/01/14 上午 04:07
  * @description
  */
-public class SnowPageButtonDataSetReference extends PsiReferenceBase<XmlAttributeValue> implements
+public class SnowPageJsDataSetReference extends PsiReferenceBase<JSReferenceExpression> implements
     PsiPolyVariantReference {
+
 
     /**
      * Reference range is obtained from {@link ElementManipulator#getRangeInElement(PsiElement)}.
      *
      * @param element Underlying element.
      */
-    public SnowPageButtonDataSetReference(@NotNull XmlAttributeValue element) {
+    public SnowPageJsDataSetReference(@NotNull JSReferenceExpression element) {
         super(Objects.requireNonNull(element), new TextRange(1, element.getText().length() - 1));
     }
 
@@ -63,23 +69,36 @@ public class SnowPageButtonDataSetReference extends PsiReferenceBase<XmlAttribut
      */
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-        String dataSetId = myElement.getValue();
-        if (StringUtils.isNotBlank(dataSetId)) {
-            List<XmlTag> dataSetList = SnowPageUtils.findAllTagInFile(((JspFile) myElement.getContainingFile()),SnowPageConstants.DATASET_TAG_NAME);
+        PsiFile containingFile = myElement.getContainingFile();
+        if (containingFile instanceof JspXmlFile) {
+            VirtualFile virtualFile = containingFile.getVirtualFile();
+            if (virtualFile != null) {
+                containingFile = PsiManager.getInstance(myElement.getProject()).findFile(virtualFile);
+            }
+        }
+        if (containingFile != null) {
+            List<XmlTag> dataSetTag = SnowPageUtils.findAllTagInFile((XmlFile) containingFile,
+                SnowPageConstants.DATASET_TAG_NAME);
             ArrayList<ResolveResult> resolveResults = new ArrayList<>();
-            for (XmlTag datasetTag : dataSetList) {
-                XmlAttribute attribute = datasetTag.getAttribute(SnowPageConstants.ATTR_NAME_ID);
+            String text = myElement.getText();
+            for (XmlTag xmlTag : dataSetTag) {
+                XmlAttribute attribute = xmlTag.getAttribute(SnowPageConstants.ATTR_NAME_ID);
                 if (attribute != null) {
-                    String id = attribute.getValue();
                     XmlAttributeValue valueElement = attribute.getValueElement();
-                    if (dataSetId.equals(id) && valueElement != null) {
-                        resolveResults.add(new PsiElementResolveResult(valueElement));
+                    if (valueElement != null) {
+                        String value = valueElement.getValue();
+                        if (StringUtils.isNotBlank(value)) {
+                            String dataSetExpression = value + SnowPageConstants.DTST_EXPRESSION_SUFFIX;
+                            if (dataSetExpression.equals(text)) {
+                                resolveResults.add(new PsiElementResolveResult(valueElement));
+                            }
+                        }
                     }
                 }
             }
             return resolveResults.toArray(new ResolveResult[0]);
         }
-        return new ResolveResult[0];
+        return ResolveResult.EMPTY_ARRAY;
     }
 
 
