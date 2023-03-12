@@ -52,37 +52,40 @@
 
         <!-- dtst引用-->
         <psi.referenceContributor language="XML"
-                implementation="com.ruimin.helper.contributor.XmlReferenceContributor"/>
+                implementation="com.ruimin.helper.dtst.contributor.DtstReferenceContributor"/>
+        <!-- rqlx引用-->
+        <psi.referenceContributor language="XML"
+                implementation="com.ruimin.helper.rqlx.contributor.RqlxReferenceContributor"/>
         <!-- java引用-->
         <psi.referenceContributor language="JAVA"
-                implementation="com.ruimin.helper.contributor.JavaReferenceContributor"/>
+                implementation="com.ruimin.helper.java.contributor.JavaReferenceContributor"/>
         <!-- jsp引用-->
         <psi.referenceContributor language="JSP"
-                implementation="com.ruimin.helper.contributor.JspReferenceContributor"/>
+                implementation="com.ruimin.helper.jsp.contributor.JspReferenceContributor"/>
 
         <!-- JavaScript引用-->
         <psi.referenceContributor language="JavaScript"
-                implementation="com.ruimin.helper.contributor.JavaScriptReferenceContributor"/>
+                implementation="com.ruimin.helper.js.contributor.JavaScriptReferenceContributor"/>
 
         <!-- xml文件描述-->
         <!-- dtst文件 -->
         <dom.fileMetaData id="snow.DtstDescription"
                 rootTagName="Data"
-                implementation="com.ruimin.helper.dom.dtst.description.DtstDescription"/>
+                implementation="com.ruimin.helper.dtst.dom.description.DataSetDescription"/>
         <!-- Rqlx文件 -->
         <dom.fileMetaData id="snow.RqlxDescription"
                 rootTagName="mapper"
-                implementation="com.ruimin.helper.dom.rql.description.RqlxDescription"/>
+                implementation="com.ruimin.helper.rqlx.dom.description.RqlxDescription"/>
 
         <!-- dtst 跳转到 java、jsp -->
         <codeInsight.lineMarkerProvider id="snow.SnowDataSetLineMarkerProvider" language="XML"
-                implementationClass="com.ruimin.helper.provider.line.SnowDataSetLineMarkerProvider"/>
+                implementationClass="com.ruimin.helper.dtst.provider.line.SnowDataSetLineMarkerProvider"/>
         <!-- rqlx 跳转到 java -->
         <codeInsight.lineMarkerProvider id="snow.SnowRqlxLineMarkerProvider" language="XML"
-                implementationClass="com.ruimin.helper.provider.line.SnowRqlxLineMarkerProvider"/>
+                implementationClass="com.ruimin.helper.rqlx.provider.line.RqlxLineMarkerProvider"/>
 
 
         <!-- 项目打开事件-->
-        <postStartupActivity implementation="com.ruimin.helper.listener.ProjectStartupListener"/>
+        <postStartupActivity implementation="com.ruimin.helper.core.listener.ProjectStartupListener"/>
     </extensions>
 </idea-plugin>
