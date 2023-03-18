@@ -40,7 +40,6 @@ public class JavaRqlxKeyReference extends PsiReferenceBase<PsiLiteralExpression>
      * @param element Underlying element.
      */
     public JavaRqlxKeyReference(@NotNull PsiLiteralExpression element, String rqlxKey) {
-
         super(Objects.requireNonNull(element), new TextRange(1, DataUtils.mustPositive(element.getText().length() - 1, 1)));
         this.rqlxKey = rqlxKey;
     }
@@ -82,7 +81,7 @@ public class JavaRqlxKeyReference extends PsiReferenceBase<PsiLiteralExpression>
                 return resolveResults.toArray(new ResolveResult[0]);
             }
         }
-        return new ResolveResult[0];
+        return ResolveResult.EMPTY_ARRAY;
     }
 
 }

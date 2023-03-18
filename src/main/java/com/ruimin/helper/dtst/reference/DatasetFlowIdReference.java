@@ -39,7 +39,7 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
      * @param element Underlying element.
      */
     public DatasetFlowIdReference(@NotNull XmlAttributeValue element) {
-        super(Objects.requireNonNull(element), new TextRange(0, DataUtils.mustPositive(element.getTextLength() - 1, 0)));
+        super(Objects.requireNonNull(element), new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1, 0)));
     }
 
 
