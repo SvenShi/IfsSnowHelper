@@ -8,6 +8,8 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ProcessingContext;
 import com.ruimin.helper.jsp.enums.JspTagEnum;
 import com.ruimin.helper.jsp.utils.SnowJspUtils;
+import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,16 +21,17 @@ import org.jetbrains.annotations.NotNull;
 public class JspReferenceProvider extends PsiReferenceProvider {
 
     @Override
+    @NotNull
     public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
         @NotNull ProcessingContext context) {
         XmlAttributeValue attribute = (XmlAttributeValue) element;
         XmlTag tag = SnowJspUtils.findTag(attribute);
         if (tag != null) {
-            if (JspTagEnum.DataSet.isTarget(tag)) {
-                return JspTagEnum.DataSet.getReference(attribute);
-            } else if (JspTagEnum.Button.isTarget(tag)) {
-                return JspTagEnum.Button.getReference(attribute);
+            List<PsiReference> references = JspTagEnum.getReferences(tag, attribute);
+            if (CollectionUtils.isNotEmpty(references)) {
+                return references.toArray(new PsiReference[0]);
             }
+
         }
         return PsiReference.EMPTY_ARRAY;
     }

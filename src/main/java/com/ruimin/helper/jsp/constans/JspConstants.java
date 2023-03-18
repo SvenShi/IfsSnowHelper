@@ -13,6 +13,7 @@ public interface JspConstants {
     String DATASET_TAG_NAME = "snow:dataset";
     String BUTTON_TAG_NAME = "snow:button";
     String QUERY_TAG_NAME = "snow:query";
+    String GRID_TAG_NAME = "snow:grid";
     String INCLUDE_TAG_NAME = "include";
 
 
@@ -21,6 +22,7 @@ public interface JspConstants {
     String ATTR_NAME_ID = "id";
     String ATTR_NAME_DATASET = "dataset";
     String ATTR_NAME_FILE = "file";
+    String ATTR_NAME_PAGINATION_BAR = "paginationbar";
 
 
     String DTST_EXPRESSION_SUFFIX = "_dataset";
