@@ -6,7 +6,7 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.jsp.constans.JspConstants;
-import com.ruimin.helper.jsp.reference.JspButtonDataSetReference;
+import com.ruimin.helper.jsp.reference.JspDataSetIdReference;
 import com.ruimin.helper.jsp.reference.JspButtonIdReference;
 import com.ruimin.helper.jsp.reference.JspDataSetPathReference;
 import com.ruimin.helper.jsp.reference.JspGridPaginationbarReference;
@@ -25,7 +25,7 @@ public enum JspTagEnum {
     /**
      * 数据集
      */
-    DataSet(JspConstants.DATASET_TAG_NAME) {
+    DATASET(JspConstants.DATASET_TAG_NAME) {
         @Override
         public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
             String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
@@ -38,18 +38,18 @@ public enum JspTagEnum {
     /**
      * 按钮
      */
-    Button(JspConstants.BUTTON_TAG_NAME) {
+    BUTTON(JspConstants.BUTTON_TAG_NAME) {
         @Override
         public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
             String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
             if (JspConstants.ATTR_NAME_ID.equals(attributeName)) {
                 return Collections.singletonList(new JspButtonIdReference(attributeValue));
             } else if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
-                return Collections.singletonList(new JspButtonDataSetReference(attributeValue));
+                return Collections.singletonList(new JspDataSetIdReference(attributeValue));
             }
             return Collections.emptyList();
         }
-    }, Grid(JspConstants.GRID_TAG_NAME) {
+    }, GRID(JspConstants.GRID_TAG_NAME) {
         @Override
         public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
             String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
@@ -74,10 +74,16 @@ public enum JspTagEnum {
                     }
                     return psiReferences;
                 }
+            } else if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
+                return Collections.singletonList(new JspDataSetIdReference(attributeValue));
             }
             return Collections.emptyList();
         }
-    };
+    }, FILE(JspConstants.FILE_TAG_NAME), QUERY(JspConstants.QUERY_TAG_NAME), TREEGRID(
+        JspConstants.TREEGRID_TAG_NAME), FORM(JspConstants.FORM_TAG_NAME), FORMGROUP(
+        JspConstants.FORMGROUP_TAG_NAME), FORMFIELD(JspConstants.FORMFIELD_TAG_NAME), QUERYFIELD(
+        JspConstants.QUERYFIELD_TAG_NAME), QUERYGROUP(JspConstants.QUERYGROUP_TAG_NAME), TREE(
+        JspConstants.TREE_TAG_NAME), EXPORTER(JspConstants.EXPORTER_TAG_NAME);
 
     /**
      * 名字
@@ -93,7 +99,15 @@ public enum JspTagEnum {
         return name;
     }
 
-    public abstract List<PsiReference> getReferences(XmlAttributeValue attributeValue);
+    public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
+        String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
+        if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
+            return Collections.singletonList(new JspDataSetIdReference(attributeValue));
+        }
+        return Collections.emptyList();
+    }
+
+    ;
 
     public boolean isTarget(@NotNull XmlTag xmlTag) {
         String tagName = xmlTag.getName();

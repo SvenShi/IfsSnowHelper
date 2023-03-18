@@ -14,6 +14,17 @@ public interface JspConstants {
     String BUTTON_TAG_NAME = "snow:button";
     String QUERY_TAG_NAME = "snow:query";
     String GRID_TAG_NAME = "snow:grid";
+    String FILE_TAG_NAME = "snow:file";
+    String TREEGRID_TAG_NAME = "snow:treegrid";
+    String FORM_TAG_NAME = "snow:form";
+    String FORMGROUP_TAG_NAME = "snow:formgroup";
+    String FORMFIELD_TAG_NAME = "snow:formfield";
+    String QUERYGROUP_TAG_NAME = "snow:querygroup";
+    String QUERYFIELD_TAG_NAME = "snow:queryfield";
+    String TREE_TAG_NAME = "snow:tree";
+    String EXPORTER_TAG_NAME = "snow:exporter";
+
+
     String INCLUDE_TAG_NAME = "include";
 
 

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  * @date 2023/01/14 上午 04:07
  * @description
  */
-public class JspButtonDataSetReference extends PsiReferenceBase<XmlAttributeValue> implements
+public class JspDataSetIdReference extends PsiReferenceBase<XmlAttributeValue> implements
     PsiPolyVariantReference {
 
     /**
@@ -35,7 +35,7 @@ public class JspButtonDataSetReference extends PsiReferenceBase<XmlAttributeValu
      *
      * @param element Underlying element.
      */
-    public JspButtonDataSetReference(@NotNull XmlAttributeValue element) {
+    public JspDataSetIdReference(@NotNull XmlAttributeValue element) {
         super(Objects.requireNonNull(element), new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1,1)));
     }
 
