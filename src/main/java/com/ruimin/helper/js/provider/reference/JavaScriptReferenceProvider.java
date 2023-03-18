@@ -7,10 +7,10 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ProcessingContext;
-import com.ruimin.helper.jsp.constans.JspConstants;
 import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.js.reference.JavaScriptDataSetReference;
 import com.ruimin.helper.js.reference.JavaScriptQueryReference;
+import com.ruimin.helper.jsp.constans.JspConstants;
 import org.jetbrains.annotations.NotNull;
 
 /**

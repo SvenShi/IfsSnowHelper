@@ -6,9 +6,9 @@ import com.intellij.psi.PsiMethodCallExpression;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
-import com.ruimin.helper.rqlx.utils.RqlxUtils;
 import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.java.reference.JavaRqlxKeyReference;
+import com.ruimin.helper.rqlx.utils.RqlxUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
