@@ -8,7 +8,7 @@
     <name>IfsSnowHelper</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="shiwei@rmitec.cn">shiwei</vendor>
+    <vendor email="isvenshi@gamil.com">Shi Wei</vendor>
     <change-notes><![CDATA[
       <h4>2.32</h4>
       <ul>
@@ -87,6 +87,6 @@
 
 
         <!-- 项目打开事件-->
-        <postStartupActivity implementation="com.ruimin.helper.core.listener.ProjectStartupListener"/>
+        <postStartupActivity implementation="com.ruimin.helper.common.listener.ProjectStartupListener"/>
     </extensions>
 </idea-plugin>

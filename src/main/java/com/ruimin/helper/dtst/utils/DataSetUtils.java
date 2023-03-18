@@ -20,7 +20,7 @@ import com.intellij.util.Query;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.DomService;
-import com.ruimin.helper.core.constants.CommonConstants;
+import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.dtst.constans.DataSetConstants;
 import com.ruimin.helper.dtst.dom.model.Command;
 import com.ruimin.helper.dtst.dom.model.Commands;

@@ -11,6 +11,7 @@ import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
+import com.ruimin.helper.common.util.DataUtils;
 import com.ruimin.helper.dtst.utils.DataSetUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class JspDataSetPathReference extends PsiReferenceBase<XmlAttributeValue>
      * @param element Underlying element.
      */
     public JspDataSetPathReference(@NotNull XmlAttributeValue element) {
-        super(Objects.requireNonNull(element), new TextRange(1, element.getText().length() - 1));
+        super(Objects.requireNonNull(element), new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1, 1)));
     }
 
 

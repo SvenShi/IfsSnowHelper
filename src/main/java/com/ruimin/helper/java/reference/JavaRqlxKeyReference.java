@@ -11,6 +11,7 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.ruimin.helper.common.util.DataUtils;
 import com.ruimin.helper.rqlx.utils.RqlxUtils;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +40,8 @@ public class JavaRqlxKeyReference extends PsiReferenceBase<PsiLiteralExpression>
      * @param element Underlying element.
      */
     public JavaRqlxKeyReference(@NotNull PsiLiteralExpression element, String rqlxKey) {
-        super(Objects.requireNonNull(element), new TextRange(1, element.getText().length() - 1));
+
+        super(Objects.requireNonNull(element), new TextRange(1, DataUtils.mustPositive(element.getText().length() - 1, 1)));
         this.rqlxKey = rqlxKey;
     }
 

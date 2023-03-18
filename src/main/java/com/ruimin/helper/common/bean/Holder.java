@@ -1,4 +1,4 @@
-package com.ruimin.helper.core.bean;
+package com.ruimin.helper.common.bean;
 
 /**
  * @author shiwei

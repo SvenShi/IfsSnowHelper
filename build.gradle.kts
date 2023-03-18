@@ -32,6 +32,10 @@ tasks {
         targetCompatibility = "11"
         options.encoding = "UTF-8"
     }
+    runIde {
+        // 启用热重载功能，使用Build菜单编译项目后无需重启调试进程即可完成, 仅支持JBR
+        jvmArgs = listOf("-XX:+AllowEnhancedClassRedefinition")
+    }
 
     patchPluginXml {
         sinceBuild.set("212.2")

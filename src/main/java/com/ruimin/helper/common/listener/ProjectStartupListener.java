@@ -1,4 +1,4 @@
-package com.ruimin.helper.core.listener;
+package com.ruimin.helper.common.listener;
 
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.application.ApplicationManager;

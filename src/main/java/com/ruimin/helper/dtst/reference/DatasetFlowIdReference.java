@@ -13,7 +13,8 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.IncorrectOperationException;
-import com.ruimin.helper.core.constants.CommonConstants;
+import com.ruimin.helper.common.constants.CommonConstants;
+import com.ruimin.helper.common.util.DataUtils;
 import com.ruimin.helper.java.utils.SnowJavaUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
      * @param element Underlying element.
      */
     public DatasetFlowIdReference(@NotNull XmlAttributeValue element) {
-        super(Objects.requireNonNull(element), new TextRange(1, element.getText().length() - 1));
+        super(Objects.requireNonNull(element), new TextRange(0, DataUtils.mustPositive(element.getTextLength() - 1, 0)));
     }
 
 

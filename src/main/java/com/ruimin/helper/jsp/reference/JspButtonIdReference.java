@@ -17,10 +17,11 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.GenericAttributeValue;
+import com.ruimin.helper.common.util.DataUtils;
 import com.ruimin.helper.jsp.constans.JspConstants;
 import com.ruimin.helper.dtst.utils.DataSetUtils;
 import com.ruimin.helper.jsp.utils.SnowJspUtils;
-import com.ruimin.helper.core.util.StringUtils;
+import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.dtst.dom.model.Command;
 import com.ruimin.helper.dtst.dom.model.Commands;
 import com.ruimin.helper.dtst.dom.model.Data;
@@ -39,14 +40,13 @@ import org.jetbrains.annotations.Nullable;
 public class JspButtonIdReference extends PsiReferenceBase<XmlAttributeValue> implements PsiPolyVariantReference {
 
 
-
     /**
      * Reference range is obtained from {@link ElementManipulator#getRangeInElement(PsiElement)}.
      *
      * @param element Underlying element.
      */
     public JspButtonIdReference(@NotNull XmlAttributeValue element) {
-        super(Objects.requireNonNull(element), new TextRange(1, element.getText().length() - 1));
+        super(Objects.requireNonNull(element), new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1, 1)));
     }
 
 

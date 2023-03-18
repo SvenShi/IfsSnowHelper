@@ -19,7 +19,7 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.ruimin.helper.core.constants.CommonConstants;
+import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.dtst.constans.DataSetConstants;
 import com.ruimin.helper.jsp.constans.JspConstants;
 import java.util.ArrayList;

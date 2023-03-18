@@ -15,7 +15,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.ruimin.helper.core.util.StringUtils;
+import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.jsp.constans.JspConstants;
 import com.ruimin.helper.jsp.utils.SnowJspUtils;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class JavaScriptQueryReference extends PsiReferenceBase<JSReferenceExpres
      * @param element Underlying element.
      */
     public JavaScriptQueryReference(@NotNull JSReferenceExpression element) {
-        super(Objects.requireNonNull(element), new TextRange(1, element.getText().length() - 1));
+        super(Objects.requireNonNull(element), new TextRange(0, element.getTextLength() - 1));
     }
 
 

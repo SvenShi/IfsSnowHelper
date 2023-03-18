@@ -1,4 +1,4 @@
-package com.ruimin.helper.core.util;
+package com.ruimin.helper.common.util;
 
 import java.util.ArrayList;
 import java.util.List;

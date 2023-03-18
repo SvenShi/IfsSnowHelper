@@ -1,4 +1,4 @@
-package com.ruimin.helper.core.constants;
+package com.ruimin.helper.common.constants;
 
 import com.intellij.openapi.util.IconLoader;
 import javax.swing.Icon;

@@ -1,6 +1,6 @@
 package com.ruimin.helper.rqlx.constans;
 
-import com.ruimin.helper.core.constants.CommonConstants;
+import com.ruimin.helper.common.constants.CommonConstants;
 
 /**
  * @author shiwei

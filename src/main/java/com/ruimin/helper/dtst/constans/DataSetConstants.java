@@ -1,6 +1,6 @@
 package com.ruimin.helper.dtst.constans;
 
-import com.ruimin.helper.core.constants.CommonConstants;
+import com.ruimin.helper.common.constants.CommonConstants;
 
 /**
  * @author shiwei
