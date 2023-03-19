@@ -1,6 +1,5 @@
 package com.ruimin.helper.dtst.reference;
 
-import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.TextRange;
@@ -14,12 +13,10 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.IncorrectOperationException;
-import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.common.util.DataUtils;
 import com.ruimin.helper.dtst.utils.DataSetUtils;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -35,17 +32,19 @@ import org.jetbrains.annotations.Nullable;
 public class DatasetDataSourceReference extends PsiReferenceBase<XmlAttributeValue> implements PsiPolyVariantReference {
 
 
-    private static final Set<String> NOT_IN_DATASOURCE_TAG = Sets.newHashSet("LIST", "DDIC");
+    private final String datasetPath;
 
     /**
      * Reference range is obtained from {@link ElementManipulator#getRangeInElement(PsiElement)}.
      *
-     * @param element Underlying element.
      * @param indexOf
+     * @param element Underlying element.
+     * @param i
      */
-    public DatasetDataSourceReference(@NotNull XmlAttributeValue element, int indexOf) {
+    public DatasetDataSourceReference(@NotNull XmlAttributeValue element, int indexOf, String datasetPath) {
         super(Objects.requireNonNull(element),
             new TextRange(indexOf + 1, DataUtils.mustPositive(element.getTextLength() - 1, 0)));
+        this.datasetPath = datasetPath;
     }
 
 
@@ -73,24 +72,15 @@ public class DatasetDataSourceReference extends PsiReferenceBase<XmlAttributeVal
      */
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-        String dataSource = myElement.getValue();
-        if (StringUtils.isNotBlank(dataSource)) {
-            String[] split = dataSource.split(CommonConstants.COLON_SEPARATE);
-            if (split.length >= 2) {
-                if (!NOT_IN_DATASOURCE_TAG.contains(split[0])) {
-                    String dtstPath = split[1];
-                    Module module = ModuleUtil.findModuleForPsiElement(myElement);
-                    if (module != null) {
-                        ArrayList<XmlFile> dtst = DataSetUtils.findDtstFileByPath(dtstPath, module.getModuleScope());
-                        if (CollectionUtils.isNotEmpty(dtst)) {
-                            ArrayList<ResolveResult> resolveResults = new ArrayList<>();
-                            for (XmlFile xmlFile : dtst) {
-                                resolveResults.add(new PsiElementResolveResult(xmlFile));
-                            }
-                            return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
-                        }
-                    }
+        Module module = ModuleUtil.findModuleForPsiElement(myElement);
+        if (module != null) {
+            ArrayList<XmlFile> dtst = DataSetUtils.findDtstFileByPath(datasetPath, module.getModuleScope());
+            if (CollectionUtils.isNotEmpty(dtst)) {
+                ArrayList<ResolveResult> resolveResults = new ArrayList<>();
+                for (XmlFile xmlFile : dtst) {
+                    resolveResults.add(new PsiElementResolveResult(xmlFile));
                 }
+                return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
             }
         }
         return ResolveResult.EMPTY_ARRAY;
