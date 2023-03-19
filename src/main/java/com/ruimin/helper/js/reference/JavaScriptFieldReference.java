@@ -5,13 +5,9 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.GenericAttributeValue;
@@ -21,7 +17,7 @@ import com.ruimin.helper.dtst.dom.model.Data;
 import com.ruimin.helper.dtst.dom.model.Field;
 import com.ruimin.helper.dtst.dom.model.Fields;
 import com.ruimin.helper.dtst.utils.DataSetUtils;
-import com.ruimin.helper.jsp.constans.JspConstants;
+import com.ruimin.helper.jsp.utils.SnowJspUtils;
 import java.util.ArrayList;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
@@ -77,34 +73,22 @@ public class JavaScriptFieldReference extends PsiReferenceBase<JSLiteralExpressi
      */
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-        XmlAttribute attribute = dataSetTag.getAttribute(JspConstants.ATTR_NAME_PATH);
-        if (attribute != null) {
-            XmlAttributeValue valueElement = attribute.getValueElement();
-            if (valueElement != null) {
-                PsiReference reference = valueElement.getReference();
-                if (reference != null) {
-                    PsiElement resolve = reference.resolve();
-                    if (resolve instanceof XmlFile) {
-                        Data data = DataSetUtils.getDataTagByDtstFile((PsiFile) resolve);
-                        ArrayList<ResolveResult> resolveResults = new ArrayList<>();
-                        if (data != null) {
-                            for (Fields fields : data.getFieldses()) {
-                                for (Field field : fields.getFields()) {
-                                    GenericAttributeValue<String> id = field.getId();
-                                    if (fieldName.equals(id.getValue())) {
-                                        if (id.getXmlAttributeValue() != null) {
-                                            resolveResults.add(new PsiElementResolveResult(id.getXmlAttributeValue()));
-                                        }
-                                    }
-                                }
-                            }
+        XmlFile file = SnowJspUtils.getDtstFileByTag(dataSetTag);
+        Data data = DataSetUtils.getDataTagByDtstFile(file);
+        ArrayList<ResolveResult> resolveResults = new ArrayList<>();
+        if (data != null) {
+            for (Fields fields : data.getFieldses()) {
+                for (Field field : fields.getFields()) {
+                    GenericAttributeValue<String> id = field.getId();
+                    if (fieldName.equals(id.getValue())) {
+                        if (id.getXmlAttributeValue() != null) {
+                            resolveResults.add(new PsiElementResolveResult(id.getXmlAttributeValue()));
                         }
-                        return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
                     }
                 }
             }
         }
-        return ResolveResult.EMPTY_ARRAY;
+        return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
     }
 
 

@@ -2,7 +2,6 @@ package com.ruimin.helper.jsp.utils;
 
 
 import com.intellij.jsp.highlighter.NewJspFileType;
-import com.intellij.jsp.util.JstlUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -185,5 +184,30 @@ public class SnowJspUtils {
         } else {
             return null;
         }
+    }
+
+    /**
+     * 根据xml tag获取dtst文件
+     *
+     * @param tag 标签
+     * @return {@link XmlFile}
+     */
+    public static XmlFile getDtstFileByTag(XmlTag tag) {
+        if (tag != null) {
+            XmlAttribute attribute = tag.getAttribute(JspConstants.ATTR_NAME_PATH);
+            if (attribute != null) {
+                XmlAttributeValue valueElement = attribute.getValueElement();
+                if (valueElement != null) {
+                    PsiReference reference = valueElement.getReference();
+                    if (reference != null) {
+                        PsiElement resolve = reference.resolve();
+                        if (resolve instanceof XmlFile) {
+                            return (XmlFile) resolve;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
