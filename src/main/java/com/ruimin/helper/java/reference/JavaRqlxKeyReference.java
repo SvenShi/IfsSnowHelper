@@ -84,11 +84,6 @@ public class JavaRqlxKeyReference extends PsiReferenceBase<PsiLiteralExpression>
                 return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
             }
         }
-
-        EditorHighlighter highlighter = HighlighterFactory.createHighlighter(myElement.getProject(),
-            myElement.getContainingFile().getVirtualFile());
-        highlighter.
-
         return ResolveResult.EMPTY_ARRAY;
     }
 
