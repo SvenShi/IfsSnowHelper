@@ -9,14 +9,18 @@ import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.IncorrectOperationException;
 import com.ruimin.helper.common.util.DataUtils;
 import com.ruimin.helper.dtst.utils.DataSetUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +40,8 @@ public class JspDataSetPathReference extends PsiReferenceBase<XmlAttributeValue>
      * @param element Underlying element.
      */
     public JspDataSetPathReference(@NotNull XmlAttributeValue element) {
-        super(Objects.requireNonNull(element), new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1, 1)));
+        super(Objects.requireNonNull(element),
+            new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1, 1)));
     }
 
 
@@ -79,5 +84,19 @@ public class JspDataSetPathReference extends PsiReferenceBase<XmlAttributeValue>
         return ResolveResult.EMPTY_ARRAY;
     }
 
-
+    /**
+     * @param newElementName the new name of the target element.
+     * @return
+     * @throws IncorrectOperationException
+     */
+    @Override
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
+        String dtstPath = myElement.getValue();
+        if (StringUtils.isNotBlank(dtstPath)) {
+            String s = StringUtils.substringBeforeLast(dtstPath, ".");
+            String filename = FilenameUtils.removeExtension(newElementName);
+            return super.handleElementRename(s + "." + filename);
+        }
+        return myElement;
+    }
 }

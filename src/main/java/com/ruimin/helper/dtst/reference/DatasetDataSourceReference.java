@@ -10,8 +10,10 @@ import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.IncorrectOperationException;
 import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.common.util.DataUtils;
 import com.ruimin.helper.dtst.utils.DataSetUtils;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,4 +96,20 @@ public class DatasetDataSourceReference extends PsiReferenceBase<XmlAttributeVal
         return ResolveResult.EMPTY_ARRAY;
     }
 
+    /**
+     * @param newElementName the new name of the target element.
+     * @return
+     * @throws IncorrectOperationException
+     */
+    @Override
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
+        XmlAttribute parent = (XmlAttribute) myElement.getParent();
+        String dtstPath = myElement.getValue();
+        if (StringUtils.isNotBlank(dtstPath)) {
+            String s = StringUtils.substringBeforeLast(dtstPath, ".");
+            String filename = FilenameUtils.removeExtension(newElementName);
+            parent.setValue(s + "." + filename);
+        }
+        return myElement;
+    }
 }

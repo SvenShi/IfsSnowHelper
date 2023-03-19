@@ -46,7 +46,8 @@ public class JspButtonIdReference extends PsiReferenceBase<XmlAttributeValue> im
      * @param element Underlying element.
      */
     public JspButtonIdReference(@NotNull XmlAttributeValue element) {
-        super(Objects.requireNonNull(element), new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1, 1)));
+        super(Objects.requireNonNull(element),
+            new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1, 1)));
     }
 
 
@@ -125,6 +126,4 @@ public class JspButtonIdReference extends PsiReferenceBase<XmlAttributeValue> im
 
         return ResolveResult.EMPTY_ARRAY;
     }
-
-
 }

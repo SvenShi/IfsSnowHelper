@@ -110,6 +110,10 @@ public enum JspAttrEnum {
         @Override
         public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
             String fieldStr = attributeValue.getValue();
+            if (fieldStr.contains("{") || fieldStr.contains("<") || fieldStr.contains("}")
+                || fieldStr.contains(">") || fieldStr.contains("%") || fieldStr.contains("$")) {
+                return Collections.emptyList();
+            }
             String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
             String[] split = realFieldStr.split(",");
             ArrayList<PsiReference> psiReferences = new ArrayList<>();

@@ -137,9 +137,8 @@ public class JspTagFieldIdReference extends PsiReferenceBase<XmlAttributeValue> 
     @Override
     public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
         String value = myElement.getValue();
-        XmlAttribute parent = (XmlAttribute) myElement.getParent();
-        parent.setValue(value.replace(fieldId, newElementName));
+        PsiElement psiElement = super.handleElementRename(value.replace(fieldId, newElementName));
         this.fieldId = newElementName;
-        return myElement;
+        return psiElement;
     }
 }

@@ -1,7 +1,5 @@
 package com.ruimin.helper.java.reference;
 
-import com.intellij.ide.highlighter.HighlighterFactory;
-import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.TextRange;
@@ -13,7 +11,9 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.util.IncorrectOperationException;
 import com.ruimin.helper.common.util.DataUtils;
+import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.rqlx.utils.RqlxUtils;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -87,4 +87,16 @@ public class JavaRqlxKeyReference extends PsiReferenceBase<PsiLiteralExpression>
         return ResolveResult.EMPTY_ARRAY;
     }
 
+    /**
+     * @param newElementName the new name of the target element.
+     * @return
+     * @throws IncorrectOperationException
+     */
+    @Override
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
+        String text = myElement.getText();
+        String removeQuot = StringUtils.removeQuot(text);
+        String s = StringUtils.substringBeforeLast(removeQuot, ".");
+        return super.handleElementRename(s + "." + newElementName);
+    }
 }
