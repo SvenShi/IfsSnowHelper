@@ -86,6 +86,13 @@
                 implementationClass="com.ruimin.helper.rqlx.provider.line.RqlxLineMarkerProvider"/>
 
 
+        <!--  代码检查-->
+        <localInspection language="JAVA" shortName="JavaRqlxKeyInspection"
+                id="snow.JavaRqlxKeyInspection"
+                displayName="Snow rqlx key inspection"
+                groupName="Snow" enabledByDefault="true" level="ERROR"
+                implementationClass="com.ruimin.helper.java.inspection.JavaRqlxKeyInspection"/>
+
         <!-- 项目打开事件-->
         <postStartupActivity implementation="com.ruimin.helper.common.listener.ProjectStartupListener"/>
     </extensions>
