@@ -8,6 +8,7 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ProcessingContext;
+import com.ruimin.helper.rqlx.constans.RqlxConstants;
 import com.ruimin.helper.rqlx.dom.model.Mapper;
 import com.ruimin.helper.rqlx.reference.RqlxIdJavaReference;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,7 @@ public class RqlxReferenceProvider extends PsiReferenceProvider {
         if (rootTag != null && Mapper.TAG_NAME.equals(rootTag.getName())) {
             XmlAttributeValue attribute = (XmlAttributeValue) element;
             String localName = XmlAttributeValuePattern.getLocalName(attribute);
-            if ("id".equals(localName)) {
+            if (RqlxConstants.ATTR_NAME_ID.equals(localName)) {
                 return new PsiReference[]{new RqlxIdJavaReference(attribute)};
             }
         }

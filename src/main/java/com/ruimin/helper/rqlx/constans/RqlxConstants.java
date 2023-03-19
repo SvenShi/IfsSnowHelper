@@ -13,4 +13,6 @@ public interface RqlxConstants {
     // dtst文件后缀
     String RQLX_FILE_EXTENSION = "rqlx";
     String RQLX_FILE_EXTENSION_DOT = CommonConstants.DOT_SEPARATE + RQLX_FILE_EXTENSION;
+
+    String ATTR_NAME_ID = "id";
 }
