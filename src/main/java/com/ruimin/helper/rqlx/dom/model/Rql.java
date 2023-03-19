@@ -4,6 +4,7 @@ package com.ruimin.helper.rqlx.dom.model;
 
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.NameValue;
 import com.intellij.util.xml.Required;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +37,7 @@ public interface Rql extends DomElement {
 	 */
 	@NotNull
 	@Required
+	@NameValue
 	GenericAttributeValue<String> getId();
 
 

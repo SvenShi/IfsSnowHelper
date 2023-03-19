@@ -54,9 +54,6 @@
         <!-- dtst引用-->
         <psi.referenceContributor language="XML"
                 implementation="com.ruimin.helper.dtst.contributor.DtstReferenceContributor"/>
-        <!-- rqlx引用-->
-        <psi.referenceContributor language="XML"
-                implementation="com.ruimin.helper.rqlx.contributor.RqlxReferenceContributor"/>
         <!-- java引用-->
         <psi.referenceContributor language="JAVA"
                 implementation="com.ruimin.helper.java.contributor.JavaReferenceContributor"/>
@@ -81,10 +78,6 @@
         <!-- dtst 跳转到 java、jsp -->
         <codeInsight.lineMarkerProvider id="snow.SnowDataSetLineMarkerProvider" language="XML"
                 implementationClass="com.ruimin.helper.dtst.provider.line.SnowDataSetLineMarkerProvider"/>
-        <!-- rqlx 跳转到 java -->
-        <codeInsight.lineMarkerProvider id="snow.SnowRqlxLineMarkerProvider" language="XML"
-                implementationClass="com.ruimin.helper.rqlx.provider.line.RqlxLineMarkerProvider"/>
-
 
         <!--  代码检查-->
         <localInspection language="JAVA" shortName="SnowJavaRqlxKeyInspection"
