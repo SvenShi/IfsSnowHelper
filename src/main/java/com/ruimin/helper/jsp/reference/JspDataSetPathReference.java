@@ -73,10 +73,10 @@ public class JspDataSetPathReference extends PsiReferenceBase<XmlAttributeValue>
                 for (XmlFile xmlFile : dtst) {
                     resolveResults.add(new PsiElementResolveResult(xmlFile));
                 }
-                return resolveResults.toArray(new ResolveResult[0]);
+                return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
             }
         }
-        return new ResolveResult[0];
+        return ResolveResult.EMPTY_ARRAY;
     }
 
 

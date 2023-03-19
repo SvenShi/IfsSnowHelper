@@ -1,5 +1,7 @@
 package com.ruimin.helper.java.reference;
 
+import com.intellij.ide.highlighter.HighlighterFactory;
+import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.TextRange;
@@ -40,7 +42,8 @@ public class JavaRqlxKeyReference extends PsiReferenceBase<PsiLiteralExpression>
      * @param element Underlying element.
      */
     public JavaRqlxKeyReference(@NotNull PsiLiteralExpression element, String rqlxKey) {
-        super(Objects.requireNonNull(element), new TextRange(1, DataUtils.mustPositive(element.getText().length() - 1, 1)));
+        super(Objects.requireNonNull(element),
+            new TextRange(1, DataUtils.mustPositive(element.getText().length() - 1, 1)));
         this.rqlxKey = rqlxKey;
     }
 
@@ -78,9 +81,14 @@ public class JavaRqlxKeyReference extends PsiReferenceBase<PsiLiteralExpression>
                 for (XmlAttributeValue attributeValue : xmlTagByRqlKey) {
                     resolveResults.add(new PsiElementResolveResult(attributeValue));
                 }
-                return resolveResults.toArray(new ResolveResult[0]);
+                return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
             }
         }
+
+        EditorHighlighter highlighter = HighlighterFactory.createHighlighter(myElement.getProject(),
+            myElement.getContainingFile().getVirtualFile());
+        highlighter.
+
         return ResolveResult.EMPTY_ARRAY;
     }
 

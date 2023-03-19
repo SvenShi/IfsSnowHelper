@@ -121,11 +121,11 @@ public class JspGridPaginationbarReference extends PsiReferenceBase<XmlAttribute
                         }
                     }
                 }
-                return resolveResults.toArray(new ResolveResult[0]);
+                return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
             }
         }
 
-        return new ResolveResult[0];
+        return ResolveResult.EMPTY_ARRAY;
     }
 
 

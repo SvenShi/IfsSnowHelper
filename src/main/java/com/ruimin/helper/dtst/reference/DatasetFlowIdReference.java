@@ -80,11 +80,11 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
                             resolveResults.add(new PsiElementResolveResult(method));
                         }
                     }
-                    return resolveResults.toArray(new ResolveResult[0]);
+                    return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
                 }
             }
         }
-        return new ResolveResult[0];
+        return ResolveResult.EMPTY_ARRAY;
     }
 
     /**

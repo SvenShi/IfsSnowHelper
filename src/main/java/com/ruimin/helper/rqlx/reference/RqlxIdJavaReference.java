@@ -75,7 +75,7 @@ public class RqlxIdJavaReference extends PsiReferenceBase<XmlAttributeValue> imp
                     PsiElementResolveResult resolveResult = new PsiElementResolveResult(element);
                     resolveResults.add(resolveResult);
                 }
-                return resolveResults.toArray(new ResolveResult[0]);
+                return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
             }
         }
         return new ResolveResult[]{EmptyResolveResult.INSTANCE};

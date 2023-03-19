@@ -93,7 +93,7 @@ public class JavaScriptDataSetReference extends PsiReferenceBase<JSReferenceExpr
                     }
                 }
             }
-            return resolveResults.toArray(new ResolveResult[0]);
+            return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
         }
         return ResolveResult.EMPTY_ARRAY;
     }
