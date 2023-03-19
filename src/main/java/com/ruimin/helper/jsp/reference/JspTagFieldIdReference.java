@@ -14,6 +14,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.GenericAttributeValue;
@@ -128,5 +129,17 @@ public class JspTagFieldIdReference extends PsiReferenceBase<XmlAttributeValue> 
         return ResolveResult.EMPTY_ARRAY;
     }
 
-
+    /**
+     * @param newElementName the new name of the target element.
+     * @return
+     * @throws IncorrectOperationException
+     */
+    @Override
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
+        String value = myElement.getValue();
+        XmlAttribute parent = (XmlAttribute) myElement.getParent();
+        parent.setValue(value.replace(fieldId, newElementName));
+        this.fieldId = newElementName;
+        return myElement;
+    }
 }
