@@ -26,6 +26,8 @@ import com.ruimin.helper.dtst.dom.model.Command;
 import com.ruimin.helper.dtst.dom.model.Commands;
 import com.ruimin.helper.dtst.dom.model.Data;
 import com.ruimin.helper.dtst.dom.model.Define;
+import com.ruimin.helper.dtst.dom.model.Field;
+import com.ruimin.helper.dtst.dom.model.Fields;
 import com.ruimin.helper.dtst.dom.model.FlowIdDomElement;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -192,7 +194,7 @@ public final class DataSetUtils {
      * @param scope 范围
      * @return {@link ArrayList}<{@link XmlFile}>
      */
-    public static ArrayList<XmlFile> findDtstFileByPath(String dtstPath,@NotNull GlobalSearchScope scope) {
+    public static ArrayList<XmlFile> findDtstFileByPath(String dtstPath, @NotNull GlobalSearchScope scope) {
         ArrayList<XmlFile> psiFiles = new ArrayList<>();
         Project project = scope.getProject();
         if (project != null) {
@@ -213,7 +215,7 @@ public final class DataSetUtils {
                     VirtualFile child = matchPackage.findChild(dtstName + DataSetConstants.DTST_FILE_EXTENSION_DOT);
                     if (child != null) {
                         boolean contains = scope.contains(child);
-                        if (contains){
+                        if (contains) {
                             PsiFile file = psiManager.findFile(child);
                             if (file != null && isDtstFile(file)) {
                                 psiFiles.add((XmlFile) file);
@@ -233,11 +235,26 @@ public final class DataSetUtils {
      * @param file dtst文件
      * @return {@link Data}
      */
-    public static Data getDataTagByDtstFile(PsiFile file){
-        if (isDtstFile(file)){
-            DomFileElement<Data> fileElement = DomManager.getDomManager(file.getProject()).getFileElement((XmlFile) file, Data.class);
-            if (fileElement != null){
+    public static Data getDataTagByDtstFile(PsiFile file) {
+        if (isDtstFile(file)) {
+            DomFileElement<Data> fileElement = DomManager.getDomManager(file.getProject())
+                .getFileElement((XmlFile) file, Data.class);
+            if (fileElement != null) {
                 return fileElement.getRootElement();
+            }
+        }
+        return null;
+    }
+
+    public static Field findField(@NotNull XmlFile file, @NotNull String fieldId) {
+        Data data = getDataTagByDtstFile(file);
+        if (data != null) {
+            for (Fields fields : data.getFieldses()) {
+                for (Field field : fields.getFields()) {
+                    if (fieldId.equals(field.getId().getValue())) {
+                        return field;
+                    }
+                }
             }
         }
         return null;

@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
-import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ProcessingContext;
 import com.ruimin.helper.js.reference.JavaScriptFieldReference;
 import com.ruimin.helper.js.utils.SnowJSUtils;
@@ -25,9 +25,9 @@ public class JSLiteralReferenceProvider extends PsiReferenceProvider {
         @NotNull ProcessingContext context) {
         JSReferenceExpression methodCaller = SnowJSUtils.getDataSetMethodCaller(element);
         if (methodCaller != null) {
-            XmlTag tag = SnowJSUtils.getDataSetTagByVar(methodCaller);
-            if (tag != null) {
-                return new PsiReference[]{new JavaScriptFieldReference((JSLiteralExpression) element, tag)};
+            XmlFile xmlFile = SnowJSUtils.getDataSetTagByReference(methodCaller);
+            if (xmlFile != null) {
+                return new PsiReference[]{new JavaScriptFieldReference((JSLiteralExpression) element, xmlFile)};
             }
         }
         return PsiReference.EMPTY_ARRAY;

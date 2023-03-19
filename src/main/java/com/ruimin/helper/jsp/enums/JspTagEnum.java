@@ -1,11 +1,14 @@
 package com.ruimin.helper.jsp.enums;
 
 import com.intellij.patterns.XmlAttributeValuePattern;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.jsp.constans.JspConstants;
+import com.ruimin.helper.jsp.utils.SnowJspUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -113,5 +116,22 @@ public enum JspTagEnum {
             }
         }
         return psiReferences;
+    }
+
+    public XmlTag findDatasetTagById(PsiElement element, String id) {
+        XmlTag tagById = SnowJspUtils.findTagById(element, id, this);
+        if (this.equals(DATASET)) {
+            return tagById;
+        }
+        if (tagById != null) {
+            XmlAttribute attribute = tagById.getAttribute(JspConstants.ATTR_NAME_DATASET);
+            if (attribute != null) {
+                String value = attribute.getValue();
+                if (StringUtils.isNotBlank(value)) {
+                    return SnowJspUtils.findTagById(element, value, DATASET);
+                }
+            }
+        }
+        return null;
     }
 }

@@ -8,17 +8,12 @@ import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.xml.GenericAttributeValue;
 import com.ruimin.helper.common.util.DataUtils;
 import com.ruimin.helper.common.util.StringUtils;
-import com.ruimin.helper.dtst.dom.model.Data;
 import com.ruimin.helper.dtst.dom.model.Field;
-import com.ruimin.helper.dtst.dom.model.Fields;
 import com.ruimin.helper.dtst.utils.DataSetUtils;
-import com.ruimin.helper.jsp.utils.SnowJspUtils;
-import java.util.ArrayList;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 public class JavaScriptFieldReference extends PsiReferenceBase<JSLiteralExpression> implements
     PsiPolyVariantReference {
 
-    private final XmlTag dataSetTag;
+    private final XmlFile dataSetFile;
 
     private final String fieldName;
 
@@ -41,10 +36,10 @@ public class JavaScriptFieldReference extends PsiReferenceBase<JSLiteralExpressi
      *
      * @param element Underlying element.
      */
-    public JavaScriptFieldReference(@NotNull JSLiteralExpression element, XmlTag dataSetTag) {
+    public JavaScriptFieldReference(@NotNull JSLiteralExpression element, XmlFile dataSetFile) {
         super(Objects.requireNonNull(element),
             new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1, 1)));
-        this.dataSetTag = dataSetTag;
+        this.dataSetFile = dataSetFile;
         this.fieldName = StringUtils.removeQuot(element.getText());
     }
 
@@ -73,22 +68,14 @@ public class JavaScriptFieldReference extends PsiReferenceBase<JSLiteralExpressi
      */
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-        XmlFile file = SnowJspUtils.getDtstFileByTag(dataSetTag);
-        Data data = DataSetUtils.getDataTagByDtstFile(file);
-        ArrayList<ResolveResult> resolveResults = new ArrayList<>();
-        if (data != null) {
-            for (Fields fields : data.getFieldses()) {
-                for (Field field : fields.getFields()) {
-                    GenericAttributeValue<String> id = field.getId();
-                    if (fieldName.equals(id.getValue())) {
-                        if (id.getXmlAttributeValue() != null) {
-                            resolveResults.add(new PsiElementResolveResult(id.getXmlAttributeValue()));
-                        }
-                    }
-                }
+        Field field = DataSetUtils.findField(dataSetFile, fieldName);
+        if (field != null) {
+            XmlElement xmlElement = field.getXmlElement();
+            if (xmlElement != null){
+                return new ResolveResult[]{new PsiElementResolveResult(xmlElement)};
             }
         }
-        return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
+        return ResolveResult.EMPTY_ARRAY;
     }
 
 

@@ -7,11 +7,13 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.JspPsiUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.jsp.BaseJspFile;
+import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlAttribute;
@@ -22,9 +24,9 @@ import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.dtst.constans.DataSetConstants;
 import com.ruimin.helper.jsp.constans.JspConstants;
+import com.ruimin.helper.jsp.enums.JspTagEnum;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -127,14 +129,11 @@ public class SnowJspUtils {
      * @param jspFile jsp文件
      * @return {@link List}<{@link XmlTag}>
      */
-    public static List<XmlTag> findAllTagInFile(@NotNull XmlFile jspFile, @NotNull String tagName) {
+    public static List<XmlTag> findAllTagInFile(@NotNull JspFile jspFile, @NotNull String tagName) {
         XmlTag rootTag = jspFile.getRootTag();
-        if (rootTag != null) {
-            ArrayList<XmlTag> pageTags = new ArrayList<>();
-            findAllTag(rootTag, pageTags, tagName);
-            return pageTags;
-        }
-        return Collections.emptyList();
+        ArrayList<XmlTag> pageTags = new ArrayList<>();
+        findAllTag(rootTag, pageTags, tagName);
+        return pageTags;
     }
 
     private static void findAllTag(XmlTag rootTag, ArrayList<XmlTag> pageTags, String tagName) {
@@ -204,6 +203,31 @@ public class SnowJspUtils {
                         if (resolve instanceof XmlFile) {
                             return (XmlFile) resolve;
                         }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 得到数据集标签id
+     *
+     * @param element 元素
+     * @param id 数据集id
+     * @return {@link XmlTag}
+     */
+    public static XmlTag findTagById(@NotNull PsiElement element, @NotNull String id, JspTagEnum tagEnum) {
+        JspFile jspFile = JspPsiUtil.getJspFile(element);
+        if (jspFile != null) {
+            List<XmlTag> allTagInFile = findAllTagInFile(jspFile,
+                tagEnum.getName());
+            for (XmlTag xmlTag : allTagInFile) {
+                XmlAttribute attribute = xmlTag.getAttribute(JspConstants.ATTR_NAME_ID);
+                if (attribute != null) {
+                    String value = attribute.getValue();
+                    if (id.equals(value)) {
+                        return xmlTag;
                     }
                 }
             }

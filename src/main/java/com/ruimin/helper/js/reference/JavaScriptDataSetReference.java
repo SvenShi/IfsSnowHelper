@@ -2,18 +2,16 @@ package com.ruimin.helper.js.reference;
 
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.ElementManipulator;
+import com.intellij.psi.JspPsiUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.jsp.constans.JspConstants;
@@ -68,13 +66,9 @@ public class JavaScriptDataSetReference extends PsiReferenceBase<JSReferenceExpr
      */
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-        PsiFile containingFile = myElement.getContainingFile();
-        VirtualFile virtualFile = containingFile.getVirtualFile();
-        if (virtualFile != null) {
-            containingFile = PsiManager.getInstance(myElement.getProject()).findFile(virtualFile);
-        }
-        if (containingFile != null) {
-            List<XmlTag> dataSetTag = SnowJspUtils.findAllTagInFile((XmlFile) containingFile,
+        JspFile jspFile = JspPsiUtil.getJspFile(myElement);
+        if (jspFile != null) {
+            List<XmlTag> dataSetTag = SnowJspUtils.findAllTagInFile(jspFile,
                 JspConstants.DATASET_TAG_NAME);
             ArrayList<ResolveResult> resolveResults = new ArrayList<>();
             String text = myElement.getText();
