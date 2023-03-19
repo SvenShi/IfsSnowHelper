@@ -10,11 +10,14 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="isvenshi@gamil.com">Shi Wei</vendor>
     <change-notes><![CDATA[
-      <h4>2.32</h4>
+      <h4>2.41</h4>
       <ul>
-          <li>代码包名、类名重构</li>
-          <li>弃用jsp文件使用箭头跳转dtst文件的方式，改为使用引用方式跳转dtst</li>
-          <li>jsp 文件中的 JavaScript xxx_interface_dataset 以及 xxx_dataset变量引用到dataSet声明处</li>
+        <li>Jsp页面的各标签跳转dataset</li>
+        <li>fieldstr 跳转dtst文件的field声明处</li>
+        <li>grid标签的声明的按钮跳转到dtst文件的command声明处</li>
+        <li>Jsp页面中的dataset对象以及record对象的getValue、setValue等方法引用dtst文件的field属性</li>
+        <li>各个引用间的重构重命名</li>
+        <li>Java文件中的rqlxkey检查、jsp页面中的getValue、setValue方法检查以及jsp页面的dataset对象检查，添加报红提示</li>
       </ul>
       ]]>
     </change-notes>

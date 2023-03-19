@@ -15,6 +15,12 @@
 - [x] rqlx文件标签的id与Java代码中的rqlx key互相跳转
 - [x] dtst、dtmd文件关联xml文件，rqlx文件注入sql语法提示（需要在idea设置中配置方言，如果需要数据库表名、字段提示需要在idea中连接数据库，并且配置SQL
   Resolution Scopes中设置对应的映射）
+- [x] Jsp页面的各标签跳转dataset
+- [x] fieldstr 跳转dtst文件的field声明处
+- [x] grid标签的声明的按钮跳转到dtst文件的command声明处
+- [x] Jsp页面中的dataset对象以及record对象的getValue、setValue等方法引用dtst文件的field属性
+- [x] 各个引用间的重构重命名
+- [x] Java文件中的rqlxkey检查、jsp页面中的getValue、setValue方法检查以及jsp页面的dataset对象检查，添加报红提示
 - [ ] dtst中flowId的自动补全
 - [ ] JavaScript中的自动补全
 - [ ] Java代码中的rqlx key自动补全
