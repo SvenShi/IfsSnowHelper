@@ -18,9 +18,9 @@ import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.ruimin.helper.common.util.StringUtils;
-import com.ruimin.helper.dtst.dom.model.Command;
-import com.ruimin.helper.dtst.dom.model.Commands;
 import com.ruimin.helper.dtst.dom.model.Data;
+import com.ruimin.helper.dtst.dom.model.Field;
+import com.ruimin.helper.dtst.dom.model.Fields;
 import com.ruimin.helper.dtst.utils.DataSetUtils;
 import com.ruimin.helper.jsp.constans.JspConstants;
 import com.ruimin.helper.jsp.utils.SnowJspUtils;
@@ -36,20 +36,20 @@ import org.jetbrains.annotations.Nullable;
  * @date 2023/01/14 上午 04:07
  * @description
  */
-public class JspGridPaginationbarReference extends PsiReferenceBase<XmlAttributeValue> implements
+public class JspTagFieldIdReference extends PsiReferenceBase<XmlAttributeValue> implements
     PsiPolyVariantReference {
 
-    private String buttonId;
+    private String fieldId;
 
     /**
      * Reference range is obtained from {@link ElementManipulator#getRangeInElement(PsiElement)}.
      *
      * @param element Underlying element.
      */
-    public JspGridPaginationbarReference(@NotNull XmlAttributeValue element, String buttonId, int startIndex,
+    public JspTagFieldIdReference(@NotNull XmlAttributeValue element, String fieldId, int startIndex,
         int endIndex) {
         super(Objects.requireNonNull(element), new TextRange(Math.max(startIndex, 0), endIndex));
-        this.buttonId = buttonId;
+        this.fieldId = fieldId;
     }
 
 
@@ -81,7 +81,7 @@ public class JspGridPaginationbarReference extends PsiReferenceBase<XmlAttribute
         if (module != null) {
             XmlTag buttonTag = SnowJspUtils.findTag(myElement);
             String dataSetId = buttonTag.getAttributeValue(JspConstants.ATTR_NAME_DATASET);
-            if (StringUtils.isNotBlank(dataSetId) && StringUtils.isNotBlank(buttonId)) {
+            if (StringUtils.isNotBlank(dataSetId) && StringUtils.isNotBlank(fieldId)) {
                 DomManager domManager = DomManager.getDomManager(myElement.getProject());
                 List<XmlTag> dataSetList = SnowJspUtils.findAllTagInFile(
                     ((JspFile) myElement.getContainingFile()), JspConstants.DATASET_TAG_NAME);
@@ -101,12 +101,12 @@ public class JspGridPaginationbarReference extends PsiReferenceBase<XmlAttribute
                                         Data.class);
                                     if (dtstRootElement != null) {
                                         Data data = dtstRootElement.getRootElement();
-                                        List<Commands> commandses = data.getCommandses();
-                                        for (Commands commands : commandses) {
-                                            for (Command command : commands.getCommands()) {
-                                                GenericAttributeValue<String> commandId = command.getId();
-                                                if (buttonId.equals(commandId.getValue())) {
-                                                    XmlAttributeValue xmlAttribute = commandId.getXmlAttributeValue();
+                                        List<Fields> fieldses = data.getFieldses();
+                                        for (Fields fields : fieldses) {
+                                            for (Field field : fields.getFields()) {
+                                                GenericAttributeValue<String> filedId = field.getId();
+                                                if (fieldId.equals(filedId.getValue())) {
+                                                    XmlAttributeValue xmlAttribute = filedId.getXmlAttributeValue();
                                                     if (xmlAttribute != null) {
                                                         resolveResults.add(
                                                             new PsiElementResolveResult(xmlAttribute));

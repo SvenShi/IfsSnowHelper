@@ -6,10 +6,11 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.jsp.constans.JspConstants;
-import com.ruimin.helper.jsp.reference.JspDataSetIdReference;
 import com.ruimin.helper.jsp.reference.JspButtonIdReference;
+import com.ruimin.helper.jsp.reference.JspDataSetIdReference;
 import com.ruimin.helper.jsp.reference.JspDataSetPathReference;
-import com.ruimin.helper.jsp.reference.JspGridPaginationbarReference;
+import com.ruimin.helper.jsp.reference.JspPaginationbarReference;
+import com.ruimin.helper.jsp.reference.JspTagFieldIdReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,22 +69,155 @@ public enum JspTagEnum {
                         if (startIndex >= 0) {
                             prevIndex = startIndex + buttonId.length();
                             psiReferences.add(
-                                new JspGridPaginationbarReference(attributeValue, buttonId, startIndex + 1,
-                                    prevIndex + 1));
+                                new JspPaginationbarReference(attributeValue, buttonId, startIndex + 1, prevIndex + 1));
                         }
                     }
                     return psiReferences;
                 }
             } else if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
                 return Collections.singletonList(new JspDataSetIdReference(attributeValue));
+            } else if (JspConstants.ATTR_NAME_FIELD_STR.equals(attributeName)
+                || JspConstants.ATTR_NAME_MORE_FIELD_STR.equals(attributeName)) {
+                String fieldStr = attributeValue.getValue();
+                if (StringUtils.isNotBlank(fieldStr)) {
+                    String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
+                    if (StringUtils.isNotBlank(realFieldStr)) {
+                        String[] split = realFieldStr.split(",");
+                        ArrayList<PsiReference> psiReferences = new ArrayList<>();
+                        int prevIndex = 0;
+                        for (String fieldId : split) {
+                            int startIndex = fieldStr.indexOf(fieldId, prevIndex);
+                            if (startIndex >= 0) {
+                                prevIndex = startIndex + fieldId.length();
+                                psiReferences.add(
+                                    new JspTagFieldIdReference(attributeValue, fieldId, startIndex + 1, prevIndex + 1));
+                            }
+                        }
+                        return psiReferences;
+                    }
+                }
             }
             return Collections.emptyList();
         }
-    }, FILE(JspConstants.FILE_TAG_NAME), QUERY(JspConstants.QUERY_TAG_NAME), TREEGRID(
-        JspConstants.TREEGRID_TAG_NAME), FORM(JspConstants.FORM_TAG_NAME), FORMGROUP(
-        JspConstants.FORMGROUP_TAG_NAME), FORMFIELD(JspConstants.FORMFIELD_TAG_NAME), QUERYFIELD(
+    }, FILE(JspConstants.FILE_TAG_NAME), QUERY(JspConstants.QUERY_TAG_NAME) {
+        @Override
+        public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
+            String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
+            if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
+                return Collections.singletonList(new JspDataSetIdReference(attributeValue));
+            } else if (JspConstants.ATTR_NAME_FIELD_STR.equals(attributeName)
+                || JspConstants.ATTR_NAME_MORE_FIELD_STR.equals(attributeName)) {
+                String fieldStr = attributeValue.getValue();
+                if (StringUtils.isNotBlank(fieldStr)) {
+                    String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
+                    if (StringUtils.isNotBlank(realFieldStr)) {
+                        String[] split = realFieldStr.split(",");
+                        ArrayList<PsiReference> psiReferences = new ArrayList<>();
+                        int prevIndex = 0;
+                        for (String fieldId : split) {
+                            int startIndex = fieldStr.indexOf(fieldId, prevIndex);
+                            if (startIndex >= 0) {
+                                prevIndex = startIndex + fieldId.length();
+                                psiReferences.add(
+                                    new JspTagFieldIdReference(attributeValue, fieldId, startIndex + 1, prevIndex + 1));
+                            }
+                        }
+                        return psiReferences;
+                    }
+                }
+            }
+            return Collections.emptyList();
+        }
+    }, TREEGRID(JspConstants.TREEGRID_TAG_NAME) {
+        @Override
+        public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
+            String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
+            if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
+                return Collections.singletonList(new JspDataSetIdReference(attributeValue));
+            } else if (JspConstants.ATTR_NAME_FIELD_STR.equals(attributeName)
+                || JspConstants.ATTR_NAME_MORE_FIELD_STR.equals(attributeName)) {
+                String fieldStr = attributeValue.getValue();
+                if (StringUtils.isNotBlank(fieldStr)) {
+                    String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
+                    if (StringUtils.isNotBlank(realFieldStr)) {
+                        String[] split = realFieldStr.split(",");
+                        ArrayList<PsiReference> psiReferences = new ArrayList<>();
+                        int prevIndex = 0;
+                        for (String fieldId : split) {
+                            int startIndex = fieldStr.indexOf(fieldId, prevIndex);
+                            if (startIndex >= 0) {
+                                prevIndex = startIndex + fieldId.length();
+                                psiReferences.add(
+                                    new JspTagFieldIdReference(attributeValue, fieldId, startIndex + 1, prevIndex + 1));
+                            }
+                        }
+                        return psiReferences;
+                    }
+                }
+            }
+            return Collections.emptyList();
+        }
+    }, FORM(JspConstants.FORM_TAG_NAME) {
+        @Override
+        public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
+            String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
+            if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
+                return Collections.singletonList(new JspDataSetIdReference(attributeValue));
+            } else if (JspConstants.ATTR_NAME_FIELD_STR.equals(attributeName)
+                || JspConstants.ATTR_NAME_MORE_FIELD_STR.equals(attributeName)) {
+                String fieldStr = attributeValue.getValue();
+                if (StringUtils.isNotBlank(fieldStr)) {
+                    String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
+                    if (StringUtils.isNotBlank(realFieldStr)) {
+                        String[] split = realFieldStr.split(",");
+                        ArrayList<PsiReference> psiReferences = new ArrayList<>();
+                        int prevIndex = 0;
+                        for (String fieldId : split) {
+                            int startIndex = fieldStr.indexOf(fieldId, prevIndex);
+                            if (startIndex >= 0) {
+                                prevIndex = startIndex + fieldId.length();
+                                psiReferences.add(
+                                    new JspTagFieldIdReference(attributeValue, fieldId, startIndex + 1, prevIndex + 1));
+                            }
+                        }
+                        return psiReferences;
+                    }
+                }
+            }
+            return Collections.emptyList();
+        }
+    }, FORMGROUP(JspConstants.FORMGROUP_TAG_NAME), FORMFIELD(JspConstants.FORMFIELD_TAG_NAME), QUERYFIELD(
         JspConstants.QUERYFIELD_TAG_NAME), QUERYGROUP(JspConstants.QUERYGROUP_TAG_NAME), TREE(
-        JspConstants.TREE_TAG_NAME), EXPORTER(JspConstants.EXPORTER_TAG_NAME);
+        JspConstants.TREE_TAG_NAME), EXPORTER(JspConstants.EXPORTER_TAG_NAME) {
+        @Override
+        public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
+            String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
+            if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
+                return Collections.singletonList(new JspDataSetIdReference(attributeValue));
+            } else if (JspConstants.ATTR_NAME_FIELD_STR.equals(attributeName)
+                || JspConstants.ATTR_NAME_MORE_FIELD_STR.equals(attributeName)) {
+                String fieldStr = attributeValue.getValue();
+                if (StringUtils.isNotBlank(fieldStr)) {
+                    String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
+                    if (StringUtils.isNotBlank(realFieldStr)) {
+                        String[] split = realFieldStr.split(",");
+                        ArrayList<PsiReference> psiReferences = new ArrayList<>();
+                        int prevIndex = 0;
+                        for (String fieldId : split) {
+                            int startIndex = fieldStr.indexOf(fieldId, prevIndex);
+                            if (startIndex >= 0) {
+                                prevIndex = startIndex + fieldId.length();
+                                psiReferences.add(
+                                    new JspTagFieldIdReference(attributeValue, fieldId, startIndex + 1, prevIndex + 1));
+                            }
+                        }
+                        return psiReferences;
+                    }
+                }
+            }
+            return Collections.emptyList();
+        }
+    };
 
     /**
      * 名字

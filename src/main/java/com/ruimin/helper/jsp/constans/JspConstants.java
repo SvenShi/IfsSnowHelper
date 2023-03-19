@@ -34,6 +34,8 @@ public interface JspConstants {
     String ATTR_NAME_DATASET = "dataset";
     String ATTR_NAME_FILE = "file";
     String ATTR_NAME_PAGINATION_BAR = "paginationbar";
+    String ATTR_NAME_FIELD_STR = "fieldstr";
+    String ATTR_NAME_MORE_FIELD_STR = "morefieldstr";
 
 
     String DTST_EXPRESSION_SUFFIX = "_dataset";

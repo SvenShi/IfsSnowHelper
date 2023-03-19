@@ -6,6 +6,7 @@ package com.ruimin.helper.dtst.dom.model;
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.NameValue;
 import com.intellij.util.xml.Required;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +25,7 @@ public interface Field extends DomElement {
     @NotNull
     @Required
     @Attribute("id")
+    @NameValue
     GenericAttributeValue<String> getId();
 
 
