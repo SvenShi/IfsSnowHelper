@@ -2,6 +2,7 @@ package com.ruimin.helper.jsp.utils;
 
 
 import com.intellij.jsp.highlighter.NewJspFileType;
+import com.intellij.jsp.util.JstlUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.roots.ModuleRootManager;

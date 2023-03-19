@@ -87,12 +87,17 @@
 
 
         <!--  代码检查-->
-        <localInspection language="JAVA" shortName="JavaRqlxKeyInspection"
+        <localInspection language="JAVA" shortName="SnowJavaRqlxKeyInspection"
                 id="snow.JavaRqlxKeyInspection"
                 displayName="Snow rqlx key inspection"
                 groupName="Snow" enabledByDefault="true" level="ERROR"
                 implementationClass="com.ruimin.helper.java.inspection.JavaRqlxKeyInspection"/>
-
+        <!--  代码检查-->
+        <localInspection language="JavaScript" shortName="SnowJSDataSetInspection"
+                id="snow.JSDataSetInspection"
+                displayName="Snow dataset id inspection"
+                groupName="Snow" enabledByDefault="true" level="ERROR"
+                implementationClass="com.ruimin.helper.js.inspection.JSDataSetInspection"/>
         <!-- 项目打开事件-->
         <postStartupActivity implementation="com.ruimin.helper.common.listener.ProjectStartupListener"/>
     </extensions>

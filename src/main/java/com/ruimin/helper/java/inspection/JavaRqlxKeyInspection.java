@@ -1,6 +1,7 @@
 package com.ruimin.helper.java.inspection;
 
 import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool;
+import com.intellij.codeInspection.InspectionEP;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -18,6 +19,7 @@ import com.ruimin.helper.rqlx.utils.RqlxUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.collections.CollectionUtils;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,5 +72,15 @@ public class JavaRqlxKeyInspection extends AbstractBaseJavaLocalInspectionTool {
         }
 
         return ProblemDescriptor.EMPTY_ARRAY;
+    }
+
+    /**
+     * DO NOT OVERRIDE this method.
+     *
+     * @see InspectionEP#shortName
+     */
+    @Override
+    public @NonNls @NotNull String getShortName() {
+        return "SnowJavaRqlxKeyInspection";
     }
 }
