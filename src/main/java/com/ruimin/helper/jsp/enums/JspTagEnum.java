@@ -6,14 +6,9 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.jsp.constans.JspConstants;
-import com.ruimin.helper.jsp.reference.JspButtonIdReference;
-import com.ruimin.helper.jsp.reference.JspDataSetIdReference;
-import com.ruimin.helper.jsp.reference.JspDataSetPathReference;
-import com.ruimin.helper.jsp.reference.JspPaginationbarReference;
-import com.ruimin.helper.jsp.reference.JspTagFieldIdReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,207 +21,65 @@ public enum JspTagEnum {
     /**
      * 数据集
      */
-    DATASET(JspConstants.DATASET_TAG_NAME) {
-        @Override
-        public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
-            String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
-            if (JspConstants.ATTR_NAME_PATH.equals(attributeName)) {
-                return Collections.singletonList(new JspDataSetPathReference(attributeValue));
-            }
-            return Collections.emptyList();
-        }
-    },
+    DATASET(JspConstants.DATASET_TAG_NAME, JspAttrEnum.PATH),
     /**
      * 按钮
      */
-    BUTTON(JspConstants.BUTTON_TAG_NAME) {
-        @Override
-        public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
-            String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
-            if (JspConstants.ATTR_NAME_ID.equals(attributeName)) {
-                return Collections.singletonList(new JspButtonIdReference(attributeValue));
-            } else if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
-                return Collections.singletonList(new JspDataSetIdReference(attributeValue));
-            }
-            return Collections.emptyList();
-        }
-    }, GRID(JspConstants.GRID_TAG_NAME) {
-        @Override
-        public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
-            String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
-            if (JspConstants.ATTR_NAME_PAGINATION_BAR.equals(attributeName)) {
-                String paginationbar = attributeValue.getValue();
-                if (StringUtils.isNotBlank(paginationbar)) {
-                    if (paginationbar.contains("{") || paginationbar.contains("<") || paginationbar.contains("}")
-                        || paginationbar.contains(">") || paginationbar.contains("%") || paginationbar.contains("$")) {
-                        return Collections.emptyList();
-                    }
-                    ArrayList<PsiReference> psiReferences = new ArrayList<>();
-                    String[] split = paginationbar.split(",");
-                    int prevIndex = 0;
-                    for (String buttonId : split) {
-                        int startIndex = paginationbar.indexOf(buttonId, prevIndex);
-                        if (startIndex >= 0) {
-                            prevIndex = startIndex + buttonId.length();
-                            psiReferences.add(
-                                new JspPaginationbarReference(attributeValue, buttonId, startIndex + 1, prevIndex + 1));
-                        }
-                    }
-                    return psiReferences;
-                }
-            } else if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
-                return Collections.singletonList(new JspDataSetIdReference(attributeValue));
-            } else if (JspConstants.ATTR_NAME_FIELD_STR.equals(attributeName)
-                || JspConstants.ATTR_NAME_MORE_FIELD_STR.equals(attributeName)) {
-                String fieldStr = attributeValue.getValue();
-                if (StringUtils.isNotBlank(fieldStr)) {
-                    String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
-                    if (StringUtils.isNotBlank(realFieldStr)) {
-                        String[] split = realFieldStr.split(",");
-                        ArrayList<PsiReference> psiReferences = new ArrayList<>();
-                        int prevIndex = 0;
-                        for (String fieldId : split) {
-                            int startIndex = fieldStr.indexOf(fieldId, prevIndex);
-                            if (startIndex >= 0) {
-                                prevIndex = startIndex + fieldId.length();
-                                psiReferences.add(
-                                    new JspTagFieldIdReference(attributeValue, fieldId, startIndex + 1, prevIndex + 1));
-                            }
-                        }
-                        return psiReferences;
-                    }
-                }
-            }
-            return Collections.emptyList();
-        }
-    }, FILE(JspConstants.FILE_TAG_NAME), QUERY(JspConstants.QUERY_TAG_NAME) {
-        @Override
-        public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
-            String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
-            if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
-                return Collections.singletonList(new JspDataSetIdReference(attributeValue));
-            } else if (JspConstants.ATTR_NAME_FIELD_STR.equals(attributeName)
-                || JspConstants.ATTR_NAME_MORE_FIELD_STR.equals(attributeName)) {
-                String fieldStr = attributeValue.getValue();
-                if (StringUtils.isNotBlank(fieldStr)) {
-                    String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
-                    if (StringUtils.isNotBlank(realFieldStr)) {
-                        String[] split = realFieldStr.split(",");
-                        ArrayList<PsiReference> psiReferences = new ArrayList<>();
-                        int prevIndex = 0;
-                        for (String fieldId : split) {
-                            int startIndex = fieldStr.indexOf(fieldId, prevIndex);
-                            if (startIndex >= 0) {
-                                prevIndex = startIndex + fieldId.length();
-                                psiReferences.add(
-                                    new JspTagFieldIdReference(attributeValue, fieldId, startIndex + 1, prevIndex + 1));
-                            }
-                        }
-                        return psiReferences;
-                    }
-                }
-            }
-            return Collections.emptyList();
-        }
-    }, TREEGRID(JspConstants.TREEGRID_TAG_NAME) {
-        @Override
-        public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
-            String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
-            if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
-                return Collections.singletonList(new JspDataSetIdReference(attributeValue));
-            } else if (JspConstants.ATTR_NAME_FIELD_STR.equals(attributeName)
-                || JspConstants.ATTR_NAME_MORE_FIELD_STR.equals(attributeName)) {
-                String fieldStr = attributeValue.getValue();
-                if (StringUtils.isNotBlank(fieldStr)) {
-                    String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
-                    if (StringUtils.isNotBlank(realFieldStr)) {
-                        String[] split = realFieldStr.split(",");
-                        ArrayList<PsiReference> psiReferences = new ArrayList<>();
-                        int prevIndex = 0;
-                        for (String fieldId : split) {
-                            int startIndex = fieldStr.indexOf(fieldId, prevIndex);
-                            if (startIndex >= 0) {
-                                prevIndex = startIndex + fieldId.length();
-                                psiReferences.add(
-                                    new JspTagFieldIdReference(attributeValue, fieldId, startIndex + 1, prevIndex + 1));
-                            }
-                        }
-                        return psiReferences;
-                    }
-                }
-            }
-            return Collections.emptyList();
-        }
-    }, FORM(JspConstants.FORM_TAG_NAME) {
-        @Override
-        public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
-            String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
-            if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
-                return Collections.singletonList(new JspDataSetIdReference(attributeValue));
-            } else if (JspConstants.ATTR_NAME_FIELD_STR.equals(attributeName)
-                || JspConstants.ATTR_NAME_MORE_FIELD_STR.equals(attributeName)) {
-                String fieldStr = attributeValue.getValue();
-                if (StringUtils.isNotBlank(fieldStr)) {
-                    String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
-                    if (StringUtils.isNotBlank(realFieldStr)) {
-                        String[] split = realFieldStr.split(",");
-                        ArrayList<PsiReference> psiReferences = new ArrayList<>();
-                        int prevIndex = 0;
-                        for (String fieldId : split) {
-                            int startIndex = fieldStr.indexOf(fieldId, prevIndex);
-                            if (startIndex >= 0) {
-                                prevIndex = startIndex + fieldId.length();
-                                psiReferences.add(
-                                    new JspTagFieldIdReference(attributeValue, fieldId, startIndex + 1, prevIndex + 1));
-                            }
-                        }
-                        return psiReferences;
-                    }
-                }
-            }
-            return Collections.emptyList();
-        }
-    }, FORMGROUP(JspConstants.FORMGROUP_TAG_NAME), FORMFIELD(JspConstants.FORMFIELD_TAG_NAME), QUERYFIELD(
-        JspConstants.QUERYFIELD_TAG_NAME), QUERYGROUP(JspConstants.QUERYGROUP_TAG_NAME), TREE(
-        JspConstants.TREE_TAG_NAME), EXPORTER(JspConstants.EXPORTER_TAG_NAME) {
-        @Override
-        public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
-            String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
-            if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
-                return Collections.singletonList(new JspDataSetIdReference(attributeValue));
-            } else if (JspConstants.ATTR_NAME_FIELD_STR.equals(attributeName)
-                || JspConstants.ATTR_NAME_MORE_FIELD_STR.equals(attributeName)) {
-                String fieldStr = attributeValue.getValue();
-                if (StringUtils.isNotBlank(fieldStr)) {
-                    String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
-                    if (StringUtils.isNotBlank(realFieldStr)) {
-                        String[] split = realFieldStr.split(",");
-                        ArrayList<PsiReference> psiReferences = new ArrayList<>();
-                        int prevIndex = 0;
-                        for (String fieldId : split) {
-                            int startIndex = fieldStr.indexOf(fieldId, prevIndex);
-                            if (startIndex >= 0) {
-                                prevIndex = startIndex + fieldId.length();
-                                psiReferences.add(
-                                    new JspTagFieldIdReference(attributeValue, fieldId, startIndex + 1, prevIndex + 1));
-                            }
-                        }
-                        return psiReferences;
-                    }
-                }
-            }
-            return Collections.emptyList();
-        }
-    };
+    BUTTON(JspConstants.BUTTON_TAG_NAME, JspAttrEnum.BUTTON_ID, JspAttrEnum.DATASET),
+    /**
+     * 表格
+     */
+    GRID(JspConstants.GRID_TAG_NAME, JspAttrEnum.DATASET, JspAttrEnum.PAGINATION_BAR, JspAttrEnum.FIELD_STR,
+        JspAttrEnum.MORE_FIELD_STR),
+    /**
+     * 文件
+     */
+    FILE(JspConstants.FILE_TAG_NAME, JspAttrEnum.DATASET),
+    /**
+     * 查询
+     */
+    QUERY(JspConstants.QUERY_TAG_NAME, JspAttrEnum.DATASET, JspAttrEnum.FIELD_STR, JspAttrEnum.MORE_FIELD_STR),
+    /**
+     * treegrid
+     */
+    TREEGRID(JspConstants.TREEGRID_TAG_NAME, JspAttrEnum.DATASET, JspAttrEnum.FIELD_STR, JspAttrEnum.MORE_FIELD_STR),
+    /**
+     * 表单
+     */
+    FORM(JspConstants.FORM_TAG_NAME, JspAttrEnum.DATASET, JspAttrEnum.FIELD_STR, JspAttrEnum.MORE_FIELD_STR),
+    /**
+     * formgroup
+     */
+    FORMGROUP(JspConstants.FORMGROUP_TAG_NAME, JspAttrEnum.DATASET),
+    /**
+     * formfield
+     */
+    FORMFIELD(JspConstants.FORMFIELD_TAG_NAME, JspAttrEnum.DATASET), QUERYFIELD(JspConstants.QUERYFIELD_TAG_NAME,
+        JspAttrEnum.DATASET),
+    /**
+     * querygroup
+     */
+    QUERYGROUP(JspConstants.QUERYGROUP_TAG_NAME, JspAttrEnum.DATASET),
+    /**
+     * 树
+     */
+    TREE(JspConstants.TREE_TAG_NAME, JspAttrEnum.DATASET),
+    /**
+     * 到处
+     */
+    EXPORTER(JspConstants.EXPORTER_TAG_NAME, JspAttrEnum.DATASET, JspAttrEnum.FIELD_STR, JspAttrEnum.MORE_FIELD_STR);
 
     /**
      * 名字
      */
     private final String name;
 
+    private final Set<JspAttrEnum> attrs;
 
-    JspTagEnum(String name) {
+
+    JspTagEnum(String name, JspAttrEnum... attrs) {
         this.name = name;
+        this.attrs = Set.of(attrs);
     }
 
     public String getName() {
@@ -234,11 +87,14 @@ public enum JspTagEnum {
     }
 
     public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
-        String attributeName = XmlAttributeValuePattern.getLocalName(attributeValue);
-        if (JspConstants.ATTR_NAME_DATASET.equals(attributeName)) {
-            return Collections.singletonList(new JspDataSetIdReference(attributeValue));
+        String localName = XmlAttributeValuePattern.getLocalName(attributeValue);
+        ArrayList<PsiReference> psiReferences = new ArrayList<>();
+        for (JspAttrEnum attr : attrs) {
+            if (attr.isTarget(localName)) {
+                psiReferences.addAll(attr.getReferences(attributeValue));
+            }
         }
-        return Collections.emptyList();
+        return psiReferences;
     }
 
     ;
