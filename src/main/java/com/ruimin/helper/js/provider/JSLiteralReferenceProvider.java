@@ -1,4 +1,4 @@
-package com.ruimin.helper.js.provider.reference;
+package com.ruimin.helper.js.provider;
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;

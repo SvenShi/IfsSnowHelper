@@ -3,7 +3,7 @@ package com.ruimin.helper.java.contributor;
 import com.intellij.patterns.PsiJavaPatterns;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
-import com.ruimin.helper.java.provider.reference.JavaReferenceProvider;
+import com.ruimin.helper.java.provider.JavaReferenceProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**

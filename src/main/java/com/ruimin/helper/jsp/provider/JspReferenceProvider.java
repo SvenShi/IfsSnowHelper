@@ -1,4 +1,4 @@
-package com.ruimin.helper.jsp.provider.reference;
+package com.ruimin.helper.jsp.provider;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;

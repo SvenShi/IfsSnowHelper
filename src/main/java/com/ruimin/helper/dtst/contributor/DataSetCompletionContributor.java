@@ -5,7 +5,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.patterns.XmlPatterns;
-import com.ruimin.helper.dtst.provider.completion.DataSetCompletionProvider;
+import com.ruimin.helper.dtst.provider.DataSetCompletionProvider;
 
 public class DataSetCompletionContributor extends CompletionContributor {
 

@@ -4,7 +4,7 @@ import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.psi.xml.XmlElementType;
-import com.ruimin.helper.jsp.provider.reference.JspReferenceProvider;
+import com.ruimin.helper.jsp.provider.JspReferenceProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**

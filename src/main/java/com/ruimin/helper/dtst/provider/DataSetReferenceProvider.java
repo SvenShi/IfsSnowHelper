@@ -1,4 +1,4 @@
-package com.ruimin.helper.dtst.provider.reference;
+package com.ruimin.helper.dtst.provider;
 
 import com.google.common.collect.Sets;
 import com.intellij.patterns.XmlAttributeValuePattern;

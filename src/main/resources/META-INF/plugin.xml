@@ -84,7 +84,7 @@
 
         <!-- dtst 跳转到 java、jsp -->
         <codeInsight.lineMarkerProvider id="snow.SnowDataSetLineMarkerProvider" language="XML"
-                implementationClass="com.ruimin.helper.dtst.provider.line.SnowDataSetLineMarkerProvider"/>
+                implementationClass="com.ruimin.helper.dtst.provider.SnowDataSetLineMarkerProvider"/>
 
         <!--  代码检查-->
         <localInspection language="JAVA" shortName="SnowJavaRqlxKeyInspection"

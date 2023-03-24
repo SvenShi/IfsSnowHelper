@@ -1,4 +1,4 @@
-package com.ruimin.helper.dtst.provider.line;
+package com.ruimin.helper.dtst.provider;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;

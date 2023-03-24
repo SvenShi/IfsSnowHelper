@@ -4,7 +4,7 @@ import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.psi.xml.XmlElementType;
-import com.ruimin.helper.dtst.provider.reference.DataSetReferenceProvider;
+import com.ruimin.helper.dtst.provider.DataSetReferenceProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**

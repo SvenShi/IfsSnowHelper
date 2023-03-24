@@ -1,4 +1,4 @@
-package com.ruimin.helper.java.provider.reference;
+package com.ruimin.helper.java.provider;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLiteralExpression;

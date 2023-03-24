@@ -1,4 +1,4 @@
-package com.ruimin.helper.dtst.provider.completion;
+package com.ruimin.helper.dtst.provider;
 
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;

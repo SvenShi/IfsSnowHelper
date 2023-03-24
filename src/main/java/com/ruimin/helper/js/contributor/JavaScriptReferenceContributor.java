@@ -4,8 +4,8 @@ import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
-import com.ruimin.helper.js.provider.reference.JSExpressionReferenceProvider;
-import com.ruimin.helper.js.provider.reference.JSLiteralReferenceProvider;
+import com.ruimin.helper.js.provider.JSExpressionReferenceProvider;
+import com.ruimin.helper.js.provider.JSLiteralReferenceProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**
