@@ -1,6 +1,8 @@
 package com.ruimin.helper.dtst.constans;
 
+import com.google.common.collect.Sets;
 import com.ruimin.helper.common.constants.CommonConstants;
+import java.util.Set;
 
 /**
  * @author shiwei
@@ -19,5 +21,6 @@ public interface DataSetConstants {
     String XML_TAG_FLOWID_ATTRIBUTE_NAME = "flowid";
 
     String XML_TAG_DATASOURCE_ATTRIBUTE_NAME = "datasource";
+    Set<String> NOT_IN_DATASOURCE_TAG = Sets.newHashSet("LIST", "DDIC");
 
 }

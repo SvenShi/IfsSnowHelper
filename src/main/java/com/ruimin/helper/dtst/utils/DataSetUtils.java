@@ -208,7 +208,7 @@ public final class DataSetUtils {
                 String packageName = StringUtils.substring(dtstPath, 0, index);
                 // 找到所在的包
                 Collection<VirtualFile> matchPackages = PackageIndex.getInstance(project)
-                    .getDirsByPackageName(packageName, false)
+                    .getDirsByPackageName(packageName, scope)
                     .findAll();
                 for (VirtualFile matchPackage : matchPackages) {
                     // 匹配包下面的文件

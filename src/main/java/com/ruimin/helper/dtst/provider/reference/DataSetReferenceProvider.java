@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DataSetReferenceProvider extends PsiReferenceProvider {
 
-    private static final Set<String> NOT_IN_DATASOURCE_TAG = Sets.newHashSet("LIST", "DDIC");
 
     @Override
     public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
@@ -39,7 +38,7 @@ public class DataSetReferenceProvider extends PsiReferenceProvider {
                 return new PsiReference[]{new DatasetFlowIdReference(attribute)};
             } else if (DataSetConstants.XML_TAG_DATASOURCE_ATTRIBUTE_NAME.equals(localName)) {
                 String[] split = ((XmlAttributeValue) element).getValue().split(":");
-                if (split.length >= 2 && !NOT_IN_DATASOURCE_TAG.contains(split[0])) {
+                if (split.length >= 2 && !DataSetConstants.NOT_IN_DATASOURCE_TAG.contains(split[0])) {
                     return new PsiReference[]{new DatasetDataSourceReference(attribute, element.getText().indexOf(":"), split[1])};
                 }
             }
