@@ -1,8 +1,11 @@
 package com.ruimin.helper.dtst.reference;
 
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.ElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
@@ -13,9 +16,12 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.IncorrectOperationException;
+import com.ruimin.helper.common.SnowLookUpElement;
 import com.ruimin.helper.common.util.DataUtils;
+import com.ruimin.helper.dtst.constans.DataSetConstants;
 import com.ruimin.helper.dtst.utils.DataSetUtils;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -39,7 +45,6 @@ public class DatasetDataSourceReference extends PsiReferenceBase<XmlAttributeVal
      *
      * @param indexOf
      * @param element Underlying element.
-     * @param i
      */
     public DatasetDataSourceReference(@NotNull XmlAttributeValue element, int indexOf, String datasetPath) {
         super(Objects.requireNonNull(element),
@@ -47,6 +52,62 @@ public class DatasetDataSourceReference extends PsiReferenceBase<XmlAttributeVal
         this.datasetPath = datasetPath;
     }
 
+    /**
+     * Returns the array of String, {@link PsiElement} and/or {@link LookupElement}
+     * instances representing all identifiers that are visible at the location of the reference. The contents
+     * of the returned array are used to build the lookup list for basic code completion. (The list
+     * of visible identifiers may not be filtered by the completion prefix string - the
+     * filtering is performed later by the IDE.)
+     * <p>
+     * This method is default since 2018.3.
+     *
+     * @return the array of available identifiers.
+     */
+    @Override
+    public Object @NotNull [] getVariants() {
+        String value = myElement.getValue();
+        if (StringUtils.isNotBlank(value)) {
+            if (value.contains(":")) {
+                String[] split = value.split(":");
+                if (split.length == 2) {
+                    String datasourceMode = split[0];
+                    if (!DataSetConstants.NOT_IN_DATASOURCE_TAG.contains(datasourceMode)) {
+                        String datasourcePath = split[1];
+                        if (StringUtils.isNotBlank(datasourcePath) && datasourcePath.contains(".")) {
+                            Module module = ModuleUtil.findModuleForPsiElement(myElement);
+                            if (module == null) {
+                                return super.getVariants();
+                            }
+                            String packageName = StringUtils.substringBeforeLast(datasourcePath, ".");
+                            Collection<VirtualFile> matchPackages = PackageIndex.getInstance(myElement.getProject())
+                                .getDirsByPackageName(packageName, module.getModuleScope())
+                                .findAll();
+                            ArrayList<LookupElement> result = new ArrayList<>();
+                            for (VirtualFile file : matchPackages) {
+                                for (VirtualFile child : file.getChildren()) {
+                                    String name = child.getName();
+                                    if (StringUtils.isNotBlank(name)) {
+                                        if (name.contains(".")) {
+                                            if (StringUtils.endsWithIgnoreCase(name,
+                                                DataSetConstants.DTST_FILE_EXTENSION_DOT)) {
+                                                result.add(new SnowLookUpElement(packageName + "." + FilenameUtils.getBaseName(name)));
+                                            }
+
+                                        } else {
+                                            result.add(new SnowLookUpElement(packageName + "." + name));
+                                        }
+                                    }
+                                }
+                            }
+                            return result.toArray();
+                        }
+                    }
+                }
+            }
+        }
+        return super.getVariants();
+
+    }
 
     /**
      * Returns the element which is the target of the reference.

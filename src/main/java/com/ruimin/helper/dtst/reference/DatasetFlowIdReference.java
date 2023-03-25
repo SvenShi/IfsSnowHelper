@@ -1,8 +1,11 @@
 package com.ruimin.helper.dtst.reference;
 
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.ElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
@@ -13,13 +16,16 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.IncorrectOperationException;
+import com.ruimin.helper.common.SnowLookUpElement;
 import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.common.util.DataUtils;
 import com.ruimin.helper.java.utils.SnowJavaUtils;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +49,61 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
             new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1, 0)));
     }
 
+    /**
+     * Returns the array of String, {@link PsiElement} and/or {@link LookupElement}
+     * instances representing all identifiers that are visible at the location of the reference. The contents
+     * of the returned array are used to build the lookup list for basic code completion. (The list
+     * of visible identifiers may not be filtered by the completion prefix string - the
+     * filtering is performed later by the IDE.)
+     * <p>
+     * This method is default since 2018.3.
+     *
+     * @return the array of available identifiers.
+     */
+    @Override
+    public Object @NotNull [] getVariants() {
+        String value = myElement.getValue();
+        if (StringUtils.isNotBlank(value)) {
+            Module module = ModuleUtil.findModuleForPsiElement(myElement);
+            if (module == null) {
+                return super.getVariants();
+            }
+            ArrayList<LookupElement> result = new ArrayList<>();
+            if (value.contains(":")) {
+                String[] split = value.split(":");
+                if (split.length <= 2) {
+                    String className = split[0];
+                    List<PsiMethod> methods = SnowJavaUtils.findMethods(module.getModuleScope(), className, null);
+                    for (PsiMethod method : methods) {
+                        result.add(new SnowLookUpElement(className + ":" + method.getName()));
+                    }
+                }
+            } else if (value.contains(".")) {
+                String packageName = StringUtils.substringBeforeLast(value, ".");
+                Collection<VirtualFile> matchPackages = PackageIndex.getInstance(myElement.getProject())
+                    .getDirsByPackageName(packageName, module.getModuleScope())
+                    .findAll();
+                for (VirtualFile file : matchPackages) {
+                    for (VirtualFile child : file.getChildren()) {
+                        String childName = child.getName();
+                        if (StringUtils.isNotBlank(childName)) {
+                            if (childName.contains(".")) {
+                                if (StringUtils.endsWithIgnoreCase(childName, ".java")) {
+                                    result.add(new SnowLookUpElement(
+                                        packageName + "." + FilenameUtils.getBaseName(childName)));
+                                }
+
+                            } else {
+                                result.add(new SnowLookUpElement(packageName + "." + childName));
+                            }
+                        }
+                    }
+                }
+            }
+            return result.toArray();
+        }
+        return super.getVariants();
+    }
 
     /**
      * Returns the element which is the target of the reference.
@@ -106,5 +167,6 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
         }
         return myElement;
     }
+
 
 }

@@ -68,10 +68,6 @@
         <psi.referenceContributor language="JavaScript"
                 implementation="com.ruimin.helper.js.contributor.JavaScriptReferenceContributor"/>
 
-        <!-- 代码补全-->
-        <completion.contributor language="XML"
-                implementationClass="com.ruimin.helper.dtst.contributor.DataSetCompletionContributor"/>
-
         <!-- xml文件描述-->
         <!-- dtst文件 -->
         <dom.fileMetaData id="snow.DtstDescription"

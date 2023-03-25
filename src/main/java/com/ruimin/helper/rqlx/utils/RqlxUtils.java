@@ -470,4 +470,50 @@ public final class RqlxUtils {
         }
         return getLatestMethodCallExpressionFromParent(parent);
     }
+
+    /**
+     * 根据rqlxPath找到文件
+     *
+     * @param rqlxPath rqlx路径
+     * @param scope 范围
+     * @return {@link List}<{@link PsiFile}>
+     */
+    public static List<PsiFile> findFilesByPath(@NotNull String rqlxPath, @NotNull GlobalSearchScope scope) {
+        ArrayList<PsiFile> psiFiles = new ArrayList<>();
+        Project project = scope.getProject();
+        if (project != null) {
+            // 所属项目
+            PsiManager psiManager = PsiManager.getInstance(project);
+            // dataset标签的path属性
+            if (StringUtils.isNotBlank(rqlxPath)) {
+                int index = StringUtils.lastIndexOf(rqlxPath, CommonConstants.DOT_SEPARATE);
+                // 字符串处理为包名和dataset名
+                String fileName = StringUtils.substring(rqlxPath, index + 1);
+                String packageName = StringUtils.substring(rqlxPath, 0, index);
+                // 找到所在的包
+                Collection<VirtualFile> matchPackages = PackageIndex.getInstance(project)
+                    .getDirsByPackageName(packageName, scope)
+                    .findAll();
+                for (VirtualFile matchPackage : matchPackages) {
+                    // 匹配包下面的文件
+                    VirtualFile child = matchPackage.findChild(fileName + RqlxConstants.RQLX_FILE_EXTENSION_DOT);
+                    if (child != null) {
+                        boolean contains = scope.contains(child);
+                        if (contains) {
+                            PsiFile file = psiManager.findFile(child);
+                            psiFiles.add(file);
+                        }
+                    }else {
+                        VirtualFile packageChild = matchPackage.findChild(fileName);
+                        if (packageChild != null && scope.contains(packageChild)){
+                            PsiFile file = psiManager.findFile(packageChild);
+                            psiFiles.add(file);
+                        }
+                    }
+                }
+            }
+        }
+        return psiFiles;
+    }
+
 }
