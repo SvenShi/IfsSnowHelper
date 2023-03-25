@@ -48,7 +48,7 @@ public enum JspAttrEnum {
          */
         @Override
         public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
-            return Collections.singletonList(new JspButtonIdReference(attributeValue));
+            return Collections.singletonList(new JspButtonIdReference(attributeValue, attributeValue.getValue()));
         }
     },
     /**

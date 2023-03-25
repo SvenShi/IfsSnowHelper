@@ -1,7 +1,9 @@
 package com.ruimin.helper.jsp.reference;
 
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulator;
+import com.intellij.psi.JspPsiUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -11,6 +13,7 @@ import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
+import com.ruimin.helper.common.SnowLookUpElement;
 import com.ruimin.helper.common.util.DataUtils;
 import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.jsp.constans.JspConstants;
@@ -27,8 +30,7 @@ import org.jetbrains.annotations.Nullable;
  * @date 2023/01/14 上午 04:07
  * @description
  */
-public class JspDataSetIdReference extends PsiReferenceBase<XmlAttributeValue> implements
-    PsiPolyVariantReference {
+public class JspDataSetIdReference extends PsiReferenceBase<XmlAttributeValue> implements PsiPolyVariantReference {
 
     /**
      * Reference range is obtained from {@link ElementManipulator#getRangeInElement(PsiElement)}.
@@ -36,9 +38,39 @@ public class JspDataSetIdReference extends PsiReferenceBase<XmlAttributeValue> i
      * @param element Underlying element.
      */
     public JspDataSetIdReference(@NotNull XmlAttributeValue element) {
-        super(Objects.requireNonNull(element), new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1,1)));
+        super(Objects.requireNonNull(element),
+            new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1, 1)));
     }
 
+    /**
+     * Returns the array of String, {@link PsiElement} and/or {@link LookupElement}
+     * instances representing all identifiers that are visible at the location of the reference. The contents
+     * of the returned array are used to build the lookup list for basic code completion. (The list
+     * of visible identifiers may not be filtered by the completion prefix string - the
+     * filtering is performed later by the IDE.)
+     * <p>
+     * This method is default since 2018.3.
+     *
+     * @return the array of available identifiers.
+     */
+    @Override
+    public Object @NotNull [] getVariants() {
+        JspFile jspFile = JspPsiUtil.getJspFile(myElement);
+        if (jspFile != null) {
+            List<XmlTag> dataSetList = SnowJspUtils.findAllTagInFile(jspFile, JspConstants.DATASET_TAG_NAME);
+            ArrayList<LookupElement> result = new ArrayList<>();
+            for (XmlTag datasetTag : dataSetList) {
+                XmlAttribute attribute = datasetTag.getAttribute(JspConstants.ATTR_NAME_ID);
+                if (attribute != null) {
+                    String id = attribute.getValue();
+                    XmlAttribute path = datasetTag.getAttribute(JspConstants.ATTR_NAME_PATH);
+                    result.add(new SnowLookUpElement(id, datasetTag, path != null ? path.getValue() : null, "DataSet"));
+                }
+            }
+            return result.toArray();
+        }
+        return super.getVariants();
+    }
 
     /**
      * Returns the element which is the target of the reference.
@@ -65,12 +97,12 @@ public class JspDataSetIdReference extends PsiReferenceBase<XmlAttributeValue> i
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
         String dataSetId = myElement.getValue();
-        if (StringUtils.isNotBlank(dataSetId)) {
-            List<XmlTag> dataSetList = SnowJspUtils.findAllTagInFile(((JspFile) myElement.getContainingFile()),
-                JspConstants.DATASET_TAG_NAME);
+        JspFile jspFile = JspPsiUtil.getJspFile(myElement);
+        if (StringUtils.isNotBlank(dataSetId) && jspFile != null) {
             ArrayList<ResolveResult> resolveResults = new ArrayList<>();
-            for (XmlTag datasetTag : dataSetList) {
-                XmlAttribute attribute = datasetTag.getAttribute(JspConstants.ATTR_NAME_ID);
+            XmlTag dataSetTag = SnowJspUtils.findDataSetTag(jspFile, dataSetId);
+            if (dataSetTag != null){
+                XmlAttribute attribute = dataSetTag.getAttribute(JspConstants.ATTR_NAME_ID);
                 if (attribute != null) {
                     String id = attribute.getValue();
                     XmlAttributeValue valueElement = attribute.getValueElement();

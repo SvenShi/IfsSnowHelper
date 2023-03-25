@@ -4,13 +4,11 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.PackageIndex;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiPackage;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.xml.XmlElement;
@@ -29,11 +27,13 @@ import com.ruimin.helper.dtst.dom.model.Define;
 import com.ruimin.helper.dtst.dom.model.Field;
 import com.ruimin.helper.dtst.dom.model.Fields;
 import com.ruimin.helper.dtst.dom.model.FlowIdDomElement;
+import com.ruimin.helper.java.utils.SnowJavaUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -198,8 +198,6 @@ public final class DataSetUtils {
         ArrayList<XmlFile> psiFiles = new ArrayList<>();
         Project project = scope.getProject();
         if (project != null) {
-            // 所属项目
-            PsiManager psiManager = PsiManager.getInstance(project);
             // dataset标签的path属性
             if (StringUtils.isNotBlank(dtstPath)) {
                 int index = StringUtils.lastIndexOf(dtstPath, CommonConstants.DOT_SEPARATE);
@@ -207,27 +205,69 @@ public final class DataSetUtils {
                 String dtstName = StringUtils.substring(dtstPath, index + 1);
                 String packageName = StringUtils.substring(dtstPath, 0, index);
                 // 找到所在的包
-                Collection<VirtualFile> matchPackages = PackageIndex.getInstance(project)
-                    .getDirsByPackageName(packageName, scope)
-                    .findAll();
-                for (VirtualFile matchPackage : matchPackages) {
-                    // 匹配包下面的文件
-                    VirtualFile child = matchPackage.findChild(dtstName + DataSetConstants.DTST_FILE_EXTENSION_DOT);
-                    if (child != null) {
-                        boolean contains = scope.contains(child);
-                        if (contains) {
-                            PsiFile file = psiManager.findFile(child);
-                            if (file != null && isDtstFile(file)) {
-                                psiFiles.add((XmlFile) file);
-                            }
+                Optional<PsiPackage> aPackage = SnowJavaUtils.findPackage(project, packageName);
+                if (aPackage.isPresent()) {
+                    PsiPackage psiPackage = aPackage.get();
+                    PsiFile[] files = psiPackage.getFiles(scope);
+                    String datasetFileName = dtstName + DataSetConstants.DTST_FILE_EXTENSION_DOT;
+                    for (PsiFile file : files) {
+                        if (datasetFileName.equals(file.getName()) && isDtstFile(file)) {
+                            psiFiles.add((XmlFile) file);
                         }
-
                     }
+
                 }
             }
         }
         return psiFiles;
     }
+
+    /**
+     * 得到所有的command
+     *
+     * @param dtstFile dtst文件
+     * @return {@link List}<{@link Command}>
+     */
+    public static List<Command> getCommands(XmlFile dtstFile) {
+        ArrayList<Command> commands = new ArrayList<>();
+        if (isDtstFile(dtstFile)) {
+            DomFileElement<Data> dtstRootElement = DomManager.getDomManager(dtstFile.getProject())
+                .getFileElement(dtstFile, Data.class);
+            if (dtstRootElement != null) {
+                Data data = dtstRootElement.getRootElement();
+                List<Commands> commandses = data.getCommandses();
+                for (Commands commandsTag : commandses) {
+                    commands.addAll(commandsTag.getCommands());
+                }
+            }
+
+        }
+        return commands;
+    }
+
+    /**
+     * 得到所有的command
+     *
+     * @param dtstFile dtst文件
+     * @return {@link List}<{@link Command}>
+     */
+    public static List<Field> getFields(XmlFile dtstFile) {
+        ArrayList<Field> fields = new ArrayList<>();
+        if (isDtstFile(dtstFile)) {
+            DomFileElement<Data> dtstRootElement = DomManager.getDomManager(dtstFile.getProject())
+                .getFileElement(dtstFile, Data.class);
+            if (dtstRootElement != null) {
+                Data data = dtstRootElement.getRootElement();
+                List<Fields> fieldses = data.getFieldses();
+                for (Fields f : fieldses) {
+                    fields.addAll(f.getFields());
+                }
+            }
+
+        }
+        return fields;
+    }
+
 
     /**
      * 得到dtst文件的Data标签

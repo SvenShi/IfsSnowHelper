@@ -1,26 +1,31 @@
 package com.ruimin.helper.jsp.reference;
 
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiPackage;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
-import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.IncorrectOperationException;
+import com.ruimin.helper.common.SnowLookUpElement;
 import com.ruimin.helper.common.util.DataUtils;
+import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.dtst.utils.DataSetUtils;
+import com.ruimin.helper.java.utils.SnowJavaUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,8 +35,7 @@ import org.jetbrains.annotations.Nullable;
  * @date 2023/01/14 上午 04:07
  * @description
  */
-public class JspDataSetPathReference extends PsiReferenceBase<XmlAttributeValue> implements
-    PsiPolyVariantReference {
+public class JspDataSetPathReference extends PsiReferenceBase<XmlAttributeValue> implements PsiPolyVariantReference {
 
 
     /**
@@ -44,6 +48,43 @@ public class JspDataSetPathReference extends PsiReferenceBase<XmlAttributeValue>
             new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1, 1)));
     }
 
+    /**
+     * Returns the array of String, {@link PsiElement} and/or {@link LookupElement}
+     * instances representing all identifiers that are visible at the location of the reference. The contents
+     * of the returned array are used to build the lookup list for basic code completion. (The list
+     * of visible identifiers may not be filtered by the completion prefix string - the
+     * filtering is performed later by the IDE.)
+     * <p>
+     * This method is default since 2018.3.
+     *
+     * @return the array of available identifiers.
+     */
+    @Override
+    public Object @NotNull [] getVariants() {
+        Module module = ModuleUtil.findModuleForPsiElement(myElement);
+        if (module == null) {
+            return super.getVariants();
+        }
+        String text = myElement.getValue();
+        String prefixPath = StringUtils.substringBeforeLast(text, ".");
+        Optional<PsiPackage> aPackage = SnowJavaUtils.findPackage(module.getProject(), prefixPath);
+        ArrayList<SnowLookUpElement> result = new ArrayList<>();
+        if (aPackage.isPresent()) {
+            PsiPackage psiPackage = aPackage.get();
+            PsiPackage[] subPackages = psiPackage.getSubPackages(module.getModuleScope());
+            PsiFile[] files = psiPackage.getFiles(module.getModuleScope());
+            for (PsiPackage subPackage : subPackages) {
+                result.add(new SnowLookUpElement(prefixPath + subPackage.getName(), subPackage));
+            }
+            for (PsiFile file : files) {
+                if (DataSetUtils.isDtstFile(file)) {
+                    result.add(new SnowLookUpElement(prefixPath + FilenameUtils.getBaseName(file.getName()), file));
+                }
+            }
+
+        }
+        return result.toArray();
+    }
 
     /**
      * Returns the element which is the target of the reference.

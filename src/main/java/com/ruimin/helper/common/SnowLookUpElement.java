@@ -14,6 +14,9 @@ import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiFormatUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlTag;
+import com.ruimin.helper.jsp.utils.SnowJspUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -108,7 +111,10 @@ public class SnowLookUpElement extends LookupElement {
             }
             presentation.setTailText(tailText, true);
         } else if (element instanceof XmlAttribute) {
-            presentation.setIcon(element.getContainingFile().getIcon(Iconable.ICON_FLAG_VISIBILITY));
+            XmlTag tag = SnowJspUtils.findTag((XmlElement) element);
+            if (tag != null) {
+                presentation.setIcon(tag.getIcon(Iconable.ICON_FLAG_VISIBILITY));
+            }
         }
 
     }

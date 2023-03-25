@@ -24,6 +24,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.dtst.constans.DataSetConstants;
+import com.ruimin.helper.dtst.utils.DataSetUtils;
 import com.ruimin.helper.jsp.constans.JspConstants;
 import com.ruimin.helper.jsp.enums.JspTagEnum;
 import java.util.ArrayList;
@@ -136,6 +137,37 @@ public class SnowJspUtils {
         findAllTag(rootTag, pageTags, tagName);
         return pageTags;
     }
+
+    @Nullable
+    public static XmlTag findDataSetTag(@NotNull JspFile jspFile, @NotNull String dataSetId) {
+        List<XmlTag> allDataSetTag = findAllTagInFile(jspFile, JspConstants.DATASET_TAG_NAME);
+        for (XmlTag xmlTag : allDataSetTag) {
+            XmlAttribute attribute = xmlTag.getAttribute(JspConstants.ATTR_NAME_ID);
+            if (attribute != null) {
+                String value = attribute.getValue();
+                if (dataSetId.equals(value)) {
+                    return xmlTag;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static XmlFile findDataSetFile(@NotNull XmlTag dataSetTag) {
+        String dataSetPath = dataSetTag.getAttributeValue(JspConstants.ATTR_NAME_PATH);
+        if (StringUtils.isNotBlank(dataSetPath)) {
+            Module module = ModuleUtil.findModuleForPsiElement(dataSetTag);
+            if (module != null) {
+                ArrayList<XmlFile> dtstFiles = DataSetUtils.findDtstFileByPath(dataSetPath, module.getModuleScope());
+                if (CollectionUtils.isNotEmpty(dtstFiles)) {
+                    return dtstFiles.get(0);
+                }
+            }
+        }
+        return null;
+    }
+
 
     /**
      * 找到页面的所有snow的标签
@@ -255,8 +287,7 @@ public class SnowJspUtils {
     public static XmlTag findTagById(@NotNull PsiElement element, @NotNull String id, JspTagEnum tagEnum) {
         JspFile jspFile = JspPsiUtil.getJspFile(element);
         if (jspFile != null) {
-            List<XmlTag> allTagInFile = findAllTagInFile(jspFile,
-                tagEnum.getName());
+            List<XmlTag> allTagInFile = findAllTagInFile(jspFile, tagEnum.getName());
             for (XmlTag xmlTag : allTagInFile) {
                 XmlAttribute attribute = xmlTag.getAttribute(JspConstants.ATTR_NAME_ID);
                 if (attribute != null) {
