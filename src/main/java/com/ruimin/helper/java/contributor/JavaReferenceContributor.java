@@ -3,7 +3,7 @@ package com.ruimin.helper.java.contributor;
 import com.intellij.patterns.PsiJavaPatterns;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
-import com.ruimin.helper.java.provider.JavaReferenceProvider;
+import com.ruimin.helper.java.provider.JavaRqlxKeyReferenceProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,7 +17,7 @@ public class JavaReferenceContributor extends PsiReferenceContributor {
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
         registrar.registerReferenceProvider(PsiJavaPatterns.psiLiteral(),
-            new JavaReferenceProvider());
+            new JavaRqlxKeyReferenceProvider());
 
     }
 }

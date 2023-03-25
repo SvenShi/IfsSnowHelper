@@ -69,9 +69,7 @@
                 implementation="com.ruimin.helper.js.contributor.JavaScriptReferenceContributor"/>
 
         <!-- 代码补全-->
-        <completion.contributor language="JAVA"
-                implementationClass="com.ruimin.helper.java.contributor.JavaRqlxKeyCompletionContributor"/>
-
+        
         <completion.confidence language="JAVA"
                 implementationClass="com.ruimin.helper.java.contributor.SnowLiteralCompletionConfidence"
                 order="before javaSkipAutopopupInStrings"/>

@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * @date 2023/01/14 上午 03:54
  * @description
  */
-public class JavaReferenceProvider extends PsiReferenceProvider {
+public class JavaRqlxKeyReferenceProvider extends PsiReferenceProvider {
 
     @Override
     public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
