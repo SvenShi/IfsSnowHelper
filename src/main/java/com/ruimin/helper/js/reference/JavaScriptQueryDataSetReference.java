@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
  * @date 2023/01/14 上午 04:07
  * @description
  */
-public class JavaScriptQueryReference extends PsiReferenceBase<JSReferenceExpression> implements
+public class JavaScriptQueryDataSetReference extends PsiReferenceBase<JSReferenceExpression> implements
     PsiPolyVariantReference {
 
 
@@ -37,7 +37,7 @@ public class JavaScriptQueryReference extends PsiReferenceBase<JSReferenceExpres
      *
      * @param element Underlying element.
      */
-    public JavaScriptQueryReference(@NotNull JSReferenceExpression element) {
+    public JavaScriptQueryDataSetReference(@NotNull JSReferenceExpression element) {
         super(Objects.requireNonNull(element), new TextRange(0, element.getTextLength() - 1));
     }
 
@@ -52,7 +52,7 @@ public class JavaScriptQueryReference extends PsiReferenceBase<JSReferenceExpres
     @Override
     public PsiElement resolve() {
         ResolveResult[] resolveResults = multiResolve(false);
-        return resolveResults.length == 1 ? resolveResults[0].getElement() : null;
+        return resolveResults.length > 0 ? resolveResults[0].getElement() : null;
     }
 
 
@@ -72,6 +72,7 @@ public class JavaScriptQueryReference extends PsiReferenceBase<JSReferenceExpres
                 JspConstants.QUERY_TAG_NAME);
             ArrayList<ResolveResult> resolveResults = new ArrayList<>();
             String text = myElement.getText();
+            String datasetId = StringUtils.remove(text, JspConstants.QUERY_EXPRESSION_SUFFIX);
             for (XmlTag xmlTag : queryTags) {
                 XmlAttribute attribute = xmlTag.getAttribute(JspConstants.ATTR_NAME_DATASET);
                 if (attribute != null) {
@@ -79,9 +80,9 @@ public class JavaScriptQueryReference extends PsiReferenceBase<JSReferenceExpres
                     if (valueElement != null) {
                         String value = valueElement.getValue();
                         if (StringUtils.isNotBlank(value)) {
-                            String dataSetExpression = value + JspConstants.QUERY_EXPRESSION_SUFFIX;
-                            if (dataSetExpression.equals(text)) {
+                            if (value.equals(datasetId)) {
                                 resolveResults.add(new PsiElementResolveResult(valueElement));
+                                break;
                             }
                         }
                     }

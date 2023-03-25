@@ -24,3 +24,4 @@ public class JavaScriptReferenceContributor extends PsiReferenceContributor {
             new JSLiteralReferenceProvider());
     }
 }
+

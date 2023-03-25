@@ -9,7 +9,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ProcessingContext;
 import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.js.reference.JavaScriptDataSetReference;
-import com.ruimin.helper.js.reference.JavaScriptQueryReference;
+import com.ruimin.helper.js.reference.JavaScriptQueryDataSetReference;
 import com.ruimin.helper.jsp.constans.JspConstants;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +29,7 @@ public class JSExpressionReferenceProvider extends PsiReferenceProvider {
             JSReferenceExpression expression = (JSReferenceExpression) element;
             String text = expression.getText();
             if (StringUtils.endsWith(text, JspConstants.QUERY_EXPRESSION_SUFFIX)) {
-                return new PsiReference[]{new JavaScriptQueryReference(expression)};
+                return new PsiReference[]{new JavaScriptQueryDataSetReference(expression)};
             } else if (StringUtils.endsWith(text, JspConstants.DTST_EXPRESSION_SUFFIX)) {
                 return new PsiReference[]{new JavaScriptDataSetReference(expression)};
             }

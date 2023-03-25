@@ -52,7 +52,7 @@ public class JavaScriptDataSetReference extends PsiReferenceBase<JSReferenceExpr
     @Override
     public PsiElement resolve() {
         ResolveResult[] resolveResults = multiResolve(false);
-        return resolveResults.length == 1 ? resolveResults[0].getElement() : null;
+        return resolveResults.length > 0 ? resolveResults[0].getElement() : null;
     }
 
 
@@ -72,6 +72,7 @@ public class JavaScriptDataSetReference extends PsiReferenceBase<JSReferenceExpr
                 JspConstants.DATASET_TAG_NAME);
             ArrayList<ResolveResult> resolveResults = new ArrayList<>();
             String text = myElement.getText();
+            String datasetId = StringUtils.remove(text, JspConstants.DTST_EXPRESSION_SUFFIX);
             for (XmlTag xmlTag : dataSetTag) {
                 XmlAttribute attribute = xmlTag.getAttribute(JspConstants.ATTR_NAME_ID);
                 if (attribute != null) {
@@ -79,9 +80,9 @@ public class JavaScriptDataSetReference extends PsiReferenceBase<JSReferenceExpr
                     if (valueElement != null) {
                         String value = valueElement.getValue();
                         if (StringUtils.isNotBlank(value)) {
-                            String dataSetExpression = value + JspConstants.DTST_EXPRESSION_SUFFIX;
-                            if (dataSetExpression.equals(text)) {
+                            if (value.equals(datasetId)) {
                                 resolveResults.add(new PsiElementResolveResult(valueElement));
+                                break;
                             }
                         }
                     }
