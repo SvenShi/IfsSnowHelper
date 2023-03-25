@@ -1,9 +1,18 @@
 package com.ruimin.helper.common;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.lang.java.JavaLanguage;
+import com.intellij.openapi.util.Iconable;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.ruimin.helper.common.constants.SnowIcons;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiQualifiedNamedElement;
+import com.intellij.psi.PsiSubstitutor;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,9 +24,11 @@ import org.jetbrains.annotations.NotNull;
 public class SnowLookUpElement extends LookupElement {
 
     private final String text;
+    private final PsiElement element;
 
-    public SnowLookUpElement(String text) {
+    public SnowLookUpElement(String text, PsiElement element) {
         this.text = text;
+        this.element = element;
     }
 
     /**
@@ -34,7 +45,7 @@ public class SnowLookUpElement extends LookupElement {
      */
     @Override
     public @NotNull Object getObject() {
-        return text;
+        return element == null ? text : element;
     }
 
     /**
@@ -50,6 +61,40 @@ public class SnowLookUpElement extends LookupElement {
     @Override
     public void renderElement(@NotNull LookupElementPresentation presentation) {
         presentation.setItemText(text);
-        presentation.setIcon(SnowIcons.LOGO);
+        if (element != null) {
+            presentation.setIcon(element.getIcon(Iconable.ICON_FLAG_VISIBILITY));
+        }
+        if (element instanceof PsiMethod) {
+            PsiMethod method = (PsiMethod) element;
+            presentation.setItemText(method.getName());
+            presentation.setTailText(PsiFormatUtil.formatMethod(method, PsiSubstitutor.EMPTY, 256, 3));
+            PsiType returnType = method.getReturnType();
+            if (returnType != null) {
+                presentation.setTypeText(returnType.getCanonicalText());
+            }
+        } else if (element instanceof PsiClass) {
+            PsiClass psiClass = (PsiClass) element;
+            presentation.setItemText(psiClass.getName());
+            String locationString = PsiFormatUtil.getPackageDisplayName(psiClass);
+            String tailText = " " + locationString;
+            if (psiClass.isInterface() || psiClass.hasModifierProperty("abstract")) {
+                tailText = "{...}" + locationString;
+            }
+
+            if (psiClass.getTypeParameters().length > 0) {
+                String separator = "," + (showSpaceAfterComma(psiClass) ? " " : "");
+                String type = StringUtil.join(psiClass.getTypeParameters(), PsiQualifiedNamedElement::getName,
+                    separator);
+                tailText = "<" + type + ">" + tailText;
+            }
+            presentation.setTailText(tailText, true);
+
+        }
+
     }
+
+    private boolean showSpaceAfterComma(PsiClass psiClass) {
+        return CodeStyle.getLanguageSettings(element.getContainingFile(), JavaLanguage.INSTANCE).SPACE_AFTER_COMMA;
+    }
+
 }

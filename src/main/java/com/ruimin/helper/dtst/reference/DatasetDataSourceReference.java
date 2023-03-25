@@ -9,6 +9,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.ElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
@@ -82,19 +84,24 @@ public class DatasetDataSourceReference extends PsiReferenceBase<XmlAttributeVal
                             Collection<VirtualFile> matchPackages = PackageIndex.getInstance(myElement.getProject())
                                 .getDirsByPackageName(packageName, module.getModuleScope())
                                 .findAll();
+                            PsiManager psiManager = PsiManager.getInstance(myElement.getProject());
                             ArrayList<LookupElement> result = new ArrayList<>();
                             for (VirtualFile file : matchPackages) {
                                 for (VirtualFile child : file.getChildren()) {
-                                    String name = child.getName();
-                                    if (StringUtils.isNotBlank(name)) {
-                                        if (name.contains(".")) {
-                                            if (StringUtils.endsWithIgnoreCase(name,
-                                                DataSetConstants.DTST_FILE_EXTENSION_DOT)) {
-                                                result.add(new SnowLookUpElement(packageName + "." + FilenameUtils.getBaseName(name)));
-                                            }
+                                    PsiFile psiFile = psiManager.findFile(child);
+                                    if (psiFile != null) {
+                                        String name = child.getName();
+                                        if (StringUtils.isNotBlank(name)) {
+                                            if (name.contains(".")) {
+                                                if (StringUtils.endsWithIgnoreCase(name,
+                                                    DataSetConstants.DTST_FILE_EXTENSION_DOT)) {
+                                                    result.add(new SnowLookUpElement(
+                                                        packageName + "." + FilenameUtils.getBaseName(name), psiFile));
+                                                }
 
-                                        } else {
-                                            result.add(new SnowLookUpElement(packageName + "." + name));
+                                            } else {
+                                                result.add(new SnowLookUpElement(packageName + "." + name, psiFile));
+                                            }
                                         }
                                     }
                                 }

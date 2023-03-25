@@ -3,13 +3,13 @@ package com.ruimin.helper.dtst.reference;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.ElementManipulator;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiPackage;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
@@ -21,11 +21,10 @@ import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.common.util.DataUtils;
 import com.ruimin.helper.java.utils.SnowJavaUtils;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,28 +74,21 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
                     String className = split[0];
                     List<PsiMethod> methods = SnowJavaUtils.findMethods(module.getModuleScope(), className, null);
                     for (PsiMethod method : methods) {
-                        result.add(new SnowLookUpElement(className + ":" + method.getName()));
+                        result.add(new SnowLookUpElement(className + ":" + method.getName(), method));
                     }
                 }
             } else if (value.contains(".")) {
                 String packageName = StringUtils.substringBeforeLast(value, ".");
-                Collection<VirtualFile> matchPackages = PackageIndex.getInstance(myElement.getProject())
-                    .getDirsByPackageName(packageName, module.getModuleScope())
-                    .findAll();
-                for (VirtualFile file : matchPackages) {
-                    for (VirtualFile child : file.getChildren()) {
-                        String childName = child.getName();
-                        if (StringUtils.isNotBlank(childName)) {
-                            if (childName.contains(".")) {
-                                if (StringUtils.endsWithIgnoreCase(childName, ".java")) {
-                                    result.add(new SnowLookUpElement(
-                                        packageName + "." + FilenameUtils.getBaseName(childName)));
-                                }
-
-                            } else {
-                                result.add(new SnowLookUpElement(packageName + "." + childName));
-                            }
-                        }
+                Optional<PsiPackage> aPackage = SnowJavaUtils.findPackage(module.getModuleScope(), packageName);
+                if (aPackage.isPresent()) {
+                    PsiPackage psiPackage = aPackage.get();
+                    PsiPackage[] subPackages = psiPackage.getSubPackages(module.getModuleScope());
+                    PsiClass[] classes = psiPackage.getClasses(module.getModuleScope());
+                    for (PsiPackage subPackage : subPackages) {
+                        result.add(new SnowLookUpElement(subPackage.getQualifiedName(), subPackage));
+                    }
+                    for (PsiClass aClass : classes) {
+                        result.add(new SnowLookUpElement(aClass.getQualifiedName(), aClass));
                     }
                 }
             }

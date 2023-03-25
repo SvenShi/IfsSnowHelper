@@ -1,7 +1,6 @@
 package com.ruimin.helper.java.utils;
 
 import com.google.common.collect.Lists;
-import com.intellij.codeInsight.ClassUtil;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -11,12 +10,12 @@ import com.intellij.psi.JavaRecursiveElementVisitor;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.jsp.JavaJspRecursiveElementVisitor;
+import com.intellij.psi.PsiPackage;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PropertyUtil;
-import com.intellij.psi.util.PsiMethodUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.ruimin.helper.common.util.StringUtils;
 import java.util.ArrayList;
@@ -116,11 +115,27 @@ public final class SnowJavaUtils {
      * @param clazzName the clazz name
      * @return the optional
      */
-    public static Optional<PsiClass[]> findClasses(@NotNull GlobalSearchScope scope, @NotNull String clazzName) {
+    public static Optional<List<PsiClass>> findClasses(@NotNull GlobalSearchScope scope, @NotNull String clazzName) {
         if (scope.getProject() == null) {
             return Optional.empty();
         }
-        return Optional.of(JavaPsiFacade.getInstance(scope.getProject()).findClasses(clazzName, scope));
+        List<PsiClass> collect = Arrays.stream(
+            JavaPsiFacade.getInstance(scope.getProject()).findClasses(clazzName, scope)).filter(item -> {
+            PsiFile containingFile = item.getContainingFile();
+            return scope.contains(containingFile.getVirtualFile());
+        }).collect(Collectors.toList());
+        return Optional.of(collect);
+    }
+
+    public static Optional<PsiPackage> findPackage(@NotNull GlobalSearchScope scope, @NotNull String packageName) {
+        if (scope.getProject() == null) {
+            return Optional.empty();
+        }
+        PsiPackage aPackage = JavaPsiFacade.getInstance(scope.getProject()).findPackage(packageName);
+        if (aPackage != null) {
+            return Optional.of(aPackage);
+        }
+        return Optional.empty();
     }
 
     /**
@@ -132,10 +147,10 @@ public final class SnowJavaUtils {
      */
     public static List<PsiMethod> findMethods(@NotNull GlobalSearchScope scope, @NotNull String clazzName,
         @Nullable String methodName) {
-        Optional<PsiClass[]> classes = findClasses(scope, clazzName);
+        Optional<List<PsiClass>> classes = findClasses(scope, clazzName);
         ArrayList<PsiMethod> psiMethods = new ArrayList<>();
         if (classes.isPresent()) {
-            PsiClass[] psiClasses = classes.get();
+            List<PsiClass> psiClasses = classes.get();
             for (PsiClass psiClass : psiClasses) {
                 psiClass.accept(new JavaRecursiveElementVisitor() {
                     @Override
@@ -165,8 +180,8 @@ public final class SnowJavaUtils {
      */
     public static List<PsiMethod> findMethods(@NotNull Module module, @NotNull String clazzName,
         @Nullable String methodName) {
-        Optional<PsiClass[]> classes = findClasses(module.getModuleScope(), clazzName);
-        return classes.map(psiClasses -> Arrays.stream(psiClasses)
+        Optional<List<PsiClass>> classes = findClasses(module.getModuleScope(), clazzName);
+        return classes.map(psiClasses -> psiClasses.stream()
             .map(psiClass -> psiClass.findMethodsByName(methodName, true))
             .flatMap(Arrays::stream)
             .collect(Collectors.toList())).orElse(null);
