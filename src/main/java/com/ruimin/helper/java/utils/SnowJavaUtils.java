@@ -127,11 +127,8 @@ public final class SnowJavaUtils {
         return Optional.of(collect);
     }
 
-    public static Optional<PsiPackage> findPackage(@NotNull GlobalSearchScope scope, @NotNull String packageName) {
-        if (scope.getProject() == null) {
-            return Optional.empty();
-        }
-        PsiPackage aPackage = JavaPsiFacade.getInstance(scope.getProject()).findPackage(packageName);
+    public static Optional<PsiPackage> findPackage(@NotNull Project project, @NotNull String packageName) {
+        PsiPackage aPackage = JavaPsiFacade.getInstance(project).findPackage(packageName);
         if (aPackage != null) {
             return Optional.of(aPackage);
         }

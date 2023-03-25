@@ -40,6 +40,7 @@ public interface Command extends FlowIdDomElement {
 	 */
 	@NotNull
 	@Required
+	@Attribute("desc")
 	GenericAttributeValue<String> getDesc();
 
 
@@ -67,7 +68,7 @@ public interface Command extends FlowIdDomElement {
 	 * @return the value of the icon child.
 	 */
 	@NotNull
-	@Attribute("type")
+	@Attribute("icon")
 	GenericAttributeValue<String> getIcon();
 
 

@@ -13,6 +13,7 @@ import com.intellij.psi.PsiQualifiedNamedElement;
 import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiFormatUtil;
+import com.intellij.psi.xml.XmlAttribute;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,12 +24,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SnowLookUpElement extends LookupElement {
 
-    private final String text;
+    private String text;
     private final PsiElement element;
+    private final String tailText;
+
+    private final String typeText;
 
     public SnowLookUpElement(String text, PsiElement element) {
         this.text = text;
         this.element = element;
+        this.tailText = null;
+        this.typeText = null;
+    }
+
+    public SnowLookUpElement(String text, PsiElement element, String tailText, String typeText) {
+        this.text = text;
+        this.element = element;
+        this.tailText = tailText;
+        this.typeText = typeText;
     }
 
     /**
@@ -64,6 +77,12 @@ public class SnowLookUpElement extends LookupElement {
         if (element != null) {
             presentation.setIcon(element.getIcon(Iconable.ICON_FLAG_VISIBILITY));
         }
+        if (tailText != null) {
+            presentation.setTailText(" " + tailText);
+        }
+        if (typeText != null) {
+            presentation.setTypeText(typeText);
+        }
         if (element instanceof PsiMethod) {
             PsiMethod method = (PsiMethod) element;
             presentation.setItemText(method.getName());
@@ -88,13 +107,18 @@ public class SnowLookUpElement extends LookupElement {
                 tailText = "<" + type + ">" + tailText;
             }
             presentation.setTailText(tailText, true);
-
+        } else if (element instanceof XmlAttribute) {
+            presentation.setIcon(element.getContainingFile().getIcon(Iconable.ICON_FLAG_VISIBILITY));
         }
 
     }
 
     private boolean showSpaceAfterComma(PsiClass psiClass) {
         return CodeStyle.getLanguageSettings(element.getContainingFile(), JavaLanguage.INSTANCE).SPACE_AFTER_COMMA;
+    }
+
+    public void setLookUpText(String text) {
+        this.text = text;
     }
 
 }

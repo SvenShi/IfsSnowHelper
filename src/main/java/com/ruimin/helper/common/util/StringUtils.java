@@ -10,6 +10,7 @@ import java.util.List;
  * @description
  */
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
+
     /**
      * 索引所有
      *
@@ -19,7 +20,8 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      */
     public static List<Integer> indexOfAll(String str, String searchStr) {
         ArrayList<Integer> indexes = new ArrayList<>();
-        if (org.apache.commons.lang.StringUtils.isEmpty(str) || org.apache.commons.lang.StringUtils.isEmpty(searchStr)) {
+        if (org.apache.commons.lang.StringUtils.isEmpty(str) || org.apache.commons.lang.StringUtils.isEmpty(
+            searchStr)) {
             return indexes;
         }
 
@@ -33,5 +35,12 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     public static String removeQuot(String text) {
         return StringUtils.remove(text, "\"");
+    }
+
+    public static String remove(String str, String... removes) {
+        for (String remove : removes) {
+            str = remove(str, remove);
+        }
+        return str;
     }
 }

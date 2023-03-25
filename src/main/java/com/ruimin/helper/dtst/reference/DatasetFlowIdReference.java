@@ -79,7 +79,7 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
                 }
             } else if (value.contains(".")) {
                 String packageName = StringUtils.substringBeforeLast(value, ".");
-                Optional<PsiPackage> aPackage = SnowJavaUtils.findPackage(module.getModuleScope(), packageName);
+                Optional<PsiPackage> aPackage = SnowJavaUtils.findPackage(module.getProject(), packageName);
                 if (aPackage.isPresent()) {
                     PsiPackage psiPackage = aPackage.get();
                     PsiPackage[] subPackages = psiPackage.getSubPackages(module.getModuleScope());

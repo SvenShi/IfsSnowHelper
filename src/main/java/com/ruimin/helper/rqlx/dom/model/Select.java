@@ -2,9 +2,9 @@
 // DTD/Schema  :    http://sqlmap.rql.org/rql-mapper
 package com.ruimin.helper.rqlx.dom.model;
 
+import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,22 +20,8 @@ public interface Select extends DomElement,Rql {
      *
      * @return the value of the resultType child.
      */
-    @NotNull GenericAttributeValue<String> getResultType();
-
-
-    /**
-     * Returns the list of ifs children.
-     *
-     * @return the list of ifs children.
-     */
-    @NotNull List<Ifs> getIfses();
-
-    /**
-     * Adds new child to the list of ifs children.
-     *
-     * @return created child
-     */
-    Ifs addIfs();
-
+    @NotNull
+    @Attribute("resultType")
+    GenericAttributeValue<String> getResultType();
 
 }
