@@ -22,6 +22,7 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.ruimin.helper.common.constants.CommonConstants;
+import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.dtst.constans.DataSetConstants;
 import com.ruimin.helper.jsp.constans.JspConstants;
 import com.ruimin.helper.jsp.enums.JspTagEnum;
@@ -134,6 +135,40 @@ public class SnowJspUtils {
         ArrayList<XmlTag> pageTags = new ArrayList<>();
         findAllTag(rootTag, pageTags, tagName);
         return pageTags;
+    }
+
+    /**
+     * 找到页面的所有snow的标签
+     *
+     * @param jspFile jsp文件
+     * @return {@link List}<{@link XmlTag}>
+     */
+    public static List<XmlTag> findAllSnowTag(@NotNull JspFile jspFile) {
+        XmlTag rootTag = jspFile.getRootTag();
+        ArrayList<XmlTag> snowTags = new ArrayList<>();
+        List<XmlTag> allTag = getAllSubTag(rootTag);
+        for (XmlTag xmlTag : allTag) {
+            String name = xmlTag.getName();
+            if (StringUtils.startsWith(name, JspConstants.TAG_NAME_PREFIX)) {
+                snowTags.add(xmlTag);
+            }
+        }
+        return snowTags;
+    }
+
+    public static List<XmlTag> getAllSubTag(XmlTag rootTag) {
+        List<XmlTag> xmlTags = new ArrayList<>();
+        getAllSubTag(rootTag, xmlTags);
+        return xmlTags;
+    }
+
+    private static void getAllSubTag(XmlTag rootTag, List<XmlTag> collector) {
+        if (rootTag != null) {
+            for (XmlTag subTag : rootTag.getSubTags()) {
+                getAllSubTag(subTag, collector);
+                collector.add(subTag);
+            }
+        }
     }
 
     private static void findAllTag(XmlTag rootTag, ArrayList<XmlTag> pageTags, String tagName) {
