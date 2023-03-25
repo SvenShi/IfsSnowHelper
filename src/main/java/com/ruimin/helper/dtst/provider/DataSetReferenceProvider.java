@@ -1,6 +1,5 @@
 package com.ruimin.helper.dtst.provider;
 
-import com.google.common.collect.Sets;
 import com.intellij.patterns.XmlAttributeValuePattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -13,7 +12,7 @@ import com.ruimin.helper.dtst.constans.DataSetConstants;
 import com.ruimin.helper.dtst.dom.model.Data;
 import com.ruimin.helper.dtst.reference.DatasetDataSourceReference;
 import com.ruimin.helper.dtst.reference.DatasetFlowIdReference;
-import java.util.Set;
+import com.ruimin.helper.dtst.reference.DatasetMethodReference;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +38,13 @@ public class DataSetReferenceProvider extends PsiReferenceProvider {
             } else if (DataSetConstants.XML_TAG_DATASOURCE_ATTRIBUTE_NAME.equals(localName)) {
                 String[] split = ((XmlAttributeValue) element).getValue().split(":");
                 if (split.length >= 2 && !DataSetConstants.NOT_IN_DATASOURCE_TAG.contains(split[0])) {
-                    return new PsiReference[]{new DatasetDataSourceReference(attribute, element.getText().indexOf(":"), split[1])};
+                    return new PsiReference[]{
+                        new DatasetDataSourceReference(attribute, element.getText().indexOf(":"), split[1])};
+                }
+            } else if (DataSetConstants.XML_TAG_METHOD_ATTRIBUTE_NAME.equals(localName)) {
+                String value = attribute.getValue();
+                if (!"None".equals(value)) {
+                    return new PsiReference[]{new DatasetMethodReference(attribute)};
                 }
             }
         }

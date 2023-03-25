@@ -177,11 +177,7 @@ public final class SnowJavaUtils {
      */
     public static List<PsiMethod> findMethods(@NotNull Module module, @NotNull String clazzName,
         @Nullable String methodName) {
-        Optional<List<PsiClass>> classes = findClasses(module.getModuleScope(), clazzName);
-        return classes.map(psiClasses -> psiClasses.stream()
-            .map(psiClass -> psiClass.findMethodsByName(methodName, true))
-            .flatMap(Arrays::stream)
-            .collect(Collectors.toList())).orElse(null);
+        return findMethods(module.getModuleScope(), clazzName, methodName);
     }
 
     /**

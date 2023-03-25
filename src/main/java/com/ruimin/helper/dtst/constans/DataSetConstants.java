@@ -19,6 +19,7 @@ public interface DataSetConstants {
 
 
     String XML_TAG_FLOWID_ATTRIBUTE_NAME = "flowid";
+    String XML_TAG_METHOD_ATTRIBUTE_NAME = "method";
 
     String XML_TAG_DATASOURCE_ATTRIBUTE_NAME = "datasource";
     Set<String> NOT_IN_DATASOURCE_TAG = Sets.newHashSet("LIST", "DDIC");

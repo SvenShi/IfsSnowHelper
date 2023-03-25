@@ -11,6 +11,8 @@ import java.util.List;
  */
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
+    public static final String[] EMPTY_ARRAY = new String[0];
+
     /**
      * 索引所有
      *
@@ -42,5 +44,25 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
             str = remove(str, remove);
         }
         return str;
+    }
+
+    /**
+     * 以最后出现的一个字符作为分割点分割字符串
+     *
+     * @param str str
+     * @param lastStr 最后力量
+     * @return {@link String[]}
+     */
+    public static String[] splitLast(String str, String lastStr) {
+        if (isNotEmpty(str) && isNotEmpty(lastStr)) {
+            int pos = str.lastIndexOf(lastStr);
+            if (pos >= 0) {
+                String[] strings = new String[2];
+                strings[0] = str.substring(0, pos);
+                strings[1] = str.substring(pos + 1);
+                return strings;
+            }
+        }
+        return EMPTY_ARRAY;
     }
 }
