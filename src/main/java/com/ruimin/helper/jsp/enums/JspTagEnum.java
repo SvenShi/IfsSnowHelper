@@ -67,6 +67,7 @@ public enum JspTagEnum {
      * 树
      */
     TREE(JspConstants.TREE_TAG_NAME, JspAttrEnum.DATASET),
+    SFORM(JspConstants.SFORM_TAG_NAME, JspAttrEnum.FLOW_ID),
     /**
      * 到处
      */

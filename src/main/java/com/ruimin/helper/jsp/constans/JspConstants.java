@@ -25,6 +25,7 @@ public interface JspConstants {
     String TREE_TAG_NAME = "snow:tree";
     String EXPORTER_TAG_NAME = "snow:exporter";
     String WINDOW_TAG_NAME = "snow:window";
+    String SFORM_TAG_NAME = "snow:sform";
 
 
     String INCLUDE_TAG_NAME = "include";
@@ -39,6 +40,7 @@ public interface JspConstants {
     String ATTR_NAME_PAGINATION_BAR = "paginationbar";
     String ATTR_NAME_FIELD_STR = "fieldstr";
     String ATTR_NAME_MORE_FIELD_STR = "morefieldstr";
+    String ATTR_NAME_FLOW_ID = "flowId";
 
 
     String DTST_EXPRESSION_SUFFIX = "_dataset";

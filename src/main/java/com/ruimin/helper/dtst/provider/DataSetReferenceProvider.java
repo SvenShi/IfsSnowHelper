@@ -34,7 +34,7 @@ public class DataSetReferenceProvider extends PsiReferenceProvider {
             XmlAttributeValue attribute = (XmlAttributeValue) element;
             String localName = XmlAttributeValuePattern.getLocalName(attribute);
             if (DataSetConstants.XML_TAG_FLOWID_ATTRIBUTE_NAME.equals(localName)) {
-                return new PsiReference[]{new DatasetFlowIdReference(attribute)};
+                return new PsiReference[]{new DatasetFlowIdReference(attribute, attribute.getValue())};
             } else if (DataSetConstants.XML_TAG_DATASOURCE_ATTRIBUTE_NAME.equals(localName)) {
                 String[] split = ((XmlAttributeValue) element).getValue().split(":");
                 if (split.length >= 2 && !DataSetConstants.NOT_IN_DATASOURCE_TAG.contains(split[0])) {

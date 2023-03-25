@@ -2,6 +2,7 @@ package com.ruimin.helper.jsp.enums;
 
 import static com.ruimin.helper.jsp.constans.JspConstants.ATTR_NAME_DATASET;
 import static com.ruimin.helper.jsp.constans.JspConstants.ATTR_NAME_FIELD_STR;
+import static com.ruimin.helper.jsp.constans.JspConstants.ATTR_NAME_FLOW_ID;
 import static com.ruimin.helper.jsp.constans.JspConstants.ATTR_NAME_ID;
 import static com.ruimin.helper.jsp.constans.JspConstants.ATTR_NAME_MORE_FIELD_STR;
 import static com.ruimin.helper.jsp.constans.JspConstants.ATTR_NAME_PAGINATION_BAR;
@@ -11,9 +12,11 @@ import com.intellij.patterns.XmlAttributeValuePattern;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.jsp.reference.JspButtonIdReference;
 import com.ruimin.helper.jsp.reference.JspDataSetIdReference;
 import com.ruimin.helper.jsp.reference.JspDataSetPathReference;
+import com.ruimin.helper.jsp.reference.JspFlowIdReference;
 import com.ruimin.helper.jsp.reference.JspPaginationbarReference;
 import com.ruimin.helper.jsp.reference.JspTagFieldIdReference;
 import java.util.ArrayList;
@@ -110,8 +113,8 @@ public enum JspAttrEnum {
         @Override
         public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
             String fieldStr = attributeValue.getValue();
-            if (fieldStr.contains("{") || fieldStr.contains("<") || fieldStr.contains("}")
-                || fieldStr.contains(">") || fieldStr.contains("%") || fieldStr.contains("$")) {
+            if (fieldStr.contains("{") || fieldStr.contains("<") || fieldStr.contains("}") || fieldStr.contains(">")
+                || fieldStr.contains("%") || fieldStr.contains("$")) {
                 return Collections.emptyList();
             }
             String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
@@ -142,6 +145,29 @@ public enum JspAttrEnum {
         @Override
         public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
             return FIELD_STR.getReferences(attributeValue);
+        }
+    },
+    /**
+     * flow Id
+     */
+    FLOW_ID(ATTR_NAME_FLOW_ID) {
+        /**
+         * 获取引用
+         *
+         * @param attributeValue 属性值
+         * @return {@link List}<{@link PsiReference}>
+         */
+        @Override
+        public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
+            String flowId = attributeValue.getValue();
+            if (flowId.contains("?")) {
+                flowId = StringUtils.substringBeforeLast(flowId, "?");
+            }
+            if (flowId.contains("{") || flowId.contains("<") || flowId.contains("}") || flowId.contains(">")
+                || flowId.contains("%") || flowId.contains("$")) {
+                return Collections.emptyList();
+            }
+            return Collections.singletonList(new JspFlowIdReference(attributeValue, flowId));
         }
     };
 

@@ -22,7 +22,6 @@ import com.ruimin.helper.common.util.DataUtils;
 import com.ruimin.helper.java.utils.SnowJavaUtils;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -38,14 +37,27 @@ import org.jetbrains.annotations.Nullable;
 public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> implements PsiPolyVariantReference {
 
 
+    private final String flowId;
+
     /**
      * Reference range is obtained from {@link ElementManipulator#getRangeInElement(PsiElement)}.
      *
      * @param element Underlying element.
      */
-    public DatasetFlowIdReference(@NotNull XmlAttributeValue element) {
-        super(Objects.requireNonNull(element),
-            new TextRange(1, DataUtils.mustPositive(element.getTextLength() - 1, 0)));
+    public DatasetFlowIdReference(@NotNull XmlAttributeValue element, @NotNull String flowId) {
+        super(element, new TextRange(1, DataUtils.mustPositive(flowId.length(), 1)));
+        this.flowId = flowId;
+    }
+
+
+    /**
+     * Reference range is obtained from {@link ElementManipulator#getRangeInElement(PsiElement)}.
+     *
+     * @param element Underlying element.
+     */
+    public DatasetFlowIdReference(@NotNull XmlAttributeValue element, @NotNull String flowId, TextRange range) {
+        super(element, range);
+        this.flowId = flowId;
     }
 
     /**
@@ -61,15 +73,14 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
      */
     @Override
     public Object @NotNull [] getVariants() {
-        String value = myElement.getValue();
-        if (StringUtils.isNotBlank(value)) {
+        if (StringUtils.isNotBlank(flowId)) {
             Module module = ModuleUtil.findModuleForPsiElement(myElement);
             if (module == null) {
                 return super.getVariants();
             }
             ArrayList<LookupElement> result = new ArrayList<>();
-            if (value.contains(":")) {
-                String[] split = value.split(":");
+            if (flowId.contains(":")) {
+                String[] split = flowId.split(":");
                 if (split.length <= 2) {
                     String className = split[0];
                     List<PsiMethod> methods = SnowJavaUtils.findMethods(module.getModuleScope(), className, null);
@@ -77,8 +88,8 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
                         result.add(new SnowLookUpElement(className + ":" + method.getName(), method));
                     }
                 }
-            } else if (value.contains(".")) {
-                String packageName = StringUtils.substringBeforeLast(value, ".");
+            } else if (flowId.contains(".")) {
+                String packageName = StringUtils.substringBeforeLast(flowId, ".");
                 Optional<PsiPackage> aPackage = SnowJavaUtils.findPackage(module.getProject(), packageName);
                 if (aPackage.isPresent()) {
                     PsiPackage psiPackage = aPackage.get();
@@ -121,7 +132,6 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
      */
     @Override
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-        String flowId = myElement.getValue();
         if (StringUtils.isNotBlank(flowId)) {
             String[] split = flowId.split(CommonConstants.COLON_SEPARATE);
             if (split.length >= 2) {
@@ -152,7 +162,6 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
     @Override
     public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
         XmlAttribute parent = (XmlAttribute) myElement.getParent();
-        String flowId = myElement.getValue();
         if (StringUtils.isNotBlank(flowId)) {
             String s = StringUtils.substringBefore(flowId, ":");
             parent.setValue(s + ":" + newElementName);
