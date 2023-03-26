@@ -4,30 +4,18 @@
 
 ### 简介
 
-本插件为个人兴趣使然在业余时间开发，对idea插件开发的一次简单尝试与学习。
+本插件是个人在业余时间开发的一款针对公司框架的特性，提供各种方便的功能，也作为一次对idea插件开发的简单尝试与学习。
 
-公司自研框架在开发过程中，搜索dtst、jsp以及对应的java方法时比较麻烦，所以就写了这个插件，用来简化开发。
+如果本插件对你有帮助，可以到Github中star来支持本项目开发。
 
-#### 功能特点
-
-- [x] Java方法与dtst文件的flowId互相跳转，Java方法重命名同时重命名flowId
-- [x] Jsp `<snow:dataset>` 标签的path与dtst文件互相跳转
-- [x] rqlx文件标签的id与Java代码中的rqlx key互相跳转
-- [x] dtst、dtmd文件关联xml文件，rqlx文件注入sql语法提示（需要在idea设置中配置方言，如果需要数据库表名、字段提示需要在idea中连接数据库，并且配置SQL
-  Resolution Scopes中设置对应的映射）
-- [x] Jsp页面的各标签跳转dataset
-- [x] fieldstr 跳转dtst文件的field声明处
-- [x] grid标签的声明的按钮跳转到dtst文件的command声明处
-- [x] Jsp页面中的dataset对象以及record对象的getValue、setValue等方法引用dtst文件的field属性
-- [x] 各个引用间的重构重命名
-- [x] Java文件中的rqlxkey检查、jsp页面中的getValue、setValue方法检查以及jsp页面的dataset对象检查，添加报红提示
-- [ ] dtst中flowId的自动补全
-- [ ] JavaScript中的自动补全
-- [ ] Java代码中的rqlx key自动补全
-
-#### 随缘更新
-
----
+<div>
+  <a href="https://github.com/SvenShi/IfsSnowHelper" style="display: inline-block; margin-right: 10px;">
+    <img src="https://img.shields.io/badge/GitHub-%23121011.svg?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" style="border-radius: 7px;">
+  </a>
+  <a href="https://plugins.jetbrains.com/plugin/21046-ifssnowhelper" style="display: inline-block;">
+    <img src="https://img.shields.io/badge/IntelliJ%20IDEA%20Marketplace-000000.svg?style=flat&logo=intellij-idea&logoColor=white" alt="IntelliJ IDEA Marketplace">
+  </a>
+</div>
 
 ### 快速开始
 
@@ -37,26 +25,87 @@
 
 #### 如何下载
 
-插件市场已发布！搜索IfsSnowHelper即可。目前还在审核！
+插件市场已发布！搜索IfsSnowHelper安装即可。
 
-#### 如何使用
+#### 功能特点
 
-插件安装成功后在jsp、dtst、java文件的编辑区域左侧会出现箭头点击箭头即可转向对应文件。
-![](/image/jsp2dtst.gif)
+##### 引用跳转
 
-在使用过程中，如果项目比较复杂dtst、jsp文件较多的情况下索引较慢，箭头可能会等待一段时间才会出现
+###### Java
 
-##### 引用方式跳转
+- 方法跳转到dtst文件中的flowId和method属性或Jsp文件的sform标签
 
-- dtst跳转到java
-  ![](/image/dtst2java.gif)
-- java跳转到rqlx
-  ![](/image/java2rqlx.gif)
+- 代码中dao的select语句中的rqlxKey跳转到rqlx文件
 
-##### 箭头分为四种颜色分别对应不同文件：
+###### dtst
 
-- <img src="src/main/resources/icons/go-blue.svg" alt="blue" width="20" > 对应java文件，点击后跳转对应方法；
+- flowid、method属性跳转到对应的java方法
+- datasource属性跳转到对应的dtst文件
+- Find Usages功能跳转到使用该dtst文件的datasource或Jsp文件中的dataset标签
 
-- <img src="src/main/resources/icons/go-green.svg" alt="green" width="20" > 对应dtst文件，点击后跳转到对应dtst文件；
+###### rqlx
 
-- <img src="src/main/resources/icons/go-yellow.svg" alt="yellow" width="20" > 对应jsp文件，点击后跳转到对应jsp文件；（只可能显示在dtst文件的`<Data>`标签左侧）
+- 各标签的id属性跳转到对应Java代码的引用处
+
+###### Jsp
+
+- dataset标签的path属性跳转到对应的dtst文件
+
+- 各标签的dataset属性跳转到当前页面的dataset声明处
+
+- 各标签的fieldstr属性中的各个字段跳转到对应的dtst文件field声明处
+
+- gird标签paginationbar属性的各个按钮跳转到对应dtst文件command声明处
+
+- button标签的id属性跳转到对应dtst文件的command声明处
+
+- sform标签的flowid属性跳转到对应的Java方法
+
+###### JavaScript
+
+- dataset对象跳转到对应的dataset标签处
+- interface_dataset对象跳转到对应的query标签处
+- dataset对象调用setValue、getValue等方法中使用的field跳转到对应dtst文件的field声明处
+
+##### 代码重构
+
+使用idea文件的右键菜单`Refactor | rename`或快捷键`shift + F6`功能时可以帮助快速的重构相关代码，以下列出的各项均可反向操作
+
+- 修改Java方法名时自动修改dtst文件的flowid、method属性值
+- 修改dtst文件名时自动修改Jsp文件dataset标签的path属性值或dtst文件中的datasource属性值
+- 修改dtst文件的field标签的id时自动修改Jsp文件中的fieldstr属性值、JavaScript中的setValue、getValue等方法中使用的fieldId
+- 修改dtst文件的command标签的id时自动修改Jsp文件的button标签id以及gird标签aginationbar的属性值
+- 修改rqlx文件的标签id时自动修改Java代码中的rqlxKey的值
+- 修改Jsp文件dataset标签的id时自动修改其他标签的dataset属性值、JavaScript中的dataset对象名
+
+##### 代码检查
+
+在编写代码时如果出现未找到对应的引用元素，就会报红警告作为提醒。下面列出各个场景：
+
+- Java代码中的rqlxKey未找到对应rqlx文件的标签时
+- dtst文件中的flowid、method属性未找到对应的Java方法时
+- Jsp文件dataset标签的path属性未找到对应的dtst文件时
+- Jsp文件sform标签的flowid属性未找到对应的Java方法时
+- Jsp文件button标签未找到对应dtst文件的command标签时
+- Jsp文件gird标签的paginationbar属性未找到对应dtst文件的command标签时
+- JavaScript中dataset对象未找到对应dataset标签时
+- JavaScript中的interface_dataset对象未找到对应的query标签时
+- JavaScript中dataset对象的getValue、setValue等方法中的field id未找到对应dtst文件的Field标签时
+
+##### 自动补全
+
+- Java代码中的rqlx key自动补全
+- dtst文件中的flowid、method、datasource属性自动补全
+- Jsp文件path、fieldstr、paginationbar、dataset属性自动补全
+- JavaScript中的dataset对象自动补全
+- JavaScript中dataset对象的getValue、setValue方法参数的自动补全
+
+##### 语言注入
+
+需要在idea设置中配置方言，如果需要数据库表名、字段提示需要在idea中连接数据库，并且配置SQL Resolution Scopes中设置对应的映射
+idea SQL方言配置路径 `File | Settings | Languages & Frameworks | SQL Dialects`
+idea SQL解析范围配置路径 `File | Settings | Languages & Frameworks | SQL Resolution Scopes`
+
+- dtst、dtmd、rqlx文件关联为xml文件
+- rqlx文件注入Sql语言
+
