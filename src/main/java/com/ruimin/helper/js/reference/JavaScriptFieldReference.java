@@ -10,7 +10,7 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.ruimin.helper.common.SnowLookUpElement;
@@ -118,9 +118,9 @@ public class JavaScriptFieldReference extends PsiReferenceBase<JSLiteralExpressi
     public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
         Field field = DataSetUtils.findField(dataSetFile, fieldName);
         if (field != null) {
-            XmlElement xmlElement = field.getXmlElement();
-            if (xmlElement != null) {
-                return new ResolveResult[]{new PsiElementResolveResult(xmlElement)};
+            XmlAttributeValue xmlAttributeValue = field.getId().getXmlAttributeValue();
+            if (xmlAttributeValue != null) {
+                return new ResolveResult[]{new PsiElementResolveResult(xmlAttributeValue)};
             }
         }
         return ResolveResult.EMPTY_ARRAY;
