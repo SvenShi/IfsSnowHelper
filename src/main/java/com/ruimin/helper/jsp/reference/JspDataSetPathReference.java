@@ -1,5 +1,6 @@
 package com.ruimin.helper.jsp.reference;
 
+import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -66,7 +67,8 @@ public class JspDataSetPathReference extends PsiReferenceBase<XmlAttributeValue>
             return super.getVariants();
         }
         String text = myElement.getValue();
-        String prefixPath = StringUtils.substringBeforeLast(text, ".");
+        String beforeText = StringUtils.substringBeforeLast(text, CompletionUtil.DUMMY_IDENTIFIER);
+        String prefixPath = StringUtils.substringBeforeLast(beforeText, ".");
         Optional<PsiPackage> aPackage = SnowJavaUtils.findPackage(module.getProject(), prefixPath);
         ArrayList<SnowLookUpElement> result = new ArrayList<>();
         if (aPackage.isPresent()) {
@@ -74,11 +76,12 @@ public class JspDataSetPathReference extends PsiReferenceBase<XmlAttributeValue>
             PsiPackage[] subPackages = psiPackage.getSubPackages(module.getModuleScope());
             PsiFile[] files = psiPackage.getFiles(module.getModuleScope());
             for (PsiPackage subPackage : subPackages) {
-                result.add(new SnowLookUpElement(prefixPath + subPackage.getName(), subPackage));
+                result.add(new SnowLookUpElement(prefixPath + "." + subPackage.getName(), subPackage));
             }
             for (PsiFile file : files) {
                 if (DataSetUtils.isDtstFile(file)) {
-                    result.add(new SnowLookUpElement(prefixPath + FilenameUtils.getBaseName(file.getName()), file));
+                    result.add(
+                        new SnowLookUpElement(prefixPath + "." + FilenameUtils.getBaseName(file.getName()), file));
                 }
             }
 
