@@ -6,7 +6,7 @@
 
 本插件是个人在业余时间开发的一款针对公司框架的特性，提供各种方便的功能，也作为一次对idea插件开发的简单尝试与学习。
 
-如果本插件对你有帮助，可以到Github中star来支持本项目开发。
+**如果本插件对你有帮助，可以到Github中star来支持本项目开发。**
 
 <div>
   <a href="https://github.com/SvenShi/IfsSnowHelper" style="display: inline-block; margin-right: 10px;">
