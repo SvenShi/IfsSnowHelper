@@ -11,5 +11,4 @@ import javax.swing.Icon;
  */
 public interface SnowIcons {
     Icon GO_JSP = IconLoader.getIcon("icons/go-yellow.svg", SnowIcons.class);
-    Icon LOGO = IconLoader.getIcon("icons/pluginIcon.svg", SnowIcons.class);
 }
