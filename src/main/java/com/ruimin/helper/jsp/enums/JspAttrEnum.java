@@ -17,7 +17,7 @@ import com.ruimin.helper.jsp.reference.JspButtonIdReference;
 import com.ruimin.helper.jsp.reference.JspDataSetIdReference;
 import com.ruimin.helper.jsp.reference.JspDataSetPathReference;
 import com.ruimin.helper.jsp.reference.JspFlowIdReference;
-import com.ruimin.helper.jsp.reference.JspPaginationbarReference;
+import com.ruimin.helper.jsp.reference.JspPaginationBarReference;
 import com.ruimin.helper.jsp.reference.JspTagFieldIdReference;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,7 +94,7 @@ public enum JspAttrEnum {
                 if (startIndex >= 0) {
                     prevIndex = startIndex + buttonId.length();
                     psiReferences.add(
-                        new JspPaginationbarReference(attributeValue, buttonId, startIndex + 1, prevIndex + 1));
+                        new JspPaginationBarReference(attributeValue, buttonId, startIndex + 1, prevIndex + 1));
                 }
             }
             return psiReferences;

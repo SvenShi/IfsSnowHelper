@@ -1,4 +1,4 @@
-package com.ruimin.helper.common.provider.line;
+package com.ruimin.helper.common.provider;
 
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;

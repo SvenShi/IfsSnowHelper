@@ -7,7 +7,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
 import com.ruimin.helper.common.constants.SnowIcons;
-import com.ruimin.helper.common.provider.line.SimpleLineMarkerProvider;
+import com.ruimin.helper.common.provider.SimpleLineMarkerProvider;
 import com.ruimin.helper.dtst.dom.model.Data;
 import com.ruimin.helper.jsp.constans.JspConstants;
 import com.ruimin.helper.jsp.utils.SnowJspUtils;

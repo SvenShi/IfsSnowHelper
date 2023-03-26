@@ -4,7 +4,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.ruimin.helper.dtst.reference.DatasetFlowIdReference;
+import com.ruimin.helper.common.reference.FlowIdReference;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * @date 2023/03/26 上午 12:33
  * @description
  */
-public class JspFlowIdReference extends DatasetFlowIdReference {
+public class JspFlowIdReference extends FlowIdReference {
 
     /**
      * Reference range is obtained from {@link ElementManipulator#getRangeInElement(PsiElement)}.
