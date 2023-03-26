@@ -1,5 +1,6 @@
 package com.ruimin.helper.dtst.reference;
 
+import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -67,9 +68,11 @@ public class DatasetMethodReference extends PsiReferenceBase<XmlAttributeValue> 
             if (module == null) {
                 return super.getVariants();
             }
+            String beforeValue = StringUtils.substringBeforeLast(value, CompletionUtil.DUMMY_IDENTIFIER);
+
             ArrayList<LookupElement> result = new ArrayList<>();
-            if (value.contains(".")) {
-                String packageName = StringUtils.substringBeforeLast(value, ".");
+            if (beforeValue.contains(".")) {
+                String packageName = StringUtils.substringBeforeLast(beforeValue, ".");
                 Optional<PsiPackage> aPackage = SnowJavaUtils.findPackage(module.getProject(), packageName);
                 List<PsiMethod> methods = SnowJavaUtils.findMethods(module, packageName, null);
                 if (aPackage.isPresent()) {

@@ -1,5 +1,6 @@
 package com.ruimin.helper.dtst.reference;
 
+import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -45,7 +46,7 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
      * @param element Underlying element.
      */
     public DatasetFlowIdReference(@NotNull XmlAttributeValue element, @NotNull String flowId) {
-        super(element, new TextRange(1, DataUtils.mustPositive(flowId.length(), 1)));
+        super(element, new TextRange(1, DataUtils.mustPositive(flowId.length() + 1, 1)));
         this.flowId = flowId;
     }
 
@@ -78,9 +79,10 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
             if (module == null) {
                 return super.getVariants();
             }
+            String beforeFlowId = StringUtils.substringBeforeLast(flowId, CompletionUtil.DUMMY_IDENTIFIER);
             ArrayList<LookupElement> result = new ArrayList<>();
-            if (flowId.contains(":")) {
-                String[] split = flowId.split(":");
+            if (beforeFlowId.contains(":")) {
+                String[] split = beforeFlowId.split(":");
                 if (split.length <= 2) {
                     String className = split[0];
                     List<PsiMethod> methods = SnowJavaUtils.findMethods(module.getModuleScope(), className, null);
@@ -88,8 +90,8 @@ public class DatasetFlowIdReference extends PsiReferenceBase<XmlAttributeValue> 
                         result.add(new SnowLookUpElement(className + ":" + method.getName(), method));
                     }
                 }
-            } else if (flowId.contains(".")) {
-                String packageName = StringUtils.substringBeforeLast(flowId, ".");
+            } else if (beforeFlowId.contains(".")) {
+                String packageName = StringUtils.substringBeforeLast(beforeFlowId, ".");
                 Optional<PsiPackage> aPackage = SnowJavaUtils.findPackage(module.getProject(), packageName);
                 if (aPackage.isPresent()) {
                     PsiPackage psiPackage = aPackage.get();

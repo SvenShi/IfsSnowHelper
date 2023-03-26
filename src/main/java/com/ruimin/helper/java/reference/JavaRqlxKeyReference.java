@@ -1,5 +1,6 @@
 package com.ruimin.helper.java.reference;
 
+import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -79,10 +80,11 @@ public class JavaRqlxKeyReference extends PsiReferenceBase<PsiLiteralExpression>
     public Object @NotNull [] getVariants() {
         if (StringUtils.isNotBlank(rqlxKey) && rqlxKey.contains(".")) {
             Module module = ModuleUtil.findModuleForPsiElement(myElement);
-            if (module == null){
+            if (module == null) {
                 return super.getVariants();
             }
-            String prefixKey = StringUtils.substringBeforeLast(rqlxKey, ".");
+            String beforeRqlxKey = StringUtils.substringBeforeLast(rqlxKey, CompletionUtil.DUMMY_IDENTIFIER);
+            String prefixKey = StringUtils.substringBeforeLast(beforeRqlxKey, ".");
             Optional<PsiPackage> aPackage = SnowJavaUtils.findPackage(module.getProject(), prefixKey);
             List<PsiFile> rqlxFiles = RqlxUtils.findFilesByPath(prefixKey, module.getModuleScope());
             ArrayList<SnowLookUpElement> appendElement = new ArrayList<>();
@@ -129,7 +131,8 @@ public class JavaRqlxKeyReference extends PsiReferenceBase<PsiLiteralExpression>
                     }
                 }
             }
-            String text = StringUtils.remove(myElement.getText(), "\"", "IntellijIdeaRulezzz ");
+            String s = StringUtils.substringBeforeLast(myElement.getText(), CompletionUtil.DUMMY_IDENTIFIER);
+            String text = StringUtils.removeQuot(s);
             ArrayList<LookupElement> result = new ArrayList<>();
             if (text.contains(".")) {
                 String prefix = StringUtils.substringBeforeLast(text, ".");
