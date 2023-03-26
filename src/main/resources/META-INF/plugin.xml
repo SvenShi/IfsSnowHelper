@@ -26,14 +26,14 @@
     <description><![CDATA[
         <h1 id="ifssnowhelper">IfsSnowHelper</h1>
         <h2>introduction</h2>
-        <p>This plug-in is developed in my spare time due to my personal interest. It is a simple attempt and study of the development of idea plug-in.</p>
-        <p>The company developed the framework of special files to jump to each other, and the various java methods in the reference jump</p>
+        <p>This plug-in is developed by the individual in his spare time for the characteristics of the company's framework, providing various convenient functions, and also as a simple attempt and study of idea plug-in development.</p>
+        <p>If this plugin is helpful to you, you can go to Github to star to support the development of this project.</p>
         <p>GitHub：<a href="https://github.com/SvenShi/IfsSnowHelper">https://github.com/SvenShi/IfsSnowHelper</a></p>
 
 
         <h2>简介</h2>
-        <p>本插件为个人兴趣使然在业余时间开发，对idea插件开发的一次简单尝试与学习。</p>
-        <p>公司自研框架中特殊文件的相互跳转，以及其中各种java方法的引用跳转</p>
+        <p>本插件是个人在业余时间开发的一款针对公司框架的特性，提供各种方便的功能，也作为一次对idea插件开发的简单尝试与学习。</p>
+        <p>如果本插件对你有帮助，可以到Github中star来支持本项目开发。</p>
         <p>GitHub：<a href="https://github.com/SvenShi/IfsSnowHelper">https://github.com/SvenShi/IfsSnowHelper</a></p>
       ]]>
     </description>
