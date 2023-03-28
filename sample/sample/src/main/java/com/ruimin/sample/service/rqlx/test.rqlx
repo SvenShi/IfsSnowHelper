@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mapper xmlns="http://sqlmap.rql.org/rql-mapper" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://sqlmap.rql.org/rql-mapper http://sqlmap.rql.org/rql-mapper">
+
+    <!-- 根据 pram参数 查询ifb_acpt_cont（承兑协议信息）表 -->
+    <select id="selectTest" paramType="map" resultType="com.ruimin.ifb.elc.collztnrpd.process.bean.CollztnRpdContVO">
+        SELECT 1
+        FROM ATABLE;
+    </select>
+
+
+</mapper>
