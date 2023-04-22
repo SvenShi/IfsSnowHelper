@@ -19,6 +19,7 @@ import com.ruimin.helper.jsp.reference.JspDataSetPathReference;
 import com.ruimin.helper.jsp.reference.JspFlowIdReference;
 import com.ruimin.helper.jsp.reference.JspPaginationBarReference;
 import com.ruimin.helper.jsp.reference.JspTagFieldIdReference;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -82,8 +83,8 @@ public enum JspAttrEnum {
         @Override
         public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
             String paginationbar = attributeValue.getValue();
-            if (paginationbar.contains("{") || paginationbar.contains("<") || paginationbar.contains("}")
-                || paginationbar.contains(">") || paginationbar.contains("%") || paginationbar.contains("$")) {
+            if (paginationbar.contains("{") || paginationbar.contains("<") || paginationbar.contains("}") ||
+                    paginationbar.contains(">") || paginationbar.contains("%") || paginationbar.contains("$")) {
                 return Collections.emptyList();
             }
             ArrayList<PsiReference> psiReferences = new ArrayList<>();
@@ -94,7 +95,7 @@ public enum JspAttrEnum {
                 if (startIndex >= 0) {
                     prevIndex = startIndex + buttonId.length();
                     psiReferences.add(
-                        new JspPaginationBarReference(attributeValue, buttonId, startIndex + 1, prevIndex + 1));
+                            new JspPaginationBarReference(attributeValue, buttonId, startIndex + 1, prevIndex + 1));
                 }
             }
             return psiReferences;
@@ -113,11 +114,11 @@ public enum JspAttrEnum {
         @Override
         public List<PsiReference> getReferences(XmlAttributeValue attributeValue) {
             String fieldStr = attributeValue.getValue();
-            if (fieldStr.contains("{") || fieldStr.contains("<") || fieldStr.contains("}") || fieldStr.contains(">")
-                || fieldStr.contains("%") || fieldStr.contains("$")) {
+            if (fieldStr.contains("{") || fieldStr.contains("<") || fieldStr.contains("}") || fieldStr.contains(">") ||
+                    fieldStr.contains("$")) {
                 return Collections.emptyList();
             }
-            String realFieldStr = fieldStr.replaceAll("\\[\\d+]", "");
+            String realFieldStr = fieldStr.replaceAll("\\[[^]]*]", "");
             String[] split = realFieldStr.split(",");
             ArrayList<PsiReference> psiReferences = new ArrayList<>();
             int prevIndex = 0;
@@ -126,7 +127,7 @@ public enum JspAttrEnum {
                 if (startIndex >= 0) {
                     prevIndex = startIndex + fieldId.length();
                     psiReferences.add(
-                        new JspTagFieldIdReference(attributeValue, fieldId, startIndex + 1, prevIndex + 1));
+                            new JspTagFieldIdReference(attributeValue, fieldId, startIndex + 1, prevIndex + 1));
                 }
             }
             return psiReferences;
@@ -163,8 +164,8 @@ public enum JspAttrEnum {
             if (flowId.contains("?")) {
                 flowId = StringUtils.substringBeforeLast(flowId, "?");
             }
-            if (flowId.contains("{") || flowId.contains("<") || flowId.contains("}") || flowId.contains(">")
-                || flowId.contains("%") || flowId.contains("$")) {
+            if (flowId.contains("{") || flowId.contains("<") || flowId.contains("}") || flowId.contains(">") ||
+                    flowId.contains("%") || flowId.contains("$")) {
                 return Collections.emptyList();
             }
             return Collections.singletonList(new JspFlowIdReference(attributeValue, flowId));
