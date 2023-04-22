@@ -363,7 +363,7 @@ public final class RqlxUtils {
      * @return boolean
      */
     public static boolean isRqlxMethodName(String methodName) {
-        return StringUtils.containsAny(methodName, SQL_METHOD_NAMES);
+        return StringUtils.endsWithAny(methodName, SQL_METHOD_NAMES);
     }
 
     /**
