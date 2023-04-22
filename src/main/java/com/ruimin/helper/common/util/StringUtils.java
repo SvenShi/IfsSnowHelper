@@ -36,7 +36,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     public static String removeQuot(String text) {
-        return StringUtils.remove(text, "\"");
+        return StringUtils.remove(text, "\"","'");
     }
 
     public static String remove(String str, String... removes) {
