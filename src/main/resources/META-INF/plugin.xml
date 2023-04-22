@@ -10,12 +10,11 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="isvenshi@gamil.com">Shi Wei</vendor>
     <change-notes><![CDATA[
-      <h4>2.53</h4>
+      <h4>2.59</h4>
       <ul>
-        <li>新增Java代码中的RqlxKey自动补全</li>
-        <li>新增Jsp文件中的datasetId、buttonId、FieldId等的自动补全</li>
-        <li>新增JavaScript代码中的setValue、getValue等以及dataset变量的自动补全</li>
-        <li>新增DataSet文件中的flowid、method、datasource属性的自动补全</li>
+        <li>修复jsp标签 fieldstr属性中包含%或者[]时无法索引的BUG</li>
+        <li>修复dataset的getValue等方法属性名使用单引号时无法索引的BUG</li>
+        <li>修复识别java中调用rqlx方法不准确的BUG</li>
       </ul>
       ]]>
     </change-notes>
