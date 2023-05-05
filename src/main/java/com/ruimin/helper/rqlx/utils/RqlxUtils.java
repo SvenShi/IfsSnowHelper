@@ -7,19 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.PackageIndex;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaRecursiveElementVisitor;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiExpressionList;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLiteralExpression;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceExpression;
-import com.intellij.psi.PsiReturnStatement;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.cache.CacheManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.UsageSearchContext;
@@ -37,14 +25,15 @@ import com.ruimin.helper.dtst.dom.model.Data;
 import com.ruimin.helper.rqlx.constans.RqlxConstants;
 import com.ruimin.helper.rqlx.dom.model.Mapper;
 import com.ruimin.helper.rqlx.dom.model.Rql;
+import org.apache.commons.collections.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.collections.CollectionUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author shiwei
@@ -258,7 +247,7 @@ public final class RqlxUtils {
         Project project = scope.getProject();
         if (project != null) {
             Collection<VirtualFile> matchPackages = PackageIndex.getInstance(project)
-                .getDirsByPackageName(packageName, false)
+                .getDirsByPackageName(packageName, scope)
                 .findAll();
             PsiManager psiManager = PsiManager.getInstance(project);
             for (VirtualFile matchPackage : matchPackages) {
