@@ -10,11 +10,9 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="isvenshi@gamil.com">Shi Wei</vendor>
     <change-notes><![CDATA[
-      <h4>2.59</h4>
+      <h4>2.60</h4>
       <ul>
-        <li>修复jsp标签 fieldstr属性中包含%或者[]时无法索引的BUG</li>
-        <li>修复dataset的getValue等方法属性名使用单引号时无法索引的BUG</li>
-        <li>修复识别java中调用rqlx方法不准确的BUG</li>
+        <li>修复java中的rqlx key在其他模块存在同路径同名rqlx文件时索引错误的bug</li>
       </ul>
       ]]>
     </change-notes>
