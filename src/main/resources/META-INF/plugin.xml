@@ -99,4 +99,16 @@
         <!-- 项目打开事件-->
         <postStartupActivity implementation="com.ruimin.helper.common.listener.ProjectStartupListener"/>
     </extensions>
+    <actions>
+        <action id="com.ruimin.helper.java.action.CopyFlowIdAction"
+                class="com.ruimin.helper.java.action.CopyFlowIdAction" text="Copy Flow Id"
+                description="Copy snow dataset flow id">
+            <add-to-group group-id="Copy.Paste.Special" anchor="before"/>
+        </action>
+        <action id="com.ruimin.helper.rqlx.action.CopyRqlxKeyAction"
+                class="com.ruimin.helper.rqlx.action.CopyRqlxKeyAction" text="Copy Rqlx Key"
+                description="Copy snow rqlx key">
+            <add-to-group group-id="Copy.Paste.Special" anchor="before"/>
+        </action>
+    </actions>
 </idea-plugin>
