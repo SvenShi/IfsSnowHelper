@@ -4,11 +4,9 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiPackage;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.xml.XmlElement;
@@ -20,25 +18,15 @@ import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.DomService;
 import com.ruimin.helper.common.constants.CommonConstants;
 import com.ruimin.helper.dtst.constans.DataSetConstants;
-import com.ruimin.helper.dtst.dom.model.Command;
-import com.ruimin.helper.dtst.dom.model.Commands;
-import com.ruimin.helper.dtst.dom.model.Data;
-import com.ruimin.helper.dtst.dom.model.Define;
-import com.ruimin.helper.dtst.dom.model.Field;
-import com.ruimin.helper.dtst.dom.model.Fields;
-import com.ruimin.helper.dtst.dom.model.FlowIdDomElement;
+import com.ruimin.helper.dtst.dom.model.*;
 import com.ruimin.helper.java.utils.SnowJavaUtils;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author shiwei
@@ -100,7 +88,7 @@ public final class DataSetUtils {
     /**
      * 根据flow获取所有相应的标签
      *
-     * @param scope 范围
+     * @param scope   范围
      * @param flowIds 需要对应的flowid
      * @return 查找到的xmltag
      */
@@ -191,7 +179,7 @@ public final class DataSetUtils {
      * 找到dtst根据文件路径
      *
      * @param dtstPath dtst路径
-     * @param scope 范围
+     * @param scope    范围
      * @return {@link ArrayList}<{@link XmlFile}>
      */
     public static ArrayList<XmlFile> findDtstFileByPath(String dtstPath, @NotNull GlobalSearchScope scope) {
@@ -232,7 +220,7 @@ public final class DataSetUtils {
         ArrayList<Command> commands = new ArrayList<>();
         if (isDtstFile(dtstFile)) {
             DomFileElement<Data> dtstRootElement = DomManager.getDomManager(dtstFile.getProject())
-                .getFileElement(dtstFile, Data.class);
+                    .getFileElement(dtstFile, Data.class);
             if (dtstRootElement != null) {
                 Data data = dtstRootElement.getRootElement();
                 List<Commands> commandses = data.getCommandses();
@@ -255,7 +243,7 @@ public final class DataSetUtils {
         ArrayList<Field> fields = new ArrayList<>();
         if (isDtstFile(dtstFile)) {
             DomFileElement<Data> dtstRootElement = DomManager.getDomManager(dtstFile.getProject())
-                .getFileElement(dtstFile, Data.class);
+                    .getFileElement(dtstFile, Data.class);
             if (dtstRootElement != null) {
                 Data data = dtstRootElement.getRootElement();
                 List<Fields> fieldses = data.getFieldses();
@@ -278,7 +266,7 @@ public final class DataSetUtils {
     public static Data getDataTagByDtstFile(PsiFile file) {
         if (isDtstFile(file)) {
             DomFileElement<Data> fileElement = DomManager.getDomManager(file.getProject())
-                .getFileElement((XmlFile) file, Data.class);
+                    .getFileElement((XmlFile) file, Data.class);
             if (fileElement != null) {
                 return fileElement.getRootElement();
             }
@@ -296,6 +284,34 @@ public final class DataSetUtils {
                     }
                 }
             }
+        }
+        return null;
+    }
+
+    /**
+     * 得到数据集路径
+     *
+     * @param datasetFile 数据集文件
+     * @return {@link String}
+     */
+    @Nullable
+    public static String getDataSetPath(@NotNull PsiFile datasetFile) {
+        if (isDtstFile(datasetFile)) {
+            String path = datasetFile.getVirtualFile().getPath();
+            Module module = ModuleUtil.findModuleForPsiElement(datasetFile);
+            if (module != null) {
+                String packagePath = path;
+                for (VirtualFile virtualFile : ModuleRootManager.getInstance(module).getSourceRoots()) {
+                    packagePath = StringUtils.remove(packagePath, virtualFile.getPath());
+                }
+                if (packagePath.startsWith("/") || packagePath.startsWith("\\")) {
+                    packagePath = packagePath.substring(1);
+                }
+                packagePath = packagePath.replace("/", ".");
+                packagePath = packagePath.replace("\\", ".");
+                return packagePath.replace(DataSetConstants.DTST_FILE_EXTENSION_DOT, "");
+            }
+            return null;
         }
         return null;
     }
