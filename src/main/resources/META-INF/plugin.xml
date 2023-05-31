@@ -10,9 +10,11 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="isvenshi@gamil.com">Shi Wei</vendor>
     <change-notes><![CDATA[
-      <h4>2.60</h4>
+      <h4>2.61</h4>
       <ul>
-        <li>修复java中的rqlx key在其他模块存在同路径同名rqlx文件时索引错误的bug</li>
+        <li>方法名右键 Copy / Paste Special 菜单中添加 Copy Flow Id 选项点击后复制为flowId</li>
+        <li>rqlx文件中的id右键 Copy / Paste Special 菜单中添加 Copy Rqlx Key 选项点击后复制为rqlxKey</li>
+        <li>选中dtst文件右键 Copy Path/Reference 菜单中添加 Copy DataSet Path 选项点击后复制为datasetPath</li>
       </ul>
       ]]>
     </change-notes>

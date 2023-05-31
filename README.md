@@ -100,6 +100,11 @@
 - JavaScript中的dataset对象自动补全
 - JavaScript中dataset对象的getValue、setValue方法参数的自动补全
 
+##### 快捷复制
+- 方法名右键 Copy / Paste Special 菜单中添加 Copy Flow Id 选项点击后复制为flowId
+- rqlx文件中的id右键 Copy / Paste Special 菜单中添加 Copy Rqlx Key 选项点击后复制为rqlxKey
+- 选中dtst文件右键 Copy Path/Reference 菜单中添加 Copy DataSet Path 选项点击后复制为datasetPath
+
 ##### 语言注入
 
 需要在idea设置中配置方言，如果需要数据库表名、字段提示需要在idea中连接数据库，并且配置SQL Resolution Scopes中设置对应的映射
