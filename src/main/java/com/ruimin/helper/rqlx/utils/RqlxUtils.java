@@ -49,14 +49,14 @@ public final class RqlxUtils {
     }
 
     public static final String[] SQL_METHOD_NAMES = new String[]{"selectOne", "selectList", "selectListWithLock",
-        "selectCount", "selectListIn", "selectCountIn", "executeUpdate"};
+            "selectCount", "selectListIn", "selectCountIn", "executeUpdate", "executeBatchUpdate"};
 
     /**
      * 查询项目中的所有dtst的data标签
      */
     public static List<Mapper> findAllRqlx(@NotNull Project project, GlobalSearchScope scope) {
         @NotNull List<DomFileElement<Mapper>> elements = DomService.getInstance()
-            .getFileElements(Mapper.class, project, scope);
+                .getFileElements(Mapper.class, project, scope);
         return elements.stream().map(DomFileElement::getRootElement).collect(Collectors.toList());
     }
 
@@ -82,7 +82,7 @@ public final class RqlxUtils {
      * 获取rqlx key
      *
      * @param file rqlx文件
-     * @param id id
+     * @param id   id
      * @return {@link String}
      */
     public static @NotNull String getRqlxKey(@NotNull PsiFile file, @NotNull String id) {
@@ -92,7 +92,7 @@ public final class RqlxUtils {
     /**
      * 得到包含rqlx key 的元素
      *
-     * @param file java文件
+     * @param file    java文件
      * @param rqlxKey rqlx key
      * @return {@link ArrayList}<{@link PsiElement}>
      */
@@ -112,14 +112,14 @@ public final class RqlxUtils {
     /**
      * 找到所有包含rqlx key 的元素
      *
-     * @param file java文件
+     * @param file     java文件
      * @param rqlxPath rqlx path
-     * @param rqlxId rqlx id
+     * @param rqlxId   rqlx id
      * @return {@link ArrayList}<{@link PsiElement}>
      */
     @NotNull
     public static ArrayList<PsiElement> findAllRqlxKeyElements(@NotNull PsiFile file, @NotNull String rqlxPath,
-        @NotNull String rqlxId) {
+                                                               @NotNull String rqlxId) {
         String rqlxKey = rqlxPath + CommonConstants.DOT_SEPARATE + rqlxId;
         ArrayList<PsiElement> elements = new ArrayList<>();
         String text = file.getText();
@@ -139,8 +139,8 @@ public final class RqlxUtils {
     /**
      * 递归判断是否rqlx key 引用的目标
      *
-     * @param rqlxKey rqlx key
-     * @param element 元素 需要判断的元素
+     * @param rqlxKey       rqlx key
+     * @param element       元素 需要判断的元素
      * @param rqlxKeySuffix rqlx key 的最后一部分
      * @return boolean
      */
@@ -196,12 +196,12 @@ public final class RqlxUtils {
     /**
      * 根据rqlKey获取所有相应的标签
      *
-     * @param scope 范围
+     * @param scope   范围
      * @param rqlKeys 需要对应的flowid
      * @return 查找到的xmltag
      */
     public static Collection<XmlAttributeValue> findXmlTagByRqlKey(@NotNull GlobalSearchScope scope,
-        String... rqlKeys) {
+                                                                   String... rqlKeys) {
         ArrayList<XmlAttributeValue> xmlAttributeValues = new ArrayList<>();
         HashSet<String> rqlKeySet = Sets.newHashSet(rqlKeys);
         Project project = scope.getProject();
@@ -234,7 +234,7 @@ public final class RqlxUtils {
     /**
      * 找到rqlx rqlx文件文件路径
      *
-     * @param scope 范围
+     * @param scope        范围
      * @param rqlxFilePath rqlx文件路径
      * @return {@link Collection}<{@link XmlFile}>
      */
@@ -247,8 +247,8 @@ public final class RqlxUtils {
         Project project = scope.getProject();
         if (project != null) {
             Collection<VirtualFile> matchPackages = PackageIndex.getInstance(project)
-                .getDirsByPackageName(packageName, scope)
-                .findAll();
+                    .getDirsByPackageName(packageName, scope)
+                    .findAll();
             PsiManager psiManager = PsiManager.getInstance(project);
             for (VirtualFile matchPackage : matchPackages) {
                 // 匹配包下面的文件
@@ -305,7 +305,7 @@ public final class RqlxUtils {
     public static Mapper getMapperTagByRqlxFile(PsiFile file) {
         if (isRqlxFile(file)) {
             DomFileElement<Mapper> fileElement = DomManager.getDomManager(file.getProject())
-                .getFileElement((XmlFile) file, Mapper.class);
+                    .getFileElement((XmlFile) file, Mapper.class);
             if (fileElement != null) {
                 return fileElement.getRootElement();
             }
@@ -318,12 +318,12 @@ public final class RqlxUtils {
      * 找到rql参考
      *
      * @param rqlxPath rqlx的path
-     * @param rqlxId rqlx的id
+     * @param rqlxId   rqlx的id
      * @return {@link List}<{@link PsiElement}>
      */
     public static List<PsiElement> findRqlReference(@NotNull String rqlxPath, String rqlxId, Module module) {
         PsiFile[] filesWithWord = CacheManager.getInstance(module.getProject())
-            .getFilesWithWord(rqlxId, UsageSearchContext.IN_STRINGS, module.getModuleScope(), true);
+                .getFilesWithWord(rqlxId, UsageSearchContext.IN_STRINGS, module.getModuleScope(), true);
         ArrayList<PsiElement> elements = new ArrayList<>();
         for (PsiFile psiFile : filesWithWord) {
             elements.addAll(findAllRqlxKeyElements(psiFile, rqlxPath, rqlxId));
@@ -368,10 +368,8 @@ public final class RqlxUtils {
         if (isRqlxMethodName(referenceExpression.getText())) {
             return true;
         } else {
-            PsiMethodCallExpression callExpression = getLatestMethodCallExpressionFromParent(
-                referenceExpression);
-            PsiMethodCallExpression parentCallExpression = getLatestMethodCallExpressionFromParent(
-                callExpression);
+            PsiMethodCallExpression callExpression = getLatestMethodCallExpressionFromParent(referenceExpression);
+            PsiMethodCallExpression parentCallExpression = getLatestMethodCallExpressionFromParent(callExpression);
             if (parentCallExpression != null) {
                 return isSpliceRqlxKey(parentCallExpression.getFirstChild());
             }
@@ -383,7 +381,7 @@ public final class RqlxUtils {
      * 得到拼接的rqlx key
      *
      * @param referenceExpression 引用表达式
-     * @param rqlxKey rqlx key
+     * @param rqlxKey             rqlx key
      * @return {@link String}
      */
     @Nullable
@@ -411,18 +409,18 @@ public final class RqlxUtils {
                                     @Override
                                     public void visitLiteralExpression(@NotNull PsiLiteralExpression expression) {
                                         String text = expression.getText();
-                                        if (StringUtils.isNotBlank(text) && text.contains(
-                                            CommonConstants.DOT_SEPARATE)) {
+                                        if (StringUtils.isNotBlank(text) &&
+                                                text.contains(CommonConstants.DOT_SEPARATE)) {
                                             // 调用第一遍是传进来的参数的方法本身
                                             PsiMethodCallExpression callExpression = getLatestMethodCallExpressionFromParent(
-                                                referenceExpression);
+                                                    referenceExpression);
                                             // 调用第二遍是是本方法的上一层方法
                                             PsiMethodCallExpression parentCallExpression = getLatestMethodCallExpressionFromParent(
-                                                callExpression);
+                                                    callExpression);
                                             if (parentCallExpression != null) {
                                                 String splicedRqlxKey = getSplicedRqlxKey(
-                                                    parentCallExpression.getFirstChild(),
-                                                    StringUtils.removeQuot(text) + rqlxKey);
+                                                        parentCallExpression.getFirstChild(),
+                                                        StringUtils.removeQuot(text) + rqlxKey);
                                                 rqlxKeyHolder.set(splicedRqlxKey);
                                             }
                                         }
@@ -464,7 +462,7 @@ public final class RqlxUtils {
      * 根据rqlxPath找到文件
      *
      * @param rqlxPath rqlx路径
-     * @param scope 范围
+     * @param scope    范围
      * @return {@link List}<{@link PsiFile}>
      */
     public static List<PsiFile> findFilesByPath(@NotNull String rqlxPath, @NotNull GlobalSearchScope scope) {
@@ -481,8 +479,8 @@ public final class RqlxUtils {
                 String packageName = StringUtils.substring(rqlxPath, 0, index);
                 // 找到所在的包
                 Collection<VirtualFile> matchPackages = PackageIndex.getInstance(project)
-                    .getDirsByPackageName(packageName, scope)
-                    .findAll();
+                        .getDirsByPackageName(packageName, scope)
+                        .findAll();
                 for (VirtualFile matchPackage : matchPackages) {
                     // 匹配包下面的文件
                     VirtualFile child = matchPackage.findChild(fileName + RqlxConstants.RQLX_FILE_EXTENSION_DOT);
@@ -492,9 +490,9 @@ public final class RqlxUtils {
                             PsiFile file = psiManager.findFile(child);
                             psiFiles.add(file);
                         }
-                    }else {
+                    } else {
                         VirtualFile packageChild = matchPackage.findChild(fileName);
-                        if (packageChild != null && scope.contains(packageChild)){
+                        if (packageChild != null && scope.contains(packageChild)) {
                             PsiFile file = psiManager.findFile(packageChild);
                             psiFiles.add(file);
                         }
