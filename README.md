@@ -8,14 +8,13 @@
 
 **如果本插件对你有帮助，可以到Github中star来支持本项目开发。**
 
-<div>
+[![star](https://gitee.com/svenshi/IfsSnowHelper/badge/star.svg?theme=dark)](https://gitee.com/svenshi/IfsSnowHelper/stargazers)
   <a href="https://github.com/SvenShi/IfsSnowHelper" style="display: inline-block; margin-right: 10px;">
     <img src="https://img.shields.io/badge/GitHub-%23121011.svg?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" style="border-radius: 7px;">
   </a>
-  <a href="https://plugins.jetbrains.com/plugin/21046-ifssnowhelper" style="display: inline-block;">
+    <a href="https://plugins.jetbrains.com/plugin/21046-ifssnowhelper" style="display: inline-block;">
     <img src="https://img.shields.io/badge/IntelliJ%20IDEA%20Marketplace-000000.svg?style=flat&logo=intellij-idea&logoColor=white" alt="IntelliJ IDEA Marketplace">
   </a>
-</div>
 
 ### 快速开始
 
