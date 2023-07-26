@@ -10,11 +10,61 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="isvenshi@gamil.com">Shi Wei</vendor>
     <change-notes><![CDATA[
+      <h4>2.62</h4>
+      <ul>
+        <li>添加对rqlx方法名executeBatchUpdate的识别</li>
+        <li>适配2023.2.*</li>
+      </ul>
+
       <h4>2.61</h4>
       <ul>
         <li>方法名右键 Copy / Paste Special 菜单中添加 Copy Flow Id 选项点击后复制为flowId</li>
         <li>rqlx文件中的id右键 Copy / Paste Special 菜单中添加 Copy Rqlx Key 选项点击后复制为rqlxKey</li>
         <li>选中dtst文件右键 Copy Path/Reference 菜单中添加 Copy DataSet Path 选项点击后复制为datasetPath</li>
+      </ul>
+
+      <h4>2.60</h4>
+      <ul>
+        <li>修复java中的rqlx key在其他模块存在同路径同名rqlx文件时索引错误的bug</li>
+      </ul>
+
+      <h4>2.59</h4>
+      <ul>
+        <li>修复jsp标签 fieldstr属性中包含%或者[]时无法索引的BUG</li>
+        <li>修复dataset的getValue等方法属性名使用单引号时无法索引的BUG</li>
+        <li>修复识别java中调用rqlx方法不准确的BUG</li>
+      </ul>
+
+      <h4>2.53</h4>
+      <ul>
+        <li>新增Java代码中的RqlxKey自动补全</li>
+        <li>新增Jsp文件中的datasetId、buttonId、FieldId等的自动补全</li>
+        <li>新增JavaScript代码中的setValue、getValue等以及dataset变量的自动补全</li>
+        <li>新增DataSet文件中的flowid、method、datasource属性的自动补全</li>
+      </ul>
+
+      <h4>2.41</h4>
+      <ul>
+        <li>Jsp页面的各标签跳转dataset</li>
+        <li>fieldstr 跳转dtst文件的field声明处</li>
+        <li>grid标签的声明的按钮跳转到dtst文件的command声明处</li>
+        <li>Jsp页面中的dataset对象以及record对象的getValue、setValue等方法引用dtst文件的field属性</li>
+        <li>各个引用间的重构重命名</li>
+        <li>Java文件中的rqlxkey检查、jsp页面中的getValue、setValue方法检查以及jsp页面的dataset对象检查，添加报红提示</li>
+      </ul>
+
+      <h4>2.32</h4>
+      <ul>
+          <li>代码包名、类名重构</li>
+          <li>弃用jsp文件使用箭头跳转dtst文件的方式，改为使用引用方式跳转dtst</li>
+          <li>jsp 文件中的 JavaScript xxx_interface_dataset 以及 xxx_dataset变量引用到dataSet声明处</li>
+      </ul>
+
+      <h4>2.32</h4>
+      <ul>
+          <li>代码包名、类名重构</li>
+          <li>弃用jsp文件使用箭头跳转dtst文件的方式，改为使用引用方式跳转dtst</li>
+          <li>jsp 文件中的 JavaScript xxx_interface_dataset 以及 xxx_dataset变量引用到dataSet声明处</li>
       </ul>
       ]]>
     </change-notes>
