@@ -22,7 +22,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      */
     public static List<Integer> indexOfAll(String str, String searchStr) {
         ArrayList<Integer> indexes = new ArrayList<>();
-        if (org.apache.commons.lang.StringUtils.isEmpty(str) || org.apache.commons.lang.StringUtils.isEmpty(
+        if (isEmpty(str) || isEmpty(
             searchStr)) {
             return indexes;
         }
