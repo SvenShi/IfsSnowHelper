@@ -10,6 +10,11 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="isvenshi@gamil.com">Shi Wei</vendor>
     <change-notes><![CDATA[
+      <h4>2.63</h4>
+      <ul>
+        <li>适配2023.4.*</li>
+      </ul>
+
       <h4>2.62</h4>
       <ul>
         <li>添加对rqlx方法名executeBatchUpdate的识别</li>

@@ -5,7 +5,7 @@ plugins {
 
 
 group = "com.ruimin"
-version = "2.62"
+version = "2.63"
 
 repositories {
     mavenCentral()
@@ -39,7 +39,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("212.2")
-        untilBuild.set("232.*")
+        untilBuild.set("234.*")
     }
 
     signPlugin {
