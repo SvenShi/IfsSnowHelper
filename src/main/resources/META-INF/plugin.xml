@@ -173,8 +173,4 @@
             <add-to-group group-id="CopyReferencePopupGroup" anchor="first"/>
         </action>
     </actions>
-    <applicationListeners>
-        <listener class="com.ruimin.helper.listener.AppActivationListener"
-                  topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
 </idea-plugin>
