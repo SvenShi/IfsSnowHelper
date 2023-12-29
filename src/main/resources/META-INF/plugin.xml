@@ -10,6 +10,10 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="isvenshi@gamil.com">Shi Wei</vendor>
     <change-notes><![CDATA[
+      <h4>2.64</h4>
+      <ul>
+        <li>js代码自动补全优先级提高，优化用户体验</li>
+      </ul>
       <h4>2.63</h4>
       <ul>
         <li>适配2023.4.*</li>
