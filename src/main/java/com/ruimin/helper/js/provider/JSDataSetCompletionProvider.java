@@ -3,6 +3,7 @@ package com.ruimin.helper.js.provider;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.JspPsiUtil;
 import com.intellij.psi.PsiElement;
@@ -14,20 +15,21 @@ import com.ruimin.helper.common.SnowLookUpElement;
 import com.ruimin.helper.common.util.StringUtils;
 import com.ruimin.helper.jsp.constans.JspConstants;
 import com.ruimin.helper.jsp.utils.SnowJspUtils;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * @author shiwei
  * @email shiwei@rmitec.cn
  * @date 2023/03/24 下午 11:07
- * @description 自动补全flowId和datasource
+ * @description  js代码自动提示dataset以及其他标签的id等属性
  */
 public class JSDataSetCompletionProvider extends CompletionProvider<CompletionParameters> {
 
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext context,
-        @NotNull CompletionResultSet result) {
+                                  @NotNull CompletionResultSet result) {
         PsiElement element = parameters.getPosition();
         if (element.getPrevSibling() != null) {
             return;
@@ -38,7 +40,7 @@ public class JSDataSetCompletionProvider extends CompletionProvider<CompletionPa
             for (XmlTag xmlTag : snowTags) {
                 LookupElement lookUpElement = getLookUpElement(xmlTag);
                 if (lookUpElement != null) {
-                    result.addElement(lookUpElement);
+                    result.addElement(PrioritizedLookupElement.withPriority(lookUpElement, 1000));
                 }
             }
         }
@@ -55,7 +57,7 @@ public class JSDataSetCompletionProvider extends CompletionProvider<CompletionPa
                 XmlAttribute path = xmlTag.getAttribute(JspConstants.ATTR_NAME_PATH);
                 if (id != null) {
                     return new SnowLookUpElement(id.getValue() + JspConstants.DTST_EXPRESSION_SUFFIX, xmlTag,
-                        path != null ? path.getValue() : null, "DataSet");
+                            path != null ? path.getValue() : null, "DataSet");
                 }
 
                 break;
@@ -84,7 +86,7 @@ public class JSDataSetCompletionProvider extends CompletionProvider<CompletionPa
                 XmlAttribute datset = xmlTag.getAttribute(JspConstants.ATTR_NAME_DATASET);
                 if (datset != null) {
                     return new SnowLookUpElement(datset.getValue() + JspConstants.QUERY_EXPRESSION_SUFFIX, xmlTag,
-                        datset.getValue(), "QueryDataSet");
+                            datset.getValue(), "QueryDataSet");
                 }
                 break;
             }
@@ -93,7 +95,7 @@ public class JSDataSetCompletionProvider extends CompletionProvider<CompletionPa
                 XmlAttribute datset = xmlTag.getAttribute(JspConstants.ATTR_NAME_DATASET);
                 if (id != null) {
                     return new SnowLookUpElement(id.getValue(), xmlTag, datset != null ? datset.getValue() : null,
-                        "Grid");
+                            "Grid");
                 }
                 break;
             }
@@ -102,7 +104,7 @@ public class JSDataSetCompletionProvider extends CompletionProvider<CompletionPa
                 XmlAttribute datset = xmlTag.getAttribute(JspConstants.ATTR_NAME_DATASET);
                 if (id != null) {
                     return new SnowLookUpElement(id.getValue() + JspConstants.WINDOW_EXPRESSION_SUFFIX, xmlTag,
-                        datset != null ? datset.getValue() : null, "Window");
+                            datset != null ? datset.getValue() : null, "Window");
                 }
                 break;
             }
