@@ -10,6 +10,13 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="isvenshi@gamil.com">Shi Wei</vendor>
     <change-notes><![CDATA[
+      <h4>2.63</h4>
+      <ul>
+        <li>适配2023.4.*</li>
+        <li>star通知</li>
+        <li>仅支持 2023.1 以上版本</li>
+      </ul>
+
       <h4>2.62</h4>
       <ul>
         <li>添加对rqlx方法名executeBatchUpdate的识别</li>
@@ -89,7 +96,7 @@
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
-    <idea-version since-build="212.2"/>
+    <idea-version since-build="230.*"/>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.java</depends>
     <depends>com.intellij.jsp</depends>
@@ -103,50 +110,52 @@
 
         <!-- dtst引用-->
         <psi.referenceContributor language="XML"
-                implementation="com.ruimin.helper.dtst.contributor.DtstReferenceContributor"/>
+                                  implementation="com.ruimin.helper.dtst.contributor.DtstReferenceContributor"/>
         <!-- java引用-->
         <psi.referenceContributor language="JAVA"
-                implementation="com.ruimin.helper.java.contributor.JavaReferenceContributor"/>
+                                  implementation="com.ruimin.helper.java.contributor.JavaReferenceContributor"/>
         <!-- jsp引用-->
         <psi.referenceContributor language="JSP"
-                implementation="com.ruimin.helper.jsp.contributor.JspReferenceContributor"/>
+                                  implementation="com.ruimin.helper.jsp.contributor.JspReferenceContributor"/>
 
         <!-- JavaScript引用-->
         <psi.referenceContributor language="JavaScript"
-                implementation="com.ruimin.helper.js.contributor.JavaScriptReferenceContributor"/>
+                                  implementation="com.ruimin.helper.js.contributor.JavaScriptReferenceContributor"/>
 
         <!-- 代码补全-->
         <completion.contributor language="JavaScript"
-                implementationClass="com.ruimin.helper.js.contributor.JSDataSetCompletionContributor"/>
+                                implementationClass="com.ruimin.helper.js.contributor.JSDataSetCompletionContributor"/>
 
         <completion.confidence language="JAVA"
-                implementationClass="com.ruimin.helper.java.contributor.SnowLiteralCompletionConfidence"
-                order="before javaSkipAutopopupInStrings"/>
+                               implementationClass="com.ruimin.helper.java.contributor.SnowLiteralCompletionConfidence"
+                               order="before javaSkipAutopopupInStrings"/>
 
         <!-- xml文件描述-->
         <!-- dtst文件 -->
         <dom.fileMetaData id="snow.DtstDescription"
-                rootTagName="Data"
-                implementation="com.ruimin.helper.dtst.dom.description.DataSetDescription"/>
+                          rootTagName="Data"
+                          implementation="com.ruimin.helper.dtst.dom.description.DataSetDescription"/>
         <!-- Rqlx文件 -->
         <dom.fileMetaData id="snow.RqlxDescription"
-                rootTagName="mapper"
-                implementation="com.ruimin.helper.rqlx.dom.description.RqlxDescription"/>
+                          rootTagName="mapper"
+                          implementation="com.ruimin.helper.rqlx.dom.description.RqlxDescription"/>
 
         <!--  代码检查-->
         <localInspection language="JAVA" shortName="SnowJavaRqlxKeyInspection"
-                id="snow.JavaRqlxKeyInspection"
-                displayName="Snow rqlx key inspection"
-                groupName="Snow" enabledByDefault="true" level="ERROR"
-                implementationClass="com.ruimin.helper.java.inspection.JavaRqlxKeyInspection"/>
+                         id="snow.JavaRqlxKeyInspection"
+                         displayName="Snow rqlx key inspection"
+                         groupName="Snow" enabledByDefault="true" level="ERROR"
+                         implementationClass="com.ruimin.helper.java.inspection.JavaRqlxKeyInspection"/>
         <!--  代码检查-->
         <localInspection language="JavaScript" shortName="SnowJSDataSetInspection"
-                id="snow.JSDataSetInspection"
-                displayName="Snow dataset id inspection"
-                groupName="Snow" enabledByDefault="true" level="ERROR"
-                implementationClass="com.ruimin.helper.js.inspection.JSDataSetInspection"/>
+                         id="snow.JSDataSetInspection"
+                         displayName="Snow dataset id inspection"
+                         groupName="Snow" enabledByDefault="true" level="ERROR"
+                         implementationClass="com.ruimin.helper.js.inspection.JSDataSetInspection"/>
         <!-- 项目打开事件-->
         <postStartupActivity implementation="com.ruimin.helper.common.listener.ProjectStartupListener"/>
+
+        <notificationGroup id="IfsSnowHelper" displayType="BALLOON" isLogByDefault="true"/>
     </extensions>
     <actions>
         <action id="com.ruimin.helper.java.action.CopyFlowIdAction"
